@@ -144,7 +144,8 @@ CHRS_TO_INDEX=$BASE_CHRS
 UCSC_MM10_BASE=ftp://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes
 DBSNP_MM10_BASE=ftp://ftp.ncbi.nih.gov/snp/organisms/mouse_10090/VCF
 
-GENOME=mouse.mm10.fastq
+OUTDIR=/media/media/databases/mouse/
+GENOME=mouse.mm10.fasta
 DBSNP=dbsnp.mouse.mm10.vcf	
 
 #download the file that was given by CMP 1
@@ -165,7 +166,7 @@ get() {
 }
 
 #download the genome
-if [ ! -f ${GENOME} ] ; then
+if [ ! -f $OUTDIR$GENOME ] ; then
 	INPUTS=
 	for c in $CHRS_TO_INDEX ; do
 		if [ ! -f ${c}.fa ] ; then
@@ -177,11 +178,16 @@ if [ ! -f ${GENOME} ] ; then
 		[ -z "$INPUTS" ] && INPUTS=${c}.fa
 	done
 	echo "building genome "
-	cat ${INPUTS} > $GENOME
+	cat ${INPUTS} > $OUTDIR$GENOME
+	rm $INPUTS
+	if [ ! -f $OUTDIR$GENOME.bwt ] ; then
+		bwa index $OUTDIR$GENOME
+	fi
+	
 fi
 
 #download the dbSNP database
-if [ ! -f ${DBSNP} ] ; then
+if [ ! -f $OUTDIR$DBSNP ] ; then
 	INPUTS=
 	for c in $SNP_CHRS ; do
 		if [ ! -f vcf_chr_${c}.vcf ] ; then
@@ -195,12 +201,12 @@ if [ ! -f ${DBSNP} ] ; then
 	echo "building dbSNP "
 	#cat ${INPUTS} > $DBSNP
 	
-	awk 'NR<14 {print $0} !match($0,"##"){print $0}' ${INPUTS} > $DBSNP #use awk to keep the header of the first .vcf file
 	#build dbsnp with header
+	awk 'NR<14 {print $0} !match($0,"##"){print $0}' ${INPUTS} > $OUTDIR$DBSNP #use awk to keep the header of the first .vcf file
 	rm ${INPUTS} #delete temporary files
-fi
+
 
 #TODO:download hapMap, omni, esp, aluRegions
 
-
+echo "DONE"
 
