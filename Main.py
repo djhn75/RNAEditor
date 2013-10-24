@@ -7,10 +7,10 @@ from GuiControll import GuiControll
 
 class RnaEditor(QtGui.QMainWindow, View): 
     def __init__(self):
-        self.view = GuiControll(self) 
+        self.control = GuiControll(self) #create controller class
         QtGui.QDialog.__init__(self) 
-        self.setupUi(self)
-
+        self.setupUi(self) #create user interface
+        
 app = QtGui.QApplication(sys.argv) 
 dialog = RnaEditor() 
 dialog.show() 
