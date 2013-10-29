@@ -3,7 +3,7 @@ Created on Oct 21, 2013
 
 @author: david
 '''
-import guiView
+import ui.guiView
 from ui.InputTab import Ui_Form as InputTab
 from PyQt4 import QtCore, QtGui
 

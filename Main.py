@@ -2,7 +2,7 @@
 
 import sys 
 from PyQt4 import QtGui
-from guiView import Ui_MainWindow as View
+from ui.guiView import Ui_MainWindow as View
 from GuiControll import GuiControll
 
 class RnaEditor(QtGui.QMainWindow, View): 

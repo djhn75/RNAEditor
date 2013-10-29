@@ -244,9 +244,9 @@
  <connections>
   <connection>
    <sender>actionNew_Assay</sender>
-   <signal>activated()</signal>
-   <receiver>tabMainWindow</receiver>
-   <slot>update()</slot>
+   <signal>triggered()</signal>
+   <receiver>control</receiver>
+   <slot>newAssay</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -261,8 +261,8 @@
   <connection>
    <sender>pushButton_start</sender>
    <signal>clicked()</signal>
-   <receiver>tabMainWindow</receiver>
-   <slot>showMinimized()</slot>
+   <receiver>control</receiver>
+   <slot>newAssay()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>609</x>
