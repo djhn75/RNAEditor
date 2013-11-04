@@ -70,6 +70,7 @@ class MapFastq(object):
             Exception("reference Genome File: Not found!!!")
 
     def start(self):
+        """
         #Align Fastq Reads to the Genome
         saiFile=self.outfilePrefix+".sai"
         cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile]
@@ -85,6 +86,13 @@ class MapFastq(object):
         bamFile=self.outfilePrefix+".bam"
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, saiFile, bamFile, self.logFile, self.overwrite)
+        """
+        
+        #run Alignement with tophat
+        bamFile=self.outfilePrefix+"/alignements.bam"
+        cmd=["python", self.sourceDir + "MapSplice-v2.1.2/mapsplice.py", "-p", self.threads, "--bam", "--qual-scale", "phred33", "-c", "/media/media/databases/human/hg19/byChr/", "-o", self.outfilePrefix, "-x", "/media/media/databases/human/hg19/byChr/hg19", "-1", self.fastqFile ]
+        print cmd
+        Helper.proceedCommand("Map reads with tophat", cmd, self.fastqFile, "None", self.logFile, self.overwrite)
         
         #Identify Target Regions for realignment
         intervalFile=self.outfilePrefix+".indels.intervals"

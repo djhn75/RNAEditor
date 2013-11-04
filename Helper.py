@@ -47,10 +47,13 @@ class Helper():
         
         #check if infile exists
         if not os.path.exists(infile):
-            Exception(infile + "does not exist, Error in previous Step")
+            
+            print infile + "does not exist, Error in previous Step"
+            #Exception(infile + "does not exist, Error in previous Step")
             exit(1)
         
         #check if outfile already exists
+        
         if not os.path.exists(outfile) or overwrite==True:
             if outfile == "None":
                 resultFile=None
