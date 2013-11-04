@@ -12,7 +12,6 @@ class GuiControll(object):
     classdocs
     '''
     
-
     def __init__(self, v):
         '''
         Constructor
@@ -26,3 +25,7 @@ class GuiControll(object):
         print "newAssay"
         self.tab = InputTab()
         self.view.tabMainWindow.addTab(self.tab, "TEST")
+        
+    def openFileDialog(self,textEdit):
+        fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '~/')
+        textEdit.setText(fname)

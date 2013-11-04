@@ -2,12 +2,13 @@
 
 # Form implementation generated from reading ui file 'ressources/guiView.ui'
 #
-# Created: Tue Oct 29 10:56:56 2013
+# Created: Sun Nov  3 23:02:12 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+from ui import InputTab
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -26,38 +27,43 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(720, 404)
+        MainWindow.resize(679, 417)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setMinimumSize(QtCore.QSize(300, 300))
         MainWindow.setStyleSheet(_fromUtf8(""))
         self.centralWidget = QtGui.QWidget(MainWindow)
         self.centralWidget.setObjectName(_fromUtf8("centralWidget"))
-        self.tabMainWindow = QtGui.QTabWidget(self.centralWidget)
+        self.gridLayoutWidget = QtGui.QWidget(self.centralWidget)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(130, -1, 511, 341))
+        self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
+        self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
+        self.gridLayout.setMargin(0)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.tabMainWindow = QtGui.QTabWidget(self.gridLayoutWidget)
         self.tabMainWindow.setEnabled(True)
-        self.tabMainWindow.setGeometry(QtCore.QRect(0, 10, 711, 341))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(self.tabMainWindow.sizePolicy().hasHeightForWidth())
+        self.tabMainWindow.setSizePolicy(sizePolicy)
         self.tabMainWindow.setTabPosition(QtGui.QTabWidget.North)
+        self.tabMainWindow.setElideMode(QtCore.Qt.ElideRight)
+        self.tabMainWindow.setUsesScrollButtons(False)
         self.tabMainWindow.setTabsClosable(True)
         self.tabMainWindow.setMovable(True)
         self.tabMainWindow.setObjectName(_fromUtf8("tabMainWindow"))
-        self.tab = QtGui.QWidget()
+        self.tab = InputTab.Ui_Form()
         self.tab.setObjectName(_fromUtf8("tab"))
-        self.pushButton_start = QtGui.QPushButton(self.tab)
-        self.pushButton_start.setGeometry(QtCore.QRect(550, 280, 114, 32))
-        self.pushButton_start.setObjectName(_fromUtf8("pushButton_start"))
-        self.checkBox_keepTemp = QtGui.QCheckBox(self.tab)
-        self.checkBox_keepTemp.setGeometry(QtCore.QRect(550, 240, 101, 20))
-        self.checkBox_keepTemp.setObjectName(_fromUtf8("checkBox_keepTemp"))
-        self.checkBox_overwrite = QtGui.QCheckBox(self.tab)
-        self.checkBox_overwrite.setGeometry(QtCore.QRect(550, 220, 101, 20))
-        self.checkBox_overwrite.setObjectName(_fromUtf8("checkBox_overwrite"))
-        self.lineEdit_outPrefix = QtGui.QLineEdit(self.tab)
-        self.lineEdit_outPrefix.setGeometry(QtCore.QRect(550, 190, 113, 21))
-        self.lineEdit_outPrefix.setObjectName(_fromUtf8("lineEdit_outPrefix"))
-        self.label_outPrefix = QtGui.QLabel(self.tab)
-        self.label_outPrefix.setGeometry(QtCore.QRect(450, 190, 91, 20))
-        self.label_outPrefix.setObjectName(_fromUtf8("label_outPrefix"))
         self.tabMainWindow.addTab(self.tab, _fromUtf8(""))
+        self.gridLayout.addWidget(self.tabMainWindow, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtGui.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 720, 22))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 679, 22))
         self.menuBar.setObjectName(_fromUtf8("menuBar"))
         self.menuRnaEditor = QtGui.QMenu(self.menuBar)
         self.menuRnaEditor.setObjectName(_fromUtf8("menuRnaEditor"))
@@ -117,18 +123,10 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabMainWindow.setCurrentIndex(0)
-        QtCore.QObject.connect(self.actionNew_Assay, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.control.newAssay)
-        QtCore.QObject.connect(self.pushButton_start, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.control.newAssay)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
-        self.pushButton_start.setText(_translate("MainWindow", "Start", None))
-        self.checkBox_keepTemp.setToolTip(_translate("MainWindow", "keep temporary files", None))
-        self.checkBox_keepTemp.setText(_translate("MainWindow", "Keep Temp.", None))
-        self.checkBox_overwrite.setToolTip(_translate("MainWindow", "Overwrite existing Files", None))
-        self.checkBox_overwrite.setText(_translate("MainWindow", "Overwrite", None))
-        self.label_outPrefix.setText(_translate("MainWindow", "Output Prefix:", None))
         self.tabMainWindow.setTabText(self.tabMainWindow.indexOf(self.tab), _translate("MainWindow", "Tab 1", None))
         self.menuRnaEditor.setTitle(_translate("MainWindow", "RnaEditor", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
