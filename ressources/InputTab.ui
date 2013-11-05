@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>465</height>
+    <width>792</width>
+    <height>647</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,8 +28,8 @@
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>220</y>
+     <x>380</x>
+     <y>360</y>
      <width>231</width>
      <height>151</height>
     </rect>
@@ -73,8 +73,8 @@
   <widget class="QWidget" name="formLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>370</y>
+     <x>380</x>
+     <y>540</y>
      <width>231</width>
      <height>91</height>
     </rect>
@@ -124,15 +124,15 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>220</y>
-     <width>301</width>
+     <x>50</x>
+     <y>390</y>
+     <width>313</width>
      <height>242</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="horizontalSpacing">
-     <number>-1</number>
+     <number>6</number>
     </property>
     <item row="4" column="2">
      <widget class="QPushButton" name="pushButton_esp">
@@ -290,8 +290,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>-20</y>
+     <x>140</x>
+     <y>10</y>
      <width>531</width>
      <height>181</height>
     </rect>
@@ -303,7 +303,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>../../../Desktop/RNAeditor.png</pixmap>
+    <pixmap>../icons/RNAeditor.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>

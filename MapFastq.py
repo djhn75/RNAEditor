@@ -89,10 +89,16 @@ class MapFastq(object):
         """
         
         #run Alignement with tophat
-        bamFile=self.outfilePrefix+"/alignements.bam"
-        cmd=["python", self.sourceDir + "MapSplice-v2.1.2/mapsplice.py", "-p", self.threads, "--bam", "--qual-scale", "phred33", "-c", "/media/media/databases/human/hg19/byChr/", "-o", self.outfilePrefix, "-x", "/media/media/databases/human/hg19/byChr/hg19", "-1", self.fastqFile ]
+        bamFile=self.outfilePrefix+"/accepted_hits.bam"
+        cmd=[self.sourceDir + "tophat/tophat2", "-p", "12", "--rg-id", "A","--rg-sample","A","--rg-library","illumina","--rg-platform-unit","HiSeq", "-o", self.outfilePrefix, self.refGenome, self.fastqFile ]
         print cmd
         Helper.proceedCommand("Map reads with tophat", cmd, self.fastqFile, "None", self.logFile, self.overwrite)
+        
+        #Add read group ONLY NEEDED WHEN MAPPED WITH TOPHAT
+        #rgFile=self.outfilePrefix+".bam"
+        #cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/AddOrReplaceReadGroups.jar", "INPUT=" + bamFile, "OUTPUT=" + rgFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true", "ID=A", "LB=A", "SM=A", "PL=illumina", "PU=HiSeq2000", "SM=A"]
+        #Helper.proceedCommand("Add read Groups", cmd, bamFile, rgFile, self.logFile, self.overwrite)
+        
         
         #Identify Target Regions for realignment
         intervalFile=self.outfilePrefix+".indels.intervals"

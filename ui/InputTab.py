@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ressources/InputTab.ui'
 #
-# Created: Sun Nov  3 21:49:14 2013
+# Created: Mon Nov  4 15:28:17 2013
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,17 +23,10 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_Form(QtGui.QWidget):
-    
-    def __init__(self,parent=None):
-        QtGui.QWidget.__init__(self, parent)
-        self.setupUi(self) #create user interface
-        self.retranslateUi(self)
-        self.show()
-
+class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(705, 465)
+        Form.resize(792, 647)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(1)
@@ -41,7 +34,7 @@ class Ui_Form(QtGui.QWidget):
         Form.setSizePolicy(sizePolicy)
         Form.setMinimumSize(QtCore.QSize(200, 200))
         self.verticalLayoutWidget = QtGui.QWidget(Form)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(300, 220, 231, 151))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(380, 360, 231, 151))
         self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setMargin(0)
@@ -58,7 +51,7 @@ class Ui_Form(QtGui.QWidget):
         self.checkBox.setObjectName(_fromUtf8("checkBox"))
         self.verticalLayout.addWidget(self.checkBox)
         self.formLayoutWidget_2 = QtGui.QWidget(Form)
-        self.formLayoutWidget_2.setGeometry(QtCore.QRect(300, 370, 231, 91))
+        self.formLayoutWidget_2.setGeometry(QtCore.QRect(380, 540, 231, 91))
         self.formLayoutWidget_2.setObjectName(_fromUtf8("formLayoutWidget_2"))
         self.formLayout_2 = QtGui.QFormLayout(self.formLayoutWidget_2)
         self.formLayout_2.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -78,10 +71,11 @@ class Ui_Form(QtGui.QWidget):
         self.pushButton_start.setGeometry(QtCore.QRect(840, 580, 131, 32))
         self.pushButton_start.setObjectName(_fromUtf8("pushButton_start"))
         self.gridLayoutWidget = QtGui.QWidget(Form)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 220, 301, 242))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(50, 390, 313, 242))
         self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
         self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setMargin(0)
+        self.gridLayout.setHorizontalSpacing(6)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.pushButton_esp = QtGui.QPushButton(self.gridLayoutWidget)
         self.pushButton_esp.setObjectName(_fromUtf8("pushButton_esp"))
@@ -178,10 +172,10 @@ class Ui_Form(QtGui.QWidget):
         self.lineEdit_omni.setObjectName(_fromUtf8("lineEdit_omni"))
         self.gridLayout.addWidget(self.lineEdit_omni, 3, 1, 1, 1)
         self.label = QtGui.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(80, -20, 531, 181))
+        self.label.setGeometry(QtCore.QRect(140, 10, 531, 181))
         self.label.setAutoFillBackground(False)
         self.label.setText(_fromUtf8(""))
-        self.label.setPixmap(QtGui.QPixmap(_fromUtf8("icons/RNAeditor.png")))
+        self.label.setPixmap(QtGui.QPixmap(_fromUtf8("../icons/RNAeditor.png")))
         self.label.setScaledContents(True)
         self.label.setObjectName(_fromUtf8("label"))
 
