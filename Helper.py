@@ -58,7 +58,7 @@ class Helper():
             if outfile == "None":
                 resultFile=None
             else:
-                resultFile=open(outfile,"w")
+                resultFile=open(outfile,"w+")
             try:    
                 #os.popen(cmd)
                 #retcode = subprocess.call(cmd,shell=True)

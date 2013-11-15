@@ -118,8 +118,7 @@ class CallEditingSites(object):
                                
                 edgeDistance = int(snpPos) - int(startPos)
                 
-                #only remove the snps from
-                # first 6 bases
+                #only remove the snps from first 6 bases
                 revStrand = int(flag) & 16
                 if (revStrand == 0 and edgeDistance > minDistance) or (revStrand == 16 and edgeDistance < len(sequence) - minDistance):
                     keepSNP=True
@@ -179,7 +178,6 @@ class CallEditingSites(object):
         Helper.proceedCommand("write variants from non-alu regions",cmd, noStartMissmatches, nonAlu, self.logFile, self.overwrite)  # write nonAlu-Regions
         cmd =  [self.sourceDir+"bedtools/intersectBed","-a",noStartMissmatches,"-b",self.aluRegions]
         Helper.proceedCommand("write variants from alu regions",cmd, noStartMissmatches, alu, self.logFile, self.overwrite) #write alu-regions
-        
         
         #erase variants from intronic splice junctions
         
