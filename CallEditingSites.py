@@ -4,7 +4,7 @@ Created on May 23, 2013
 @author: david
 '''
 
-import argparse, multiprocessing, os, sys
+import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
 
@@ -111,17 +111,20 @@ class CallEditingSites(object):
             
             #print position, str(minDistance)
             #samout= os.system("samtools view " + bamFile + " " + position)
-            samout = Helper.getCommandOutput("samtools view -F 1024 " + bamFile + " " + position).splitlines()
+            samout = Helper.getCommandOutput("samtools view " + bamFile + " " + position).splitlines()
             for samLine in samout:
                 samfields=samLine.split()
                 flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
+                cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
+                cigarLetters=re.split("[0-9]+",cigar)[1:]
                                
                 edgeDistance = int(snpPos) - int(startPos)
                 
                 #only remove the snps from first 6 bases
                 revStrand = int(flag) & 16
                 if (revStrand == 0 and edgeDistance > minDistance) or (revStrand == 16 and edgeDistance < len(sequence) - minDistance):
-                    keepSNP=True
+                    if():
+                        keepSNP=True
                     #print "   ".join([str(revStrand),str(keepSNP),str(edgeDistance),str(len(sequence)),flag,startPos,mapQual,cigar,sequence,seqQual])
                 #print distance
             

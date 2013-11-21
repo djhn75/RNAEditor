@@ -70,7 +70,7 @@ class MapFastq(object):
             Exception("reference Genome File: Not found!!!")
 
     def start(self):
-        """
+        
         #Align Fastq Reads to the Genome
         saiFile=self.outfilePrefix+".sai"
         cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile]
@@ -86,13 +86,15 @@ class MapFastq(object):
         bamFile=self.outfilePrefix+".bam"
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, saiFile, bamFile, self.logFile, self.overwrite)
-        """
+        
         
         #run Alignement with tophat
+        """
         bamFile=self.outfilePrefix+"/accepted_hits.bam"
         cmd=[self.sourceDir + "tophat/tophat2", "--no-coverage-search","--keep-fasta-order", "-p", "12", "--rg-id", "A","--rg-sample","A","--rg-library","illumina","--rg-platform-unit","HiSeq", "-o", self.outfilePrefix, self.refGenome, self.fastqFile ]
         print cmd
         Helper.proceedCommand("Map reads with tophat", cmd, self.fastqFile, bamFile, self.logFile, self.overwrite)
+        """
         
         #sort bam
         #sortBamFile=self.outfilePrefix+".bam"
@@ -107,12 +109,12 @@ class MapFastq(object):
         
         #Identify Target Regions for realignment
         intervalFile=self.outfilePrefix+".indels.intervals"
-        cmd=["java","-Xmx4G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.threads, "-T", "RealignerTargetCreator", "-R", self.refGenome+".fasta", "-I", bamFile, "-o", intervalFile,"-l", "ERROR"]
+        cmd=["java","-Xmx4G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.threads, "-T", "RealignerTargetCreator", "-R", self.refGenome, "-I", bamFile, "-o", intervalFile,"-l", "ERROR"]
         Helper.proceedCommand("Identify Target Regions for realignment", cmd, bamFile, intervalFile, self.logFile, self.overwrite)
         
         #Proceed Realignement
         realignedFile=self.outfilePrefix+".realigned.bam"
-        cmd=["java","-Xmx4G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.refGenome+".fasta", "-I", bamFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
+        cmd=["java","-Xmx4G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.refGenome, "-I", bamFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
         Helper.proceedCommand("Proceed Realignement", cmd, intervalFile, realignedFile, self.logFile, self.overwrite)
         
         #mark PCR duplicates
