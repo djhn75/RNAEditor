@@ -118,7 +118,7 @@ class CallEditingSites(object):
                 cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
                 cigarLetters=re.split("[0-9]+",cigar)[1:]
                 
-                #TEST!123
+                #TEST345
                                
                 edgeDistance = int(snpPos) - int(startPos)
                 
