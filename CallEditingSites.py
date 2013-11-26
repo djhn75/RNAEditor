@@ -115,17 +115,32 @@ class CallEditingSites(object):
             for samLine in samout:
                 samfields=samLine.split()
                 flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
+                readPos=1
+                mmReadPos=0
                 cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
                 cigarLetters=re.split("[0-9]+",cigar)[1:]
                 
-                #TEST345
-                               
-                edgeDistance = int(snpPos) - int(startPos)
                 
-                #only remove the snps from first 6 bases
-                revStrand = int(flag) & 16
-                if (revStrand == 0 and edgeDistance > minDistance) or (revStrand == 16 and edgeDistance < len(sequence) - minDistance):
-                    if():
+                for i in range(len(cigarLetters)): #parse over single read
+                    if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
+                        readPos = readPos + int(cigarNums[i])
+                    elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
+                        startPos = startPos + int(cigarNums[i])
+                    elif cigarLetters[i] in {"M"}: #Matches
+                        for j in range(cigarNums[i]):
+                            if startPos == snpPos:
+                                mmReadPos = readPos 
+                            readPos += 1
+                            startPos += 1
+                
+                if mmReadPos != 0:
+                                   
+                    edgeDistance = int(snpPos) - int(startPos)
+                
+                    #only remove the snps from first 6 bases
+                    revStrand = int(flag) & 16
+                    if (revStrand == 0 and mmReadPos > minDistance) or (revStrand == 16 and mmReadPos < readPos - minDistance):
+                        #if(): check for quality of the base
                         keepSNP=True
                     #print "   ".join([str(revStrand),str(keepSNP),str(edgeDistance),str(len(sequence)),flag,startPos,mapQual,cigar,sequence,seqQual])
                 #print distance
