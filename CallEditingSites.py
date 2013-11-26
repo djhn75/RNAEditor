@@ -117,6 +117,8 @@ class CallEditingSites(object):
                 flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
                 cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
                 cigarLetters=re.split("[0-9]+",cigar)[1:]
+                
+                #TEST!123
                                
                 edgeDistance = int(snpPos) - int(startPos)
                 
