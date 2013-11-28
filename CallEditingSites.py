@@ -81,7 +81,7 @@ class CallEditingSites(object):
             Exception("reference Genome File: Not found!!!")
         
     '''delete variants from Bam file which appear near read edges'''
-    def removeEdgeMissmatches(self,vcfFile,bamFile,minDistance, outFile):
+    def removeEdgeMissmatches(self,vcfFile,bamFile,minDistance, minBaseQual, outFile):
         #pass
         #Loop through vcf-File
             #call overlapping reads
@@ -140,8 +140,8 @@ class CallEditingSites(object):
                     #only remove the snps from first 6 bases
                     revStrand = int(flag) & 16
                     if (revStrand == 0 and mmReadPos > minDistance) or (revStrand == 16 and mmReadPos < readPos - minDistance):
-                        #if(): check for quality of the base
-                        keepSNP=True
+                        if(ord(seqQual[mmReadPos]) > minBaseQual + 33): #check for quality of the base
+                            keepSNP=True
                     #print "   ".join([str(revStrand),str(keepSNP),str(edgeDistance),str(len(sequence)),flag,startPos,mapQual,cigar,sequence,seqQual])
                 #print distance
             
@@ -189,7 +189,7 @@ class CallEditingSites(object):
         
         #erase artificial missmatches from read-starts
         noStartMissmatches= self.outfilePrefix + ".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf"
-        self.removeEdgeMissmatches(noEsp, self.bamFile, self.edgeDistance, noStartMissmatches)
+        self.removeEdgeMissmatches(noEsp, self.bamFile, self.edgeDistance, 25, noStartMissmatches)
         
         #split non-Alu and Alu regions
         nonAlu = self.outfilePrefix + ".nonAluEditingSites.vcf"
