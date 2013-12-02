@@ -105,8 +105,9 @@ class CallEditingSites(object):
             return
         for line in vcfFile:
             line=line.split("\t")
-            snpPos=line[1]
-            position=line[0]+":"+snpPos+"-"+snpPos
+            snpPos=int(line[1])
+            mmBase = line[4]
+            position=line[0]+":"+line[1]+"-"+line[1]
             keepSNP=False
             
             #print position, str(minDistance)
@@ -114,8 +115,8 @@ class CallEditingSites(object):
             samout = Helper.getCommandOutput("samtools view " + bamFile + " " + position).splitlines()
             for samLine in samout:
                 samfields=samLine.split()
-                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
-                readPos=1
+                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
+                readPos=0
                 mmReadPos=0
                 cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
                 cigarLetters=re.split("[0-9]+",cigar)[1:]
@@ -127,7 +128,7 @@ class CallEditingSites(object):
                     elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
                         startPos = startPos + int(cigarNums[i])
                     elif cigarLetters[i] in {"M"}: #Matches
-                        for j in range(cigarNums[i]):
+                        for j in range(int(cigarNums[i])):
                             if startPos == snpPos:
                                 mmReadPos = readPos 
                             readPos += 1
@@ -140,7 +141,9 @@ class CallEditingSites(object):
                     #only remove the snps from first 6 bases
                     revStrand = int(flag) & 16
                     if (revStrand == 0 and mmReadPos > minDistance) or (revStrand == 16 and mmReadPos < readPos - minDistance):
-                        if(ord(seqQual[mmReadPos]) > minBaseQual + 33): #check for quality of the base
+                        mmBaseQual= ord(seqQual[mmReadPos])
+                        mmReadBase= sequence[mmReadPos]
+                        if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == mmBase): #check for quality of the base and the read contains the missmatch
                             keepSNP=True
                     #print "   ".join([str(revStrand),str(keepSNP),str(edgeDistance),str(len(sequence)),flag,startPos,mapQual,cigar,sequence,seqQual])
                 #print distance
