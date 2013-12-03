@@ -155,12 +155,80 @@ class CallEditingSites(object):
             if counter % 1000 == 0:
                 sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatches finished")
                 sys.stdout.flush()
+        sys.stdout.write("\r" + num_lines + " of " + num_lines + " missmatches finished")
+        sys.stdout.flush()
         duration=Helper.getTime()-startTime
         print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
         self.logFile.flush()
         print "\t[DONE]" + " Duration [" + str(duration) + "]"    
             #sys.exit(0)
                 
+    '''do blat search (delete variants from reads that are not uniquely mapped)'''
+    def blatSearch(self,vcfFile, outFile):
+        startTime=Helper.getTime()
+        description = "look for non uniquely mapped reads by blat"
+        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        self.logFile.flush()
+        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        
+        num_lines = str(sum(1 for line in open(vcfFile)))
+        
+        variantFile=open(vcfFile,"r")
+        counter=0
+        
+        geneHash = {}
+        
+        #write missmatch read to fasta file
+        for line in variantFile:
+            line=line.split("\t")
+            chromosome,snpPos=line[0],line[1]
+            position=line[0]+":"+snpPos+"-"+snpPos
+            missmatchReadCount=1
+            samout = Helper.getCommandOutput("samtools view -F 1024 " + bamFile + " " + position).splitlines() #-F 1024 to filter out duplicate reads
+            for samLine in samout:
+                samfields=samLine.split()
+                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
+                readPos=0
+                mmReadPos=0
+                cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
+                cigarLetters=re.split("[0-9]+",cigar)[1:]
+                
+                for i in range(len(cigarLetters)): #parse over single read
+                    if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
+                        readPos = readPos + int(cigarNums[i])
+                    elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
+                        startPos = startPos + int(cigarNums[i])
+                    elif cigarLetters[i] in {"M"}: #Matches
+                        for j in range(int(cigarNums[i])):
+                            if startPos == snpPos:
+                                mmReadPos = readPos
+                                mmBaseQual= ord(seqQual[mmReadPos])
+                                mmReadBase= sequence[mmReadPos]
+                                if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == mmBase): #check for quality of the base and the read contains the missmatch
+                                    keepRead=True
+                            readPos += 1
+                            startPos += 1
+                if keepRead == True: #if read contains the missmatch 
+                    tempFasta.write("> " + chromosome + "-" + snpPos + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
+                    missmatchReadCount += 1
+
+            counter += 1
+            if counter % 1000 == 0:
+                sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatche read written")
+                sys.stdout.flush()
+                
+        #do blat search
+        print "created fasta file " + tempFasta.name
+        cmd = ["blat","stepSize=5","repMatch=2253", "-minScore=20","minIdentity=0","-noHead", args.refGenome, tempFasta.name, pslFile]
+        print cmd
+        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, pslFile, open(args.variantFile + ".Blat.log","w+"),False)
+        
+        #open psl file
+        pslFile=open(pslFile)
+        blatDict={}
+        for line in pslFile:
+            pass
+    
     def __del__(self):
         pass
     
