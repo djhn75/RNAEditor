@@ -8,6 +8,7 @@ import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
 
+
 class CallEditingSites(object):
     '''
     classdocs
@@ -164,7 +165,7 @@ class CallEditingSites(object):
             #sys.exit(0)
                 
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
-    def blatSearch(self,vcfFile, outFile):
+    def blatSearch(self,vcfFile, outFile, minBaseQual):
         startTime=Helper.getTime()
         description = "look for non uniquely mapped reads by blat"
         print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
@@ -174,6 +175,8 @@ class CallEditingSites(object):
         num_lines = str(sum(1 for line in open(vcfFile)))
         
         variantFile=open(vcfFile,"r")
+        tempFasta = open(args.variantFile + "_tmp.fa","w+")
+        pslFile=args.outFile+".psl"
         counter=0
         
         geneHash = {}
@@ -181,10 +184,11 @@ class CallEditingSites(object):
         #write missmatch read to fasta file
         for line in variantFile:
             line=line.split("\t")
-            chromosome,snpPos=line[0],line[1]
+            chromosome,snpPos,mmBase = line[0], line[1], line[4]
             position=line[0]+":"+snpPos+"-"+snpPos
             missmatchReadCount=1
-            samout = Helper.getCommandOutput("samtools view -F 1024 " + bamFile + " " + position).splitlines() #-F 1024 to filter out duplicate reads
+
+            samout = Helper.getCommandOutput("samtools view -F 1024 " + self.bamFile + " " + position).splitlines() #-F 1024 to filter out duplicate reads
             for samLine in samout:
                 samfields=samLine.split()
                 flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
@@ -226,9 +230,34 @@ class CallEditingSites(object):
         #open psl file
         pslFile=open(pslFile)
         blatDict={}
-        for line in pslFile:
-            pass
-    
+        for line in pslFile: #summarize the blat hits
+            pslFields = line.split()
+            name = pslFile[9]
+            blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]]
+            if name in blatDict:
+                blatDict[name] = blatDict[name] + [blatScore]
+            else:
+                blatDict[name] = [blatScore]
+
+
+        siteDict = {}
+        discardDict = {}
+        
+        for pslKey in blatDict.keys():
+            site = ":".join(pslKey.split("-")[0:2])
+            pslLine = blatDict[pslKey]
+            lagestScore=0
+            largestScoreLine=pslLine[0]
+            scoreArray=[]
+            for blatHit in pslLine:
+                lineScore=blatHit[0]
+                scoreArray.append(lineScore)
+                if lineScore > lagestScore:
+                    largestScore = lineScore
+                    largestScoreLine=blatHit
+        
+                
+                
     def __del__(self):
         pass
     
