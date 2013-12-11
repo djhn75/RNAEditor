@@ -7,6 +7,7 @@ Created on May 23, 2013
 import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
+from fileinput import close
 
 
 class CallEditingSites(object):
@@ -165,7 +166,7 @@ class CallEditingSites(object):
             #sys.exit(0)
                 
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
-    def blatSearch(self,vcfFile, outFile, minBaseQual):
+    def blatSearch(self,vcfFile, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
         description = "look for non uniquely mapped reads by blat"
         print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
@@ -220,6 +221,7 @@ class CallEditingSites(object):
             if counter % 1000 == 0:
                 sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatche read written")
                 sys.stdout.flush()
+        close(variantFile)
                 
         #do blat search
         print "created fasta file " + tempFasta.name
@@ -233,7 +235,7 @@ class CallEditingSites(object):
         for line in pslFile: #summarize the blat hits
             pslFields = line.split()
             name = pslFile[9]
-            blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]]
+            blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
             if name in blatDict:
                 blatDict[name] = blatDict[name] + [blatScore]
             else:
@@ -243,19 +245,59 @@ class CallEditingSites(object):
         siteDict = {}
         discardDict = {}
         
-        for pslKey in blatDict.keys():
-            site = ":".join(pslKey.split("-")[0:2])
+        #loop over blat Hits
+        for pslKey in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
+            keepSNP=False
+            chr,pos=pslKey.split("-")[0:2]
+            site = ":".join(chr,pos)
             pslLine = blatDict[pslKey]
             lagestScore=0
             largestScoreLine=pslLine[0]
             scoreArray=[]
-            for blatHit in pslLine:
-                lineScore=blatHit[0]
+            for blatHit in pslLine: #look for largest blatScore and save the largest line too
+                lineScore=int(blatHit[0])
                 scoreArray.append(lineScore)
                 if lineScore > lagestScore:
                     largestScore = lineScore
                     largestScoreLine=blatHit
+            
+            scoreArray.sort(reverse=True)
+            if not scoreArray[1]:   #test if more than one blat Hit exists
+                scoreArray[1] = 0
+            if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 perchen of first hit
+                blockCount,blockSizes,blockStarts = largestScoreLine[2],largestScoreLine[3].split(","),largestScoreLine[4].split(",")
+                for i in range(blockSizes):
+                    startPos = int(blockStarts[i])+1
+                    endPos = startPos + int(blockSizes[i])
+                    if pos >= startPos and pos < endPos: #check if alignement overlaps missmatch
+                        keepSNP = True
+            
+                if keepSNP:
+                    if site in siteDict:
+                        siteDict[site]+=1
+                    else:
+                        siteDict[site]=1
+            if not keepSNP: #when read not passes the blat criteria
+                if site in discardDict:
+                    discardDict[site]+=1
+                else:
+                    discardDict=1
+        close(pslFile)            
         
+        #
+        open(variantFile)
+        open(outFile,"w+")
+        for line in variantFile:
+            line = line.split()
+            name=":".join(line[0:2])
+            numberDiscardReads=0
+            if name in siteDict:
+                numberBlatReads = siteDict[name]
+            if name in discardDict:
+                numberDiscardReads = discardDict[name]
+            
+            if numberBlatReads >= minMissmatch and numberBlatReads > numberDiscardReads: 
+                outFile.write(line)
                 
                 
     def __del__(self):
@@ -292,8 +334,8 @@ class CallEditingSites(object):
         self.removeEdgeMissmatches(noEsp, self.bamFile, self.edgeDistance, 25, noStartMissmatches)
         
         #split non-Alu and Alu regions
-        nonAlu = self.outfilePrefix + ".nonAluEditingSites.vcf"
-        alu = self.outfilePrefix + ".aluEditingSites.vcf"
+        nonAlu = self.outfilePrefix + ".nonAlu.vcf"
+        alu = self.outfilePrefix + ".alu.vcf"
         cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noStartMissmatches,"-b",self.aluRegions]
         Helper.proceedCommand("write variants from non-alu regions",cmd, noStartMissmatches, nonAlu, self.logFile, self.overwrite)  # write nonAlu-Regions
         cmd =  [self.sourceDir+"bedtools/intersectBed","-a",noStartMissmatches,"-b",self.aluRegions]
@@ -301,7 +343,11 @@ class CallEditingSites(object):
         
         #erase variants from intronic splice junctions
         
+        #erase variants from homopolymer runs
         
+        #do blat search
+        blatOutfile = self.outfilePrefix + "nonAlu.blat.vcf"
+        self.blatSearch(alu, blatOutfile, 25, 1)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
