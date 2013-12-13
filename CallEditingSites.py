@@ -176,25 +176,27 @@ class CallEditingSites(object):
         num_lines = str(sum(1 for line in open(vcfFile)))
         
         variantFile=open(vcfFile,"r")
-        tempFasta = open(args.variantFile + "_tmp.fa","w+")
-        pslFile=args.outFile+".psl"
+        tempFasta = open(vcfFile + "_tmp.fa","w+")
+        pslFile=outFile+".psl"
         counter=0
         
         geneHash = {}
         
         #write missmatch read to fasta file
+        
         for line in variantFile:
             line=line.split("\t")
             chromosome,snpPos,mmBase = line[0], line[1], line[4]
-            position=line[0]+":"+snpPos+"-"+snpPos
+            position=line[0]+":"+ str(snpPos)+"-"+str(snpPos)
             missmatchReadCount=1
 
             samout = Helper.getCommandOutput("samtools view -F 1024 " + self.bamFile + " " + position).splitlines() #-F 1024 to filter out duplicate reads
             for samLine in samout:
                 samfields=samLine.split()
-                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],samfields[3],samfields[4],samfields[5],samfields[9],samfields[10]
+                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
                 readPos=0
                 mmReadPos=0
+                keepRead=False
                 cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
                 cigarLetters=re.split("[0-9]+",cigar)[1:]
                 
@@ -214,20 +216,22 @@ class CallEditingSites(object):
                             readPos += 1
                             startPos += 1
                 if keepRead == True: #if read contains the missmatch 
-                    tempFasta.write("> " + chromosome + "-" + snpPos + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
+                    tempFasta.write("> " + chromosome + "-" + str(snpPos) + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
                     missmatchReadCount += 1
 
             counter += 1
             if counter % 1000 == 0:
                 sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatche read written")
                 sys.stdout.flush()
-        close(variantFile)
+        
+        variantFile.close()
+        tempFasta.close()
                 
         #do blat search
         print "created fasta file " + tempFasta.name
-        cmd = ["blat","stepSize=5","repMatch=2253", "-minScore=20","minIdentity=0","-noHead", args.refGenome, tempFasta.name, pslFile]
+        cmd = ["blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta.name, pslFile]
         print cmd
-        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, pslFile, open(args.variantFile + ".Blat.log","w+"),False)
+        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, pslFile, self.logFile, self.overwrite)
         
         #open psl file
         pslFile=open(pslFile)
@@ -282,7 +286,7 @@ class CallEditingSites(object):
                     discardDict[site]+=1
                 else:
                     discardDict=1
-        close(pslFile)            
+        pslFile.close()            
         
         #
         open(variantFile)
@@ -298,7 +302,7 @@ class CallEditingSites(object):
             
             if numberBlatReads >= minMissmatch and numberBlatReads > numberDiscardReads: 
                 outFile.write(line)
-                
+        variantFile.close()       
                 
     def __del__(self):
         pass
@@ -347,7 +351,7 @@ class CallEditingSites(object):
         
         #do blat search
         blatOutfile = self.outfilePrefix + "nonAlu.blat.vcf"
-        self.blatSearch(alu, blatOutfile, 25, 1)
+        self.blatSearch(nonAlu, blatOutfile, 25, 1)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
