@@ -186,7 +186,7 @@ class CallEditingSites(object):
         
         for line in variantFile:
             line=line.split("\t")
-            chromosome,snpPos,mmBase = line[0], line[1], line[4]
+            chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
             position=line[0]+":"+ str(snpPos)+"-"+str(snpPos)
             missmatchReadCount=1
 
