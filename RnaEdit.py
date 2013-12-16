@@ -36,7 +36,7 @@ class RnaEdit(object):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
     parser.add_argument('-i', '--input', metavar='Fastq-File', type=argparse.FileType('r'), help='Input fastq file that should be mapped to the genome', required=True)
-    parser.add_argument('-r', '--RefGenome', metavar='Fasta-File', help='File that contains the reference sequences', type=str, default='/media/media/databases/human/human_g1k_v37.fasta')
+    parser.add_argument('-r', '--RefGenome', metavar='Fasta-File', help='File that contains the reference sequences', type=str, default='/media/media/databases/human/human_g1k_v37.fa')
     parser.add_argument('-s', '--dbsnp', help=' SNP database (dbSNP) in VCF format (downloaded from the GATK homepage)', type=str, default='/media/media/databases/human/dbsnp_135.b37.vcf')
     parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/hapmap_3.3.b37.sites.vcf')
     parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/1000G_omni2.5.b37.sites.vcf')
