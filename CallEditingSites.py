@@ -176,14 +176,14 @@ class CallEditingSites(object):
         num_lines = str(sum(1 for line in open(vcfFile)))
         
         variantFile=open(vcfFile,"r")
-        tempFasta = open(vcfFile + "_tmp.fa","w+")
+        tempFasta = open(vcfFile + "_tmp.fa","r")
         pslFile=outFile+".psl"
         counter=0
         
         geneHash = {}
         
         #write missmatch read to fasta file
-        
+        """
         for line in variantFile:
             line=line.split("\t")
             chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
@@ -226,19 +226,19 @@ class CallEditingSites(object):
         
         variantFile.close()
         tempFasta.close()
-                
+        """        
         #do blat search
         print "created fasta file " + tempFasta.name
         cmd = ["blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta.name, pslFile]
         print cmd
-        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, pslFile, self.logFile, self.overwrite)
+        #Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, "None", self.logFile, self.overwrite)
         
         #open psl file
         pslFile=open(pslFile)
         blatDict={}
         for line in pslFile: #summarize the blat hits
             pslFields = line.split()
-            name = pslFile[9]
+            name = pslFields[9]
             blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
             if name in blatDict:
                 blatDict[name] = blatDict[name] + [blatScore]
@@ -253,7 +253,7 @@ class CallEditingSites(object):
         for pslKey in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
             keepSNP=False
             chr,pos=pslKey.split("-")[0:2]
-            site = ":".join(chr,pos)
+            site = ":".join([chr,pos])
             pslLine = blatDict[pslKey]
             lagestScore=0
             largestScoreLine=pslLine[0]
