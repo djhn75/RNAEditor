@@ -270,7 +270,7 @@ class CallEditingSites(object):
                 scoreArray[1] = 0
             if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 perchen of first hit
                 blockCount,blockSizes,blockStarts = largestScoreLine[2],largestScoreLine[3].split(","),largestScoreLine[4].split(",")
-                for i in range(blockSizes):
+                for i in range(blockCount):
                     startPos = int(blockStarts[i])+1
                     endPos = startPos + int(blockSizes[i])
                     if pos >= startPos and pos < endPos: #check if alignement overlaps missmatch
@@ -285,7 +285,7 @@ class CallEditingSites(object):
                 if site in discardDict:
                     discardDict[site]+=1
                 else:
-                    discardDict=1
+                    discardDict[site]=1
         pslFile.close()            
         
         #
