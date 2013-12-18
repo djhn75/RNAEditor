@@ -255,13 +255,13 @@ class CallEditingSites(object):
             chr,pos=pslKey.split("-")[0:2]
             site = ":".join([chr,pos])
             pslLine = blatDict[pslKey]
-            lagestScore=0
+            largestScore=0
             largestScoreLine=pslLine[0]
             scoreArray=[]
             for blatHit in pslLine: #look for largest blatScore and save the largest line too
                 lineScore=int(blatHit[0])
                 scoreArray.append(lineScore)
-                if lineScore > lagestScore:
+                if lineScore > largestScore:
                     largestScore = lineScore
                     largestScoreLine=blatHit
             
