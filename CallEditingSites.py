@@ -164,7 +164,56 @@ class CallEditingSites(object):
         self.logFile.flush()
         print "\t[DONE]" + " Duration [" + str(duration) + "]"    
             #sys.exit(0)
-                
+    
+    '''remove missmatches inside of Homonukleotides'''
+    def removeHomonukleotideMissmatches(self,vcfFile,refGenome,outFile):
+         vcfFile=open(vcfFile)
+         tmpBedFile
+         tmpFaFile=open(vcfFile+"tmp.fa","w+")
+         for line in vcfFile:
+             line = line.split()
+             mmChr,mmPos,mmNucleotide = line[0],int(line[1]),line[4]
+             
+             bedString = mmChr+str(mmPos-4)+str(mmPos+4)
+             tmpFaFile
+    
+    
+    ''' remove variant near splice junctions'''
+    def removeIntronSpliceJunction(self,vcfFile,annotationFile,outFile):
+        annotationFile=open(annotationFile)
+        outFile=open(outFile)
+        geneDict={} #save all genes according to the Chromosome in an Dictionary
+        for line in annotationFile:
+            line=line.split()
+            chr=line[1]
+            if chr in geneDict:
+                geneDict[chr] = geneDict[chr] + line
+            elif chr not in geneDict:
+                geneDict[chr] = [line]
+        annotationFile.close()
+        
+        vcfFile = open(vcfFile)
+        for line in vcfFile:
+            line=line.split()
+            mmChr,mmPos = line[0],int(line[1])
+            if mmChr not in geneDict.keys():
+                continue 
+            for gene in geneDict[mmChr]:
+                keepSnp=False
+                refChr,refStart,refStop = gene[1],int(gene[3]),int(gene[4])
+                if mmPos > refStart and mmPos < refStop: #check if is inside of gene location 
+                    numberExons = int(gene[7])
+                    exonStarts = gene[8].split(",")
+                    exonEnds = gene[9].split(",")
+                    for i in range(numberExons): #check if variant lies in Exon
+                        if int(exonStarts[i])-4 < mmPos and int(exonStarts[i]+1 > mmPos):
+                            keepSnp=True
+                        elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:
+                            keepSnp=True
+        if keepSnp == True:
+            outFile.write("\t".join(line))
+                        
+    
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,vcfFile, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
@@ -176,14 +225,14 @@ class CallEditingSites(object):
         num_lines = str(sum(1 for line in open(vcfFile)))
         
         variantFile=open(vcfFile,"r")
-        tempFasta = open(vcfFile + "_tmp.fa","r")
-        pslFile=outFile+".psl"
+        tempFasta = open(vcfFile + "_tmp.fa","w+")
+        
         counter=0
         
         geneHash = {}
         
         #write missmatch read to fasta file
-        """
+        
         for line in variantFile:
             line=line.split("\t")
             chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
@@ -226,12 +275,13 @@ class CallEditingSites(object):
         
         variantFile.close()
         tempFasta.close()
-        """        
+         
         #do blat search
         print "created fasta file " + tempFasta.name
+        pslFile=outFile+".psl"
         cmd = ["blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta.name, pslFile]
         print cmd
-        #Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, "None", self.logFile, self.overwrite)
+        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, "None", self.logFile, self.overwrite)
         
         #open psl file
         pslFile=open(pslFile)
@@ -253,6 +303,7 @@ class CallEditingSites(object):
         for pslKey in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
             keepSNP=False
             chr,pos=pslKey.split("-")[0:2]
+            
             site = ":".join([chr,pos])
             pslLine = blatDict[pslKey]
             largestScore=0
@@ -264,12 +315,12 @@ class CallEditingSites(object):
                 if lineScore > largestScore:
                     largestScore = lineScore
                     largestScoreLine=blatHit
-            
+            pos=int(pos)
             scoreArray.sort(reverse=True)
-            if not scoreArray[1]:   #test if more than one blat Hit exists
-                scoreArray[1] = 0
+            if len(scoreArray) < 2:   #test if more than one blat Hit exists
+                scoreArray.append(0)
             if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 perchen of first hit
-                blockCount,blockSizes,blockStarts = largestScoreLine[2],largestScoreLine[3].split(","),largestScoreLine[4].split(",")
+                blockCount,blockSizes,blockStarts = int(largestScoreLine[2]),largestScoreLine[3].split(",")[:-1],largestScoreLine[4].split(",")[:-1]
                 for i in range(blockCount):
                     startPos = int(blockStarts[i])+1
                     endPos = startPos + int(blockSizes[i])
@@ -289,8 +340,8 @@ class CallEditingSites(object):
         pslFile.close()            
         
         #
-        open(variantFile)
-        open(outFile,"w+")
+        variantFile=open(vcfFile)
+        resultFile=open(outFile,"w+")
         for line in variantFile:
             line = line.split()
             name=":".join(line[0:2])
@@ -300,8 +351,8 @@ class CallEditingSites(object):
             if name in discardDict:
                 numberDiscardReads = discardDict[name]
             
-            if numberBlatReads >= minMissmatch and numberBlatReads > numberDiscardReads: 
-                outFile.write(line)
+            if numberBlatReads >= minMissmatch and numberBlatReads > numberDiscardReads: #check if more readd fit the blat criteria than not
+                resultFile.write("\t".join(line)+"\n")
         variantFile.close()       
                 
     def __del__(self):
@@ -350,7 +401,7 @@ class CallEditingSites(object):
         #erase variants from homopolymer runs
         
         #do blat search
-        blatOutfile = self.outfilePrefix + "nonAlu.blat.vcf"
+        blatOutfile = self.outfilePrefix + ".nonAlu.blat.vcf"
         self.blatSearch(nonAlu, blatOutfile, 25, 1)
         
 if __name__ == '__main__':
