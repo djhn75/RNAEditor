@@ -87,4 +87,4 @@ class Helper():
 
     @staticmethod
     def getCommandOutput(command):
-        return subprocess.check_output(command, shell=True)
+        return subprocess.check_output(command)

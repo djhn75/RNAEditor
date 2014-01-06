@@ -232,14 +232,13 @@ class CallEditingSites(object):
         geneHash = {}
         
         #write missmatch read to fasta file
-        
         for line in variantFile:
             line=line.split("\t")
             chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
             position=line[0]+":"+ str(snpPos)+"-"+str(snpPos)
             missmatchReadCount=1
 
-            samout = Helper.getCommandOutput("samtools view -F 1024 " + self.bamFile + " " + position).splitlines() #-F 1024 to filter out duplicate reads
+            samout = Helper.getCommandOutput(["samtools", "view", "-F", "1024", self.bamFile, position]).splitlines() #-F 1024 to filter out duplicate reads
             for samLine in samout:
                 samfields=samLine.split()
                 flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
@@ -270,7 +269,7 @@ class CallEditingSites(object):
 
             counter += 1
             if counter % 1000 == 0:
-                sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatche read written")
+                sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatched reads written")
                 sys.stdout.flush()
         
         variantFile.close()
