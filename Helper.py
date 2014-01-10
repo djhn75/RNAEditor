@@ -46,7 +46,7 @@ class Helper():
         print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         
         #check if infile exists
-        if not os.path.exists(infile):
+        if not os.path.isfile(infile):
             
             print infile + "does not exist, Error in previous Step"
             #Exception(infile + "does not exist, Error in previous Step")
@@ -54,7 +54,7 @@ class Helper():
         
         #check if outfile already exists
         
-        if not os.path.exists(outfile) or overwrite==True:
+        if not os.path.isfile(outfile) or overwrite==True:
             if outfile == "None":
                 resultFile=None
             else:

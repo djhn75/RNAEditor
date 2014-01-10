@@ -221,64 +221,64 @@ class CallEditingSites(object):
         print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         self.logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        
-        num_lines = str(sum(1 for line in open(vcfFile)))
-        
-        variantFile=open(vcfFile,"r")
-        tempFasta = open(vcfFile + "_tmp.fa","w+")
-        
         counter=0
-        
         geneHash = {}
+        variantFile=open(vcfFile,"r")
+        tempFasta = vcfFile + "_tmp.fa"
+        if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0:
+            tempFasta=open(tempFasta,"w+")
+            num_lines = str(sum(1 for line in open(vcfFile)))
+            
+            #write missmatch read to fasta file
+            for line in variantFile:
+                line=line.split("\t")
+                chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
+                position=line[0]+":"+ str(snpPos)+"-"+str(snpPos)
+                missmatchReadCount=1
+    
+                samout = Helper.getCommandOutput([self.sourceDir+"samtools", "view", "-F", "1024", self.bamFile, position]).splitlines() #-F 1024 to filter out duplicate reads
+                for samLine in samout:
+                    samfields=samLine.split()
+                    flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
+                    readPos=0
+                    mmReadPos=0
+                    keepRead=False
+                    cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
+                    cigarLetters=re.split("[0-9]+",cigar)[1:]
+                    
+                    for i in range(len(cigarLetters)): #parse over single read
+                        if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
+                            readPos = readPos + int(cigarNums[i])
+                        elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
+                            startPos = startPos + int(cigarNums[i])
+                        elif cigarLetters[i] in {"M"}: #Matches
+                            for j in range(int(cigarNums[i])):
+                                if startPos == snpPos:
+                                    mmReadPos = readPos
+                                    mmBaseQual= ord(seqQual[mmReadPos])
+                                    mmReadBase= sequence[mmReadPos]
+                                    if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == mmBase): #check for quality of the base and the read contains the missmatch
+                                        keepRead=True
+                                readPos += 1
+                                startPos += 1
+                    if keepRead == True: #if read contains the missmatch 
+                        tempFasta.write("> " + chromosome + "-" + str(snpPos) + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
+                        missmatchReadCount += 1
+    
+                counter += 1
+                if counter % 1000 == 0:
+                    sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatched reads written")
+                    sys.stdout.flush()
         
-        #write missmatch read to fasta file
-        for line in variantFile:
-            line=line.split("\t")
-            chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
-            position=line[0]+":"+ str(snpPos)+"-"+str(snpPos)
-            missmatchReadCount=1
-
-            samout = Helper.getCommandOutput(["samtools", "view", "-F", "1024", self.bamFile, position]).splitlines() #-F 1024 to filter out duplicate reads
-            for samLine in samout:
-                samfields=samLine.split()
-                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
-                readPos=0
-                mmReadPos=0
-                keepRead=False
-                cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
-                cigarLetters=re.split("[0-9]+",cigar)[1:]
-                
-                for i in range(len(cigarLetters)): #parse over single read
-                    if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
-                        readPos = readPos + int(cigarNums[i])
-                    elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
-                        startPos = startPos + int(cigarNums[i])
-                    elif cigarLetters[i] in {"M"}: #Matches
-                        for j in range(int(cigarNums[i])):
-                            if startPos == snpPos:
-                                mmReadPos = readPos
-                                mmBaseQual= ord(seqQual[mmReadPos])
-                                mmReadBase= sequence[mmReadPos]
-                                if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == mmBase): #check for quality of the base and the read contains the missmatch
-                                    keepRead=True
-                            readPos += 1
-                            startPos += 1
-                if keepRead == True: #if read contains the missmatch 
-                    tempFasta.write("> " + chromosome + "-" + str(snpPos) + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
-                    missmatchReadCount += 1
-
-            counter += 1
-            if counter % 1000 == 0:
-                sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatched reads written")
-                sys.stdout.flush()
-        
+            
+            print "created fasta file " + tempFasta.name
         variantFile.close()
         tempFasta.close()
-         
+            
         #do blat search
-        print "created fasta file " + tempFasta.name
+
         pslFile=outFile+".psl"
-        cmd = ["blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta.name, pslFile]
+        cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta.name, pslFile]
         print cmd
         Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, "None", self.logFile, self.overwrite)
         
@@ -360,7 +360,7 @@ class CallEditingSites(object):
     def start(self):
         #Rough variant calling with GATK
         vcfFile=self.outfilePrefix+".vcf"
-        cmd = ["java","-Xmx4G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", 
+        cmd = ["java","-Xmx6G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", 
                "-T","UnifiedGenotyper","-R", self.refGenome, "-glm", "SNP","-I", self.bamFile, 
                "-D", self.dbsnp, "-o", vcfFile, "-metrics", self.outfilePrefix+".snp.metrics", "-nt", self.threads, "-l","ERROR",
                "-stand_call_conf", self.standCall, "-stand_emit_conf", self.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
