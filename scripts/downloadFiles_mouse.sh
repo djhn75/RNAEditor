@@ -141,11 +141,11 @@ chr17_ctg5_hap1"
 
 CHRS_TO_INDEX=$BASE_CHRS
 
-UCSC_MM10_BASE=ftp://hgdownload.cse.ucsc.edu/goldenPath/mm10/chromosomes
+UCSC_MM10_BASE=ftp://hgdownload.cse.ucsc.edu/goldenPath/mm9/chromosomes
 DBSNP_MM10_BASE=ftp://ftp.ncbi.nih.gov/snp/organisms/mouse_10090/VCF
 
 OUTDIR=/media/media/databases/mouse/
-GENOME=mouse.mm10.fasta
+GENOME=mouse.mm9.fasta
 DBSNP=dbsnp.mouse.mm10.vcf	
 
 #download the file that was given by CMP 1

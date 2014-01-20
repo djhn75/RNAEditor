@@ -87,4 +87,7 @@ class Helper():
 
     @staticmethod
     def getCommandOutput(command):
+        #print command
+        #print os.path.dirname(os.path.abspath(__file__))
+        #print os.getcwd()
         return subprocess.check_output(command)

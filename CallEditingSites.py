@@ -114,7 +114,9 @@ class CallEditingSites(object):
             
             #print position, str(minDistance)
             #samout= os.system("samtools view " + bamFile + " " + position)
-            samout = Helper.getCommandOutput("samtools view " + bamFile + " " + position).splitlines()
+            #command="samtools view " + bamFile + " " + position
+            command = ["samtools", "view", bamFile, position]
+            samout = Helper.getCommandOutput(command).splitlines()
             for samLine in samout:
                 samfields=samLine.split()
                 flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
