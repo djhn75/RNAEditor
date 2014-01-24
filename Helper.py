@@ -77,7 +77,7 @@ class Helper():
                 else:
                     print >> sys.stderr, "Error: " + cmd[0] + o.strerror
                     os.remove(resultFile.name)
-                    exit(1) 
+                    exit(1)
             duration=Helper.getTime()-startTime
             print >> logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
             logFile.flush()

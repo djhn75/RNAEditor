@@ -24,6 +24,7 @@ class CallEditingSites(object):
         print "\t dbsnp:" + self.dbsnp
         print "\t HapMap:" + self.hapmap
         print "\t 1000G Omni:" + self.omni
+        print "\t Alu-Regions:" + self.aluRegions
         
         print "\t sourceDir:" + self.sourceDir
         print "\t threads:" + self.threads
@@ -33,7 +34,7 @@ class CallEditingSites(object):
         print "\t overwrite:" + str(self.overwrite)
         print
 
-    def __init__(self,bamFile,refGenome,dbsnp,hapmap,omni,esp, aluRegions, outfilePrefix="default",sourceDir="/usr/local/bin/",
+    def __init__(self,bamFile,refGenome,dbsnp,hapmap,omni,esp, aluRegions, geneAnnotationFile, outfilePrefix="default",sourceDir="/usr/local/bin/",
                  threads=multiprocessing.cpu_count()-1,standCall=0,standEmit=0, edgeDistance=6,
                  keepTemp=False,overwrite=False):
         '''
@@ -49,6 +50,7 @@ class CallEditingSites(object):
         self.omni=omni
         self.esp=esp
         self.aluRegions=aluRegions
+        self.geneAnnotationFile = geneAnnotationFile
         if outfilePrefix=="default":
             self.outfilePrefix=self.bamFile[0:self.bamFile.rfind(".realigned")]
         else:
@@ -228,7 +230,7 @@ class CallEditingSites(object):
         variantFile=open(vcfFile,"r")
         tempFasta = vcfFile + "_tmp.fa"
         if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0:
-            tempFasta=open(tempFasta,"w+")
+            tempFastaFile=open(tempFasta,"w+")
             num_lines = str(sum(1 for line in open(vcfFile)))
             
             #write missmatch read to fasta file
@@ -264,7 +266,7 @@ class CallEditingSites(object):
                                 readPos += 1
                                 startPos += 1
                     if keepRead == True: #if read contains the missmatch 
-                        tempFasta.write("> " + chromosome + "-" + str(snpPos) + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
+                        tempFastaFile.write("> " + chromosome + "-" + str(snpPos) + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
                         missmatchReadCount += 1
     
                 counter += 1
@@ -273,16 +275,15 @@ class CallEditingSites(object):
                     sys.stdout.flush()
         
             
-            print "created fasta file " + tempFasta.name
-        variantFile.close()
-        tempFasta.close()
-            
+            print "created fasta file " + tempFasta
+            tempFastaFile.close()
+        variantFile.close()    
         #do blat search
 
         pslFile=outFile+".psl"
-        cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta.name, pslFile]
+        cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta, pslFile]
         print cmd
-        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta.name, "None", self.logFile, self.overwrite)
+        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite)
         
         #open psl file
         pslFile=open(pslFile)
@@ -397,13 +398,16 @@ class CallEditingSites(object):
         cmd =  [self.sourceDir+"bedtools/intersectBed","-a",noStartMissmatches,"-b",self.aluRegions]
         Helper.proceedCommand("write variants from alu regions",cmd, noStartMissmatches, alu, self.logFile, self.overwrite) #write alu-regions
         
+        #proceed with non-Alu reads only!!!
         #erase variants from intronic splice junctions
+        noSpliceSites = self.outfilePrefix + ".nonAlu.noSpliceSites.vcf"
+        self.removeIntronSpliceJunction(nonAlu, self.geneAnnotationFile, noSpliceSites)
         
         #erase variants from homopolymer runs
         
         #do blat search
-        blatOutfile = self.outfilePrefix + ".nonAlu.blat.vcf"
-        self.blatSearch(nonAlu, blatOutfile, 25, 1)
+        blatOutfile = self.outfilePrefix + ".nonAlu.noSpliceSites.blat.vcf"
+        self.blatSearch(noSpliceSites, blatOutfile, 25, 1)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
@@ -413,7 +417,8 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=argparse.FileType('r'), default='/media/media/databases/human/hapmap_3.3.b37.sites.vcf')
     parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=argparse.FileType('r'), default='/media/media/databases/human/1000G_omni2.5.b37.sites.vcf')
     parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=argparse.FileType('r'), default='/media/media/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
-    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=argparse.FileType('r'), default='/media/media/media/databases/human/hg19/rna-editing/Alu_repeats.bed')
+    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=argparse.FileType('r'), default='/media/media/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
+    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=argparse.FileType('r'), default='/media/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
     parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
     parser.add_argument('-d', '--sourceDir', help='- Directory to all the tools [default: bin/]', default='bin/', type=Helper.readable_dir)
     parser.add_argument('-t', '--threads', help='number of threads', type=int, default=multiprocessing.cpu_count()-1)
@@ -425,4 +430,4 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, args.hapmap.name, args.omni.name, args.esp, args.output, args.sourceDir, args.threads, args.standCall, args.standEmit, args.edgeDistance, args.keepTemp, args.overwrite)
+    call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, args.hapmap.name, args.omni.name, args.esp, args.aluRegions, args.geneAnnotation, args.output, args.sourceDir, args.threads, args.standCall, args.standEmit, args.edgeDistance, args.keepTemp, args.overwrite)

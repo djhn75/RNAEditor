@@ -17,7 +17,7 @@ class RnaEdit(object):
     
     
 
-    def __init__(self,fastqFile,refGenome,dbsnp,hapmap,omni, esp, aluRegions, outfilePrefix="default",sourceDir="/usr/local/bin",
+    def __init__(self,fastqFile,refGenome,dbsnp,hapmap,omni, esp, aluRegions, geneAnnotation, outfilePrefix="default",sourceDir="/usr/local/bin",
                  threads=multiprocessing.cpu_count()-1,maxDiff=0.04,seedDiff=2,
                  paired=False, edgeDistance=3, keepTemp=False, overwrite=False):
         
@@ -26,7 +26,7 @@ class RnaEdit(object):
         
         print mapResultFile + " was created \t Mapping Process finished"
         
-        self.callEditSites=CallEditingSites(mapResultFile,refGenome,dbsnp,hapmap,omni, esp, aluRegions, sourceDir=sourceDir, edgeDistance=edgeDistance)
+        self.callEditSites=CallEditingSites(mapResultFile,refGenome,dbsnp,hapmap,omni, esp, aluRegions, geneAnnotation, sourceDir=sourceDir, edgeDistance=edgeDistance)
         self.callEditSites.start()
      
     def __del__(self):
@@ -41,8 +41,8 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/hapmap_3.3.b37.sites.vcf')
     parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/1000G_omni2.5.b37.sites.vcf')
     parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=str, default='/media/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
-    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=str, default='/media/media/databases/human/hg19/rna-editing/Alu_repeats.bed')
-    
+    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=str, default='/media/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
+    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=argparse.FileType('r'), default='/media/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
     parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
     parser.add_argument('-d', '--sourceDir', help='- Directory to all the tools [default: bin/]', default='bin/', type=Helper.readable_dir)
     parser.add_argument('-t', '--threads', help='number of threads', type=int, default=multiprocessing.cpu_count()-1)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    edit=RnaEdit(args.input.name, args.RefGenome, args.dbsnp,args.hapmap,args.omni, args.esp, args.aluRegions, args.output, args.sourceDir, args.threads, args.maxDiff, args.seedDiff, args.paired, args.edgeDistance, args.keepTemp, args.overwrite)
+    edit=RnaEdit(args.input.name, args.RefGenome, args.dbsnp,args.hapmap,args.omni, args.esp, args.aluRegions, args.geneAnnotation, args.output, args.sourceDir, args.threads, args.maxDiff, args.seedDiff, args.paired, args.edgeDistance, args.keepTemp, args.overwrite)
     del edit
     
     
