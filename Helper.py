@@ -67,16 +67,19 @@ class Helper():
                 retcode = subprocess.call(cmd, stdout=resultFile, stderr=logFile)
                 if retcode != 0:
                     print >> sys.stderr, "Error: " + description + " failed"
-                    os.remove(resultFile.name)
+                    if resultFile!=None:
+                        os.remove(resultFile.name)
                     exit(1)
             except OSError, o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
                     print >> sys.stderr, "Error: " + cmd[0] + " Command not found on this system"
-                    os.remove(resultFile.name)
+                    if resultFile!=None:
+                        remove(resultFile.name)
                     exit(1)
                 else:
                     print >> sys.stderr, "Error: " + cmd[0] + o.strerror
-                    os.remove(resultFile.name)
+                    if resultFile!=None:
+                        os.remove(resultFile.name)
                     exit(1)
             duration=Helper.getTime()-startTime
             print >> logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"

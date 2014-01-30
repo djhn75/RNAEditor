@@ -184,38 +184,55 @@ class CallEditingSites(object):
     
     ''' remove variant near splice junctions'''
     def removeIntronSpliceJunction(self,vcfFile,annotationFile,outFile):
-        annotationFile=open(annotationFile)
-        outFile=open(outFile)
+        startTime=Helper.getTime()
+        description = "remove Missmatches from intronic splice junctions"
+        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        self.logFile.flush()
+        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        
+        #annotationFile=open(annotationFile)
+        if not exists(outFile):
+            outFile=open(outFile,"w")
+        else:
+            print "\t [SKIP] File already exist"
+            return
+        
         geneDict={} #save all genes according to the Chromosome in an Dictionary
         for line in annotationFile:
             line=line.split()
             chr=line[1]
             if chr in geneDict:
-                geneDict[chr] = geneDict[chr] + line
+                geneDict[chr] = geneDict[chr] + [line]
             elif chr not in geneDict:
                 geneDict[chr] = [line]
         annotationFile.close()
         
         vcfFile = open(vcfFile)
         for line in vcfFile:
+            keepSnp=True
             line=line.split()
             mmChr,mmPos = line[0],int(line[1])
             if mmChr not in geneDict.keys():
                 continue 
             for gene in geneDict[mmChr]:
-                keepSnp=False
+                
                 refChr,refStart,refStop = gene[1],int(gene[3]),int(gene[4])
                 if mmPos > refStart and mmPos < refStop: #check if is inside of gene location 
                     numberExons = int(gene[7])
                     exonStarts = gene[8].split(",")
                     exonEnds = gene[9].split(",")
                     for i in range(numberExons): #check if variant lies in Exon
-                        if int(exonStarts[i])-4 < mmPos and int(exonStarts[i]+1 > mmPos):
-                            keepSnp=True
-                        elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:
-                            keepSnp=True
-        if keepSnp == True:
-            outFile.write("\t".join(line))
+                        if int(exonStarts[i])-4 < mmPos and int(exonStarts[i])+1 > mmPos: #read is in front of exon
+                            keepSnp=False
+                        elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:  #read is at the end of exon
+                            keepSnp=False
+            if keepSnp == True:
+                outFile.write("\t".join(line) + "\n")
+        
+        duration=Helper.getTime()-startTime
+        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
+        self.logFile.flush()
+        print "\t[DONE]" + " Duration [" + str(duration) + "]"
                         
     
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
@@ -225,11 +242,12 @@ class CallEditingSites(object):
         print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         self.logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+       
         counter=0
         geneHash = {}
         variantFile=open(vcfFile,"r")
         tempFasta = vcfFile + "_tmp.fa"
-        if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0:
+        if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0: #check if temFast exists and is not empty. If it exist it will not be created again
             tempFastaFile=open(tempFasta,"w+")
             num_lines = str(sum(1 for line in open(vcfFile)))
             
@@ -278,12 +296,21 @@ class CallEditingSites(object):
             print "created fasta file " + tempFasta
             tempFastaFile.close()
         variantFile.close()    
+        
+        
         #do blat search
-
         pslFile=outFile+".psl"
-        cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta, pslFile]
-        print cmd
-        Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite)
+        if not os.path.isfile(pslFile) or not os.path.getsize(pslFile) > 0:
+            cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta, pslFile]
+            print cmd
+            Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite)
+            
+        
+        startTime=Helper.getTime()
+        description = "check for variants that pass the blat criteria"
+        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        self.logFile.flush()
+        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         
         #open psl file
         pslFile=open(pslFile)
@@ -311,7 +338,9 @@ class CallEditingSites(object):
             largestScore=0
             largestScoreLine=pslLine[0]
             scoreArray=[]
-            for blatHit in pslLine: #look for largest blatScore and save the largest line too
+            
+            #look for largest blatScore and save the largest line too
+            for blatHit in pslLine: 
                 lineScore=int(blatHit[0])
                 scoreArray.append(lineScore)
                 if lineScore > largestScore:
@@ -329,33 +358,64 @@ class CallEditingSites(object):
                     if pos >= startPos and pos < endPos: #check if alignement overlaps missmatch
                         keepSNP = True
             
-                if keepSNP:
-                    if site in siteDict:
-                        siteDict[site]+=1
-                    else:
-                        siteDict[site]=1
-            if not keepSNP: #when read not passes the blat criteria
+            if keepSNP == True:
+                if site in siteDict:
+                    siteDict[site]+=1
+                else:
+                    siteDict[site]=1
+            elif keepSNP == False: #when read not passes the blat criteria
                 if site in discardDict:
                     discardDict[site]+=1
                 else:
                     discardDict[site]=1
-        pslFile.close()            
+        pslFile.close() 
         
-        #
+                
+        #loop through variant file again and check what passes the blat criteria
         variantFile=open(vcfFile)
         resultFile=open(outFile,"w+")
+        
+        mmNumberTotal=0
+        mmNumberTooSmall=0
+        mmReadsSmallerDiscardReads=0 
         for line in variantFile:
             line = line.split()
             name=":".join(line[0:2])
+            numberBlatReads=0
             numberDiscardReads=0
             if name in siteDict:
                 numberBlatReads = siteDict[name]
             if name in discardDict:
                 numberDiscardReads = discardDict[name]
             
-            if numberBlatReads >= minMissmatch and numberBlatReads > numberDiscardReads: #check if more readd fit the blat criteria than not
+            if numberBlatReads >= minMissmatch and numberBlatReads >= numberDiscardReads:
                 resultFile.write("\t".join(line)+"\n")
-        variantFile.close()       
+            
+            
+            #count statistics
+            if numberBlatReads < minMissmatch:
+                mmNumberTooSmall+=1
+            elif numberBlatReads < numberDiscardReads: #check if more readd fit the blat criteria than not
+                mmReadsSmallerDiscardReads+=1    
+            mmNumberTotal+=1
+        variantFile.close()
+        
+        #output statistics
+        duration=Helper.getTime()-startTime
+        mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
+        print >> self.logFile, "\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal)
+        print >> self.logFile, "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
+        print >> self.logFile, "\t\t %d Missmatches had more missaligned Reads than correct ones." % (mmReadsSmallerDiscardReads)
+        self.logFile.flush()
+        print "\t\t %d out of %d passed blat criteria (%d percent)" % (mmPassedNumber, mmNumberTotal,(mmPassedNumber/mmNumberTotal)*100)
+        print "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
+        print "\t\t %d Missmatches had more missaligned Reads than conrrect ones." % (mmReadsSmallerDiscardReads)
+        
+        duration=Helper.getTime()-startTime
+        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
+        self.logFile.flush()
+        print "\t[DONE]" + " Duration [" + str(duration) + "]"
+
                 
     def __del__(self):
         pass
