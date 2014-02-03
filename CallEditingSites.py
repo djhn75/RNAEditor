@@ -169,17 +169,7 @@ class CallEditingSites(object):
         print "\t[DONE]" + " Duration [" + str(duration) + "]"    
             #sys.exit(0)
     
-    '''remove missmatches inside of Homonukleotides'''
-    def removeHomonukleotideMissmatches(self,vcfFile,refGenome,outFile):
-         vcfFile=open(vcfFile)
-         tmpBedFile
-         tmpFaFile=open(vcfFile+"tmp.fa","w+")
-         for line in vcfFile:
-             line = line.split()
-             mmChr,mmPos,mmNucleotide = line[0],int(line[1]),line[4]
-             
-             bedString = mmChr+str(mmPos-4)+str(mmPos+4)
-             tmpFaFile
+
     
     
     ''' remove variant near splice junctions'''
@@ -233,8 +223,70 @@ class CallEditingSites(object):
         print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
         self.logFile.flush()
         print "\t[DONE]" + " Duration [" + str(duration) + "]"
-                        
     
+    
+    '''remove missmatches from homopolymers'''
+    def removeHomopolymers(self,vcfFile,outFile,distance):
+        startTime=Helper.getTime()
+        description = "remove Missmatches from homopolymers"
+        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        self.logFile.flush()
+        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        
+        tempBedFile = open(vcfFile+"tmp.bed","w+")
+        tempSeqFile = vcfFile+ +"tmp.tsv"
+        
+        vcfFile=open(vcfFile,"r")
+        mmDict = {}
+        #print BedFile
+        for line in vcfFile:
+            lineSplit = line.split()
+            chr,position,editNucleotide = lineSplit[0],lineSplit[1],lineSplit[3]
+            siteNuc = chr+":"+position+"-" + editNucleotide
+            mmDict[siteNuc] = line
+            
+            startPos = int(position) - distance if position >= distance else 0
+            endpos = int(position) + distance
+            
+            tempBedFile.write("\t".join([chr,str(startPos),str(endpos),siteNuc]))
+        
+        tempBedFile.close()
+        #run fastaFromBed
+        cmd=["fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
+        Helper.proceedCommand("catch sorrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite)
+        
+        mmNumberTotal = len(mmDict)
+        
+        #read sequence file
+        tempSeqFile= open(tempSeqFile)
+        for line in tempSeqFile:
+            siteNuc,sequence = line.split()
+            site,editNucleotide = siteNuc.split("-")
+            #check if mm sorounding sequence are homopolymer nukleotides
+            
+            pattern = editNucleotide*distance
+            
+            """ !!!Test if this gives better results
+                !!!ONLY DELETE IF MM IS AT THE END OF A HOMOPOLYMER NUKLEOTIDES
+            if sequence.startswith(pattern):
+                del mmDict[site] 
+            elif sequence.endswith(pattern):
+                del mmDict[site]
+            """
+            if pattern in sequence:
+                del mmDict[siteNuc]
+            
+        #output the surviving Missmatches
+        outFile = open(outFile,"w+")        
+        for site in mmDict.keys():
+            outFile.write("\t".join([site,mmDict[site]]))
+        
+        #output statistics
+        print >> self.logFile, "\t\t %d out of %d passed the Homopolymer-Filter" % (len(mmDict), mmNumberTotal)
+        print "\t\t %d out of %d passed the Homopolymer-Filter" % (len(mmDict), mmNumberTotal)
+        
+            
+        
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,vcfFile, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
@@ -464,10 +516,12 @@ class CallEditingSites(object):
         self.removeIntronSpliceJunction(nonAlu, self.geneAnnotationFile, noSpliceSites)
         
         #erase variants from homopolymer runs
+        noHomo = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.vcf"
+        self.removeHomopolymers(noSpliceSites, noHomo, 4)
         
         #do blat search
-        blatOutfile = self.outfilePrefix + ".nonAlu.noSpliceSites.blat.vcf"
-        self.blatSearch(noSpliceSites, blatOutfile, 25, 1)
+        blatOutfile = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.blat.vcf"
+        self.blatSearch(noHomo, blatOutfile, 25, 1)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
