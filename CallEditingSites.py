@@ -476,16 +476,28 @@ class CallEditingSites(object):
         self.logFile.flush()
         print "\t[DONE]" + " Duration [" + str(duration) + "]"
 
+    
+    def combineVariatns(self,aluSites,nonAuluSites,outFile):
+        aluSites=open(aluSites,"r")
+        nonAuluSites = open(nonAuluSites,"r")
+        outFile = open(outFile,"w+")
+        for line in aluSites:
+            outFile.write(line)
+        for line in nonAuluSites:
+            outFile.write(line)
                 
     def __del__(self):
         if self.keepTemp==False:
-            os.remove(self.outfilePrefix+".sai")
-            os.remove(self.outfilePrefix+".sam")
-            #os.remove(self.outfilePrefix+".bam")
-            os.remove(self.outfilePrefix+".indels.intervals")
-            os.remove(self.outfilePrefix+".realigned.bam")
-            os.remove(self.outfilePrefix+".realigned.marked.bam")
-            os.remove(self.outfilePrefix+".recalSpots.grp")
+            os.remove(self.outfilePrefix+".vcf")
+            os.remove(self.outfilePrefix+".no_dbsnp.vcf")
+           
+            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
+            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
+            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
+            os.remove(self.outfilePrefix+".nonAlu.vcf")
+            os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
+            os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.noHomo.vcf")
+            
     
     def start(self):
         #Rough variant calling with GATK
@@ -537,6 +549,10 @@ class CallEditingSites(object):
         #do blat search
         blatOutfile = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.blat.vcf"
         self.blatSearch(noHomo, blatOutfile, 25, 1)
+        
+        #combine alu and non Alu sites
+        resultFile = self.outfilePrefix + ".editingSites.vcf"
+        self.combineVariatns(alu, blatOutfile, resultFile)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
