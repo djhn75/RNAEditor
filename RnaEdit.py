@@ -24,13 +24,14 @@ class RnaEdit(object):
         self.mapFastQ=MapFastq(fastqFile, refGenome, dbsnp, outfilePrefix, sourceDir, threads, maxDiff, seedDiff, paired, keepTemp, overwrite)
         mapResultFile=self.mapFastQ.start()
         
-        print mapResultFile + " was created \t Mapping Process finished"
+        #print mapResultFile + " was created \t Mapping Process finished"
         
         self.callEditSites=CallEditingSites(mapResultFile,refGenome,dbsnp,hapmap,omni, esp, aluRegions, geneAnnotation, sourceDir=sourceDir, edgeDistance=edgeDistance)
         self.callEditSites.start()
      
     def __del__(self):
         del self.mapFastQ
+        del self.callEditSites
         
 
 if __name__ == '__main__':

@@ -233,27 +233,27 @@ class CallEditingSites(object):
         self.logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         
-        tempBedFile = open(vcfFile+"tmp.bed","w+")
-        tempSeqFile = vcfFile+ +"tmp.tsv"
+        tempBedFile = open(vcfFile+"_tmp.bed","w+")
+        tempSeqFile = vcfFile + "_tmp.tsv"
         
         vcfFile=open(vcfFile,"r")
         mmDict = {}
         #print BedFile
         for line in vcfFile:
             lineSplit = line.split()
-            chr,position,editNucleotide = lineSplit[0],lineSplit[1],lineSplit[3]
-            siteNuc = chr+":"+position+"-" + editNucleotide
+            chr,position,referenceNucleotide = lineSplit[0],lineSplit[1],lineSplit[3]
+            siteNuc = chr+":"+position+"-" + referenceNucleotide
             mmDict[siteNuc] = line
             
             startPos = int(position) - distance if position >= distance else 0
             endpos = int(position) + distance
             
-            tempBedFile.write("\t".join([chr,str(startPos),str(endpos),siteNuc]))
+            tempBedFile.write("\t".join([chr,str(startPos),str(endpos),siteNuc])+"\n")
         
         tempBedFile.close()
         #run fastaFromBed
         cmd=["fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
-        Helper.proceedCommand("catch sorrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite)
         
         mmNumberTotal = len(mmDict)
         
@@ -261,10 +261,10 @@ class CallEditingSites(object):
         tempSeqFile= open(tempSeqFile)
         for line in tempSeqFile:
             siteNuc,sequence = line.split()
-            site,editNucleotide = siteNuc.split("-")
+            site,referenceNucleotide = siteNuc.split("-")
             #check if mm sorounding sequence are homopolymer nukleotides
             
-            pattern = editNucleotide*distance
+            pattern = referenceNucleotide*distance
             
             """ !!!Test if this gives better results
                 !!!ONLY DELETE IF MM IS AT THE END OF A HOMOPOLYMER NUKLEOTIDES
@@ -279,12 +279,15 @@ class CallEditingSites(object):
         #output the surviving Missmatches
         outFile = open(outFile,"w+")        
         for site in mmDict.keys():
-            outFile.write("\t".join([site,mmDict[site]]))
+            outFile.write(mmDict[site])
         
         #output statistics
         print >> self.logFile, "\t\t %d out of %d passed the Homopolymer-Filter" % (len(mmDict), mmNumberTotal)
         print "\t\t %d out of %d passed the Homopolymer-Filter" % (len(mmDict), mmNumberTotal)
         
+        if self.keepTemp == False:
+            os.remove(tempBedFile.name)
+            os.remove(tempSeqFile.name)   
             
         
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
@@ -345,7 +348,7 @@ class CallEditingSites(object):
                     sys.stdout.flush()
         
             
-            print "created fasta file " + tempFasta
+            print "\n created fasta file " + tempFasta
             tempFastaFile.close()
         variantFile.close()    
         
@@ -452,16 +455,21 @@ class CallEditingSites(object):
             mmNumberTotal+=1
         variantFile.close()
         
-        #output statistics
+        if self.keepTemp == False:
+            os.remove(tempFasta)
+            os.remove(pslFile)
+        
+        #output statisticsttkkg
+        
         duration=Helper.getTime()-startTime
         mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
         print >> self.logFile, "\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal)
         print >> self.logFile, "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
-        print >> self.logFile, "\t\t %d Missmatches had more missaligned Reads than correct ones." % (mmReadsSmallerDiscardReads)
+        print >> self.logFile, "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
         self.logFile.flush()
         print "\t\t %d out of %d passed blat criteria (%d percent)" % (mmPassedNumber, mmNumberTotal,(mmPassedNumber/mmNumberTotal)*100)
         print "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
-        print "\t\t %d Missmatches had more missaligned Reads than conrrect ones." % (mmReadsSmallerDiscardReads)
+        print "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
         
         duration=Helper.getTime()-startTime
         print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
@@ -470,7 +478,14 @@ class CallEditingSites(object):
 
                 
     def __del__(self):
-        pass
+        if self.keepTemp==False:
+            os.remove(self.outfilePrefix+".sai")
+            os.remove(self.outfilePrefix+".sam")
+            #os.remove(self.outfilePrefix+".bam")
+            os.remove(self.outfilePrefix+".indels.intervals")
+            os.remove(self.outfilePrefix+".realigned.bam")
+            os.remove(self.outfilePrefix+".realigned.marked.bam")
+            os.remove(self.outfilePrefix+".recalSpots.grp")
     
     def start(self):
         #Rough variant calling with GATK
