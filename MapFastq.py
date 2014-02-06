@@ -141,7 +141,9 @@ class MapFastq(object):
             #os.remove(self.outfilePrefix+".bam")
             os.remove(self.outfilePrefix+".indels.intervals")
             os.remove(self.outfilePrefix+".realigned.bam")
+            os.remove(self.outfilePrefix+".realigned.bai")
             os.remove(self.outfilePrefix+".realigned.marked.bam")
+            os.remove(self.outfilePrefix+".realigned.marked.bai")
             os.remove(self.outfilePrefix+".recalSpots.grp")
             #os.remove(self.outfilePrefix+".realigned.marked.recalibrated.bam")
     

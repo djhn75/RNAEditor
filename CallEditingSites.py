@@ -8,6 +8,7 @@ import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
 from fileinput import close
+from _pyio import open
 
 
 class CallEditingSites(object):
@@ -184,6 +185,7 @@ class CallEditingSites(object):
         if not exists(outFile):
             outFile=open(outFile,"w")
         else:
+            print >> self.logFile, "\t [SKIP] File already exist"
             print "\t [SKIP] File already exist"
             return
         
@@ -457,7 +459,7 @@ class CallEditingSites(object):
         
         if self.keepTemp == False:
             os.remove(tempFasta)
-            os.remove(pslFile)
+            os.remove(pslFile.name)
         
         #output statisticsttkkg
         
@@ -476,7 +478,7 @@ class CallEditingSites(object):
         self.logFile.flush()
         print "\t[DONE]" + " Duration [" + str(duration) + "]"
 
-    
+    #write two variantFiles together
     def combineVariatns(self,aluSites,nonAuluSites,outFile):
         aluSites=open(aluSites,"r")
         nonAuluSites = open(nonAuluSites,"r")
@@ -485,7 +487,63 @@ class CallEditingSites(object):
             outFile.write(line)
         for line in nonAuluSites:
             outFile.write(line)
+        
+        
+    def annotateVariants(self,annotationFile,variantFile,outFile):
+        startTime=Helper.getTime()
+        description = "Annotate Missmatches"
+        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        self.logFile.flush()
+        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        
+        #check if file exitsts
+        if not exists(outFile):
+            outFile=open(outFile,"w")
+        else:
+            print >> self.logFile, "\t [SKIP] File already exist"
+            print "\t [SKIP] File already exist"
+            return
+        
+        annotationFile=open(annotationFile,"r")
+        geneDict={} #save all genes according to the Chromosome in an Dictionary
+        for line in annotationFile:
+            line=line.split()
+            chr=line[1]
+            if chr in geneDict:
+                geneDict[chr] = geneDict[chr] + [line]
+            elif chr not in geneDict:
+                geneDict[chr] = [line]
+        annotationFile.close()
+        close(annotationFile)
+        
+        vcfFile = open(variantFile) 
+        for line in vcfFile:
+            keepSnp=True
+            line=line.split()
+            mmChr,mmPos = line[0],int(line[1])
+            if mmChr not in geneDict.keys(): 
+                continue 
+            for gene in geneDict[mmChr]:
                 
+                refChr,refStart,refStop = gene[1],int(gene[3]),int(gene[4])
+                if mmPos > refStart and mmPos < refStop: #check if is inside of gene location 
+                    numberExons = int(gene[7])
+                    exonStarts = gene[8].split(",")
+                    exonEnds = gene[9].split(",")
+                    for i in range(numberExons): #check if variant lies in Exon
+                        if int(exonStarts[i])-4 < mmPos and int(exonStarts[i])+1 > mmPos: #read is in front of exon
+                            keepSnp=False
+                        elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:  #read is at the end of exon
+                            keepSnp=False
+            if keepSnp == True:
+                outFile.write("\t".join(line) + "\n")
+            
+        
+        duration=Helper.getTime()-startTime
+        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
+        self.logFile.flush()
+        print "\t[DONE]" + " Duration [" + str(duration) + "]"
+            
     def __del__(self):
         if self.keepTemp==False:
             os.remove(self.outfilePrefix+".vcf")
