@@ -143,6 +143,7 @@ CHRS_TO_INDEX=$BASE_CHRS
 
 UCSC_MM10_BASE=ftp://hgdownload.cse.ucsc.edu/goldenPath/mm9/chromosomes
 DBSNP_MM10_BASE=ftp://ftp.ncbi.nih.gov/snp/organisms/mouse_10090/VCF
+GeneAnnitation_MM10_BASE=http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz
 
 OUTDIR=/media/media/databases/mouse/
 GENOME=mouse.mm9.fasta
@@ -208,5 +209,8 @@ if [ ! -f $OUTDIR$DBSNP ] ; then
 
 #TODO:download hapMap, omni, esp, aluRegions
 
+#download the Gene Annotation File
+get ${GeneAnnitation_MM10_BASE}/$F || (echo "Error getting $F" && exit 1)
+gunzip $F || (echo "Error unzipping $F" && exit 1)
 echo "DONE"
 

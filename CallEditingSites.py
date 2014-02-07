@@ -35,9 +35,12 @@ class CallEditingSites(object):
         print "\t overwrite:" + str(self.overwrite)
         print
 
-    def __init__(self,bamFile,refGenome,dbsnp,hapmap,omni,esp, aluRegions, geneAnnotationFile, outfilePrefix="default",sourceDir="/usr/local/bin/",
-                 threads=multiprocessing.cpu_count()-1,standCall=0,standEmit=0, edgeDistance=6,
-                 keepTemp=False,overwrite=False):
+    def __init__(self, bamFile, refGenome, dbsnp,
+                 hapmap, omni, esp, 
+                 aluRegions, geneAnnotationFile, outfilePrefix="default",
+                 sourceDir="/usr/local/bin/", threads=multiprocessing.cpu_count()-1,standCall=0,
+                 standEmit=0, edgeDistance=6, keepTemp=False, 
+                 overwrite=False):
         '''
         Constructor
         set all the class Arguments
@@ -65,7 +68,7 @@ class CallEditingSites(object):
         self.overwrite=overwrite
         
         
-        self.logFile=open(self.outfilePrefix + ".log","a")
+        self.logFile=open(self.outfilePrefix + ".log","a+")
         if self.debug==True:
             self.printAttributes()
         
@@ -521,7 +524,7 @@ class CallEditingSites(object):
             keepSnp=True
             line=line.split()
             mmChr,mmPos = line[0],int(line[1])
-            if mmChr not in geneDict.keys(): 
+            if mmChr not in geneDict.keys(): #if chromosome not in GeneDict
                 continue 
             for gene in geneDict[mmChr]:
                 
@@ -633,4 +636,9 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, args.hapmap.name, args.omni.name, args.esp, args.aluRegions, args.geneAnnotation, args.output, args.sourceDir, args.threads, args.standCall, args.standEmit, args.edgeDistance, args.keepTemp, args.overwrite)
+    call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, 
+                          args.hapmap.name, args.omni.name, args.esp, 
+                          args.aluRegions, args.geneAnnotation, args.output, 
+                          args.sourceDir, args.threads, args.standCall, 
+                          args.standEmit, args.edgeDistance, args.keepTemp, 
+                          args.overwrite)
