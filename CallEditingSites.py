@@ -8,7 +8,7 @@ import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
 from fileinput import close
-from _pyio import open
+
 
 
 class CallEditingSites(object):
@@ -68,7 +68,7 @@ class CallEditingSites(object):
         self.overwrite=overwrite
         
         
-        self.logFile=open(self.outfilePrefix + ".log","a+")
+        self.logFile=open(self.outfilePrefix + ".log","a")
         if self.debug==True:
             self.printAttributes()
         
@@ -482,7 +482,9 @@ class CallEditingSites(object):
         print "\t[DONE]" + " Duration [" + str(duration) + "]"
 
     #write two variantFiles together
-    def combineVariatns(self,aluSites,nonAuluSites,outFile):
+    
+    '''combine two variant File'''
+    def combineVariants(self,aluSites,nonAuluSites,outFile):
         aluSites=open(aluSites,"r")
         nonAuluSites = open(nonAuluSites,"r")
         outFile = open(outFile,"w+")
@@ -507,7 +509,10 @@ class CallEditingSites(object):
             print "\t [SKIP] File already exist"
             return
         
-        annotationFile=open(annotationFile,"r")
+        #write header
+        outFile.write("\t".join(["#CHROM","POS","ID","REF","ALT","QUAL","FILTER","GENE","INFO"])+"\n")
+        
+        #annotationFile=open(annotationFile,"r")
         geneDict={} #save all genes according to the Chromosome in an Dictionary
         for line in annotationFile:
             line=line.split()
@@ -517,29 +522,75 @@ class CallEditingSites(object):
             elif chr not in geneDict:
                 geneDict[chr] = [line]
         annotationFile.close()
-        close(annotationFile)
         
+        
+        geneCountDict = {}
         vcfFile = open(variantFile) 
         for line in vcfFile:
             keepSnp=True
             line=line.split()
-            mmChr,mmPos = line[0],int(line[1])
+            mmChr, mmPos, mmRef, mmAlt = line[0],int(line[1]), line[3], line[4]
+            
+            
             if mmChr not in geneDict.keys(): #if chromosome not in GeneDict
                 continue 
-            for gene in geneDict[mmChr]:
+            
+            location = "intergenic"
+            geneName = "-"
+            for gene in geneDict[mmChr]: #loop through all chromosome Genes
                 
-                refChr,refStart,refStop = gene[1],int(gene[3]),int(gene[4])
+                geneId,refChr,strand,refStart,refStop = gene[0],gene[1],gene[2],int(gene[3]),int(gene[4])
                 if mmPos > refStart and mmPos < refStop: #check if is inside of gene location 
                     numberExons = int(gene[7])
                     exonStarts = gene[8].split(",")
                     exonEnds = gene[9].split(",")
-                    for i in range(numberExons): #check if variant lies in Exon
-                        if int(exonStarts[i])-4 < mmPos and int(exonStarts[i])+1 > mmPos: #read is in front of exon
-                            keepSnp=False
-                        elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:  #read is at the end of exon
-                            keepSnp=False
-            if keepSnp == True:
-                outFile.write("\t".join(line) + "\n")
+                    geneName=geneId
+                    if geneId  in geneCountDict:
+                        countList = geneCountDict[geneId]
+                    else:
+                        #countList = [5'utr,3'utr,intronic,exonic,totalNumber]
+                        countList = [refChr,refStart,refStop,0,0,0,0,0]
+                    
+                    if mmPos < exonStarts[0]:
+                        if strand == "+":
+                            location = "3'UTR"
+                            countList[4]+=1
+                        elif strand == "-":
+                            location = "5'UTR"
+                            countList[3]+=1
+                    elif mmPos > exonEnds[-1]:
+                        if strand == "+":
+                            location = "5'UTR"
+                            countList[3]+=1
+                        elif strand == "-":
+                            location = "3'UTR"
+                            countList[4]+=1
+                    else:
+                        for i in range(numberExons): #check if variant lies in Exon
+                            if int(exonStarts[i]) < mmPos and int(exonStarts[i]) > mmPos: #read is in front of exon
+                                location = "exonic"
+                                countList[6]+=1
+                        if location != "exonic":
+                            location = "intronic"
+                            countList[5]+=1
+                    
+                    countList[7]+=1 #count total number of missmatches in 
+                    geneCountDict[geneId]=countList
+            
+            #write ouputFile 
+            
+            outFile.write("\t".join([line[0],line[1],line[2],line[3],line[4],line[5],geneName,location]) + "\n")
+            
+        #print count Table        
+        geneCountsFile = open(self.outfilePrefix + ".editedGenes.counts","w+")
+        geneCountsFile.write("\t".join(["#5'utr","#3'utr","#intronic","#exonic","#total"])+"\n")
+        for geneName in geneCountDict.keys():
+            temp=map(str,geneCountDict[geneName]) #convert list to list of str
+            geneCountsFile.write(geneName + "\t" + "\t".join(temp)+"\n")               
+            
+            
+            
+            
             
         
         duration=Helper.getTime()-startTime
@@ -603,6 +654,9 @@ class CallEditingSites(object):
         noSpliceSites = self.outfilePrefix + ".nonAlu.noSpliceSites.vcf"
         self.removeIntronSpliceJunction(nonAlu, self.geneAnnotationFile, noSpliceSites)
         
+        #remove sites from simple repeats
+        cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noStartMissmatches,"-b",self.simpleRepeats]
+        
         #erase variants from homopolymer runs
         noHomo = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.vcf"
         self.removeHomopolymers(noSpliceSites, noHomo, 4)
@@ -612,8 +666,11 @@ class CallEditingSites(object):
         self.blatSearch(noHomo, blatOutfile, 25, 1)
         
         #combine alu and non Alu sites
-        resultFile = self.outfilePrefix + ".editingSites.vcf"
-        self.combineVariatns(alu, blatOutfile, resultFile)
+        combinedFile = self.outfilePrefix + ".editingSites.vcf"
+        self.combineVariants(alu, blatOutfile, combinedFile)
+        
+        annotatedFile = self.outfilePrefix + ".annotated.vcf"
+        self.annotateVariants(self.geneAnnotationFile, combinedFile, annotatedFile)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')

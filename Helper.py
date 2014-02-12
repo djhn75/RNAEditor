@@ -74,7 +74,7 @@ class Helper():
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
                     print >> sys.stderr, "Error: " + cmd[0] + " Command not found on this system"
                     if resultFile!=None:
-                        remove(resultFile.name)
+                        os.remove(resultFile.name)
                     exit(1)
                 else:
                     print >> sys.stderr, "Error: " + cmd[0] + o.strerror

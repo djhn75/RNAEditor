@@ -70,6 +70,12 @@ class MapFastq(object):
             Exception("reference Genome File: Not found!!!")
 
     def start(self):
+        recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
+        if os.path.isfile(recaledBamFile):
+            print >> self.logFile, "* * * [Skipping] Mapping result File already exists * * *"
+            self.logFile.flush()
+            print "* * * [Skipping] Mapping result File already exists * * *"
+            return recaledBamFile
         
         #Align Fastq Reads to the Genome
         saiFile=self.outfilePrefix+".sai"
@@ -128,7 +134,7 @@ class MapFastq(object):
         Helper.proceedCommand("Find Quality Score recalibration spots", cmd, markedFile, recalFile, self.logFile, self.overwrite)
         
         #proceed Quality Score recalibration
-        recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
+        #recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
         cmd=["java","-Xmx8G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.refGenome, "-I", markedFile, "-BQSR", recalFile, "-o",recaledBamFile]
         Helper.proceedCommand("Proceed Quality Score recalibration", cmd, recalFile, recaledBamFile, self.logFile, self.overwrite)
         
@@ -146,6 +152,7 @@ class MapFastq(object):
             os.remove(self.outfilePrefix+".realigned.marked.bai")
             os.remove(self.outfilePrefix+".recalSpots.grp")
             #os.remove(self.outfilePrefix+".realigned.marked.recalibrated.bam")
+            self.logFile.close()
     
 
 '''

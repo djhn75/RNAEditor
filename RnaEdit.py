@@ -29,7 +29,7 @@ class RnaEdit(object):
         mapResultFile=self.mapFastQ.start()
         
         #print mapResultFile + " was created \t Mapping Process finished"
-        
+        del self.mapFastQ
         
         self.callEditSites=CallEditingSites(mapResultFile, refGenome, dbsnp, 
                                             hapmap, omni, esp, 
@@ -40,7 +40,7 @@ class RnaEdit(object):
         self.callEditSites.start()
      
     def __del__(self):
-        del self.mapFastQ
+        #del self.mapFastQ
         del self.callEditSites
         
 
