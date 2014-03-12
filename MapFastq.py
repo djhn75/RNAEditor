@@ -15,7 +15,7 @@ class MapFastq(object):
     Maps a fastQ file to the given genome
     '''
     
-    def __init__(self,fastqFile,refGenome,dbsnp,outfilePrefix="default",sourceDir="bin/",
+    def __init__(self,fastqFiles,refGenome,dbsnp,outfilePrefix="default",sourceDir="bin/",
                  threads=multiprocessing.cpu_count()-1,maxDiff=0.04,seedDiff=2,
                  paired=False,keepTemp=False,overwrite=False):
         '''
@@ -23,7 +23,6 @@ class MapFastq(object):
         '''
         self.debug=True
         
-        self.fastqFile=fastqFile
         self.refGenome=refGenome
         self.dbsnp=dbsnp
         if outfilePrefix=="default":
@@ -39,6 +38,12 @@ class MapFastq(object):
         self.overwrite=overwrite
         
         
+        if self.paired ==True:
+            self.fastqFile1=fastqFiles[0] if os.path.exists(fastqFiles[0]) else Exception("first Read-File not found!!!")
+            self.fastqFile2=fastqFiles[1] if os.path.exists(fastqFiles[1]) else Exception("second Read-File not found!!!")
+        elif self.paired==False:
+            self.fastqFile = fastqFiles[0] if os.path.exists(fastqFiles[0]) else Exception("Read-File not found!!!")
+        
         self.logFile=open(self.outfilePrefix + ".log","w+")
         if self.debug==True:
             self.printAttributes()
@@ -49,7 +54,11 @@ class MapFastq(object):
     def printAttributes(self):
         print
         print "*** MAP READS WITH FOLLOWING ATTRIBUTES ***"
-        print "\t FastQ-File: " + self.fastqFile
+        if self.paired:
+            print "\t FastQ-File_1: " + self.fastqFile1
+            print "\t FastQ-File_2: " + self.fastqFile2
+        else:
+            print "\t FastQ-File: " + self.fastqFile
         print "\t outfilePrefix:" + self.outfilePrefix
         print "\t refGenome:" + self.refGenome
         print "\t dbsnp:" + self.dbsnp
@@ -77,17 +86,35 @@ class MapFastq(object):
             print "* * * [Skipping] Mapping result File already exists * * *"
             return recaledBamFile
         
-        #Align Fastq Reads to the Genome
-        saiFile=self.outfilePrefix+".sai"
-        cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile]
-        Helper.proceedCommand("Align Reads with BWA", cmd, self.fastqFile, saiFile, self.logFile, self.overwrite)
         
-        #convert sai to sam
-        samFile=self.outfilePrefix+".sam"
-        #TODO:check for paired
-        cmd = [self.sourceDir + "bwa", "samse", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.refGenome, saiFile, self.fastqFile]
-        Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.logFile, self.overwrite)
-    
+        if self.paired == True:  #For paired end sequencing
+            #Align first Fastq Reads to the Genome
+            saiFile1=self.outfilePrefix+"_1.sai"
+            cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile1]
+            Helper.proceedCommand("Align first Reads with BWA", cmd, self.fastqFile, saiFile1, self.logFile, self.overwrite)
+            
+            #Align second Fastq Reads to the Genome
+            saiFile2=self.outfilePrefix+"_2.sai"
+            cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile2]
+            Helper.proceedCommand("Align second Reads with BWA", cmd, self.fastqFile, saiFile2, self.logFile, self.overwrite)
+        
+            #convert sai to sam
+            samFile=self.outfilePrefix+".sam"
+            #TODO:check for paired
+            cmd = [self.sourceDir + "bwa", "sampe", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.refGenome, saiFile1, saiFile2, self.fastqFile1, self.fastqFile2]
+            Helper.proceedCommand("convert sai to sam", cmd, saiFile1, samFile, self.logFile, self.overwrite)
+        elif self.paired == False:  #For single end sequencing
+            #Align Fastq Reads to the Genome
+            saiFile=self.outfilePrefix+".sai"
+            cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile]
+            Helper.proceedCommand("Align Reads with BWA", cmd, self.fastqFile, saiFile, self.logFile, self.overwrite)
+            
+            #convert sai to sam
+            samFile=self.outfilePrefix+".sam"
+            #TODO:check for paired
+            cmd = [self.sourceDir + "bwa", "samse", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.refGenome, saiFile, self.fastqFile]
+            Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.logFile, self.overwrite)
+        
         #convert sam to bam
         bamFile=self.outfilePrefix+".bam"
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
@@ -161,7 +188,7 @@ when the script is called directly
 if __name__ == '__main__':
     #parse command line arguments and set defaults
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.')
-    parser.add_argument('-i', '--input', metavar='Fastq-File', type=argparse.FileType('r'), help='Input fastq file that should be mapped to the genome', required=True)
+    parser.add_argument('-i', '--input', metavar='Fastq-File', type='+', help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
     parser.add_argument("-r", "--RefGenome", metavar='Fasta-File', help="File that contains the reference sequences", type=argparse.FileType('r'), default='/media/databases/human/human_g1k_v37.fa')
     parser.add_argument('-s', '--dbsnp', help=' SNP database (dbSNP) in VCF format (downloaded from the GATK homepage)', type=argparse.FileType('r'), default='/media/databases/human/dbsnp_135.b37.vcf')
     parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
@@ -175,6 +202,6 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    mapFastQ=MapFastq(args.input.name, args.RefGenome.name, args.dbsnp.name,args.output, args.sourceDir, args.threads, args.maxDiff, args.seedDiff, args.paired, args.keepTemp, args.overwrite)
+    mapFastQ=MapFastq(args.input, args.RefGenome.name, args.dbsnp.name,args.output, args.sourceDir, args.threads, args.maxDiff, args.seedDiff, args.paired, args.keepTemp, args.overwrite)
     mapFastQ.start()
     del mapFastQ

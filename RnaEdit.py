@@ -17,7 +17,7 @@ class RnaEdit(object):
     
     
 
-    def __init__(self, fastqFile, refGenome, dbsnp, 
+    def __init__(self, fastqFiles, refGenome, dbsnp, 
                  hapmap, omni, esp, 
                  aluRegions, geneAnnotation, outfilePrefix="default", 
                  sourceDir="/usr/local/bin", threads=multiprocessing.cpu_count()-1,maxDiff=0.04, 
@@ -25,7 +25,7 @@ class RnaEdit(object):
                  standEmit=0, edgeDistance=3, keepTemp=False, 
                  overwrite=False):
                
-        self.mapFastQ=MapFastq(fastqFile, refGenome, dbsnp, outfilePrefix, sourceDir, threads, maxDiff, seedDiff, paired, keepTemp, overwrite)
+        self.mapFastQ=MapFastq(fastqFiles, refGenome, dbsnp, outfilePrefix, sourceDir, threads, maxDiff, seedDiff, paired, keepTemp, overwrite)
         mapResultFile=self.mapFastQ.start()
         
         #print mapResultFile + " was created \t Mapping Process finished"
@@ -46,7 +46,7 @@ class RnaEdit(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
-    parser.add_argument('-i', '--input', metavar='Fastq-File', type=argparse.FileType('r'), help='Input fastq file that should be mapped to the genome', required=True)
+    parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
     parser.add_argument('-r', '--RefGenome', metavar='Fasta-File', help='File that contains the reference sequences', type=str, default='/media/media/databases/human/human_g1k_v37.fa')
     parser.add_argument('-s', '--dbsnp', help=' SNP database (dbSNP) in VCF format (downloaded from the GATK homepage)', type=str, default='/media/media/databases/human/dbsnp_135.b37.vcf')
     parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/hapmap_3.3.b37.sites.vcf')
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    edit=RnaEdit(args.input.name, args.RefGenome, args.dbsnp,
+    edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
                  args.hapmap, args.omni, args.esp, 
                  args.aluRegions, args.geneAnnotation, args.output, 
                  args.sourceDir, args.threads, args.maxDiff, 
