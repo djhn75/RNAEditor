@@ -7,8 +7,7 @@ Created on May 22, 2013
 
 import argparse, os, multiprocessing
 from Helper import Helper
-from string import rfind
-from _pyio import open
+
 
 
 class MapFastq(object):
@@ -55,15 +54,11 @@ class MapFastq(object):
         elif self.paired==False:
             self.fastqFile = fastqFiles[0] if os.path.exists(fastqFiles[0]) else Exception("Read-File not found!!!")
         
-        self.logFile=open(self.outfilePrefix + ".log","w+")
+        #self.logFile=open(self.outfilePrefix + ".log","w+")
         if self.debug==True:
             self.printAttributes()
         
         self.checkDependencies()
-        
-        
-    
-    
     
     def printAttributes(self):
         print
@@ -89,8 +84,10 @@ class MapFastq(object):
     def checkDependencies(self):
         if not os.path.exists(self.dbsnp):
             Exception("dbSNP File: Not found!!!")
+            exit()
         if not os.path.exists(self.refGenome):
             Exception("reference Genome File: Not found!!!")
+            exit()
     
         
     def start(self):

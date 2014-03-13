@@ -143,7 +143,7 @@ CHRS_TO_INDEX=$BASE_CHRS
 
 UCSC_MM10_BASE=ftp://hgdownload.cse.ucsc.edu/goldenPath/mm9/chromosomes
 DBSNP_MM10_BASE=ftp://ftp.ncbi.nih.gov/snp/organisms/mouse_10090/VCF
-GeneAnnitation_MM10_BASE=http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz
+GeneAnnotation_MM10_BASE=http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz
 
 OUTDIR=/media/media/databases/mouse/
 GENOME=mouse.mm9.fasta

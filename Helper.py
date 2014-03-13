@@ -41,7 +41,7 @@ class Helper():
     @staticmethod
     def convertPhred64toPhred33(self,fastqFile,outFile,logFile):
         startTime=Helper.getTime()
-        #logFile.write("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *")
+        logFile.write("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *")
         logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * convert Quality encoding for " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *"
         outFile = open(outFile,"w")
