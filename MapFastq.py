@@ -8,6 +8,7 @@ Created on May 22, 2013
 import argparse, os, multiprocessing
 from Helper import Helper
 from string import rfind
+from _pyio import open
 
 
 class MapFastq(object):
@@ -37,8 +38,18 @@ class MapFastq(object):
         self.keepTemp=keepTemp
         self.overwrite=overwrite
         
+        self.logFile=open(self.outfilePrefix + ".log","w+")
         
+        #check read Quality encoding
+        for i in range(len(fastqFiles)):
+            if Helper.isPhred33Encoding(fastqFiles[i], 100) == False:
+                fastqFiles[i]=Helper.convertPhred64toPhred33(self,fastqFiles[i],self.outfilePrefix+"_phred33.fastq",self.logFile)
+                
+        
+        
+        #set fastQ files
         if self.paired ==True:
+            
             self.fastqFile1=fastqFiles[0] if os.path.exists(fastqFiles[0]) else Exception("first Read-File not found!!!")
             self.fastqFile2=fastqFiles[1] if os.path.exists(fastqFiles[1]) else Exception("second Read-File not found!!!")
         elif self.paired==False:
@@ -49,6 +60,9 @@ class MapFastq(object):
             self.printAttributes()
         
         self.checkDependencies()
+        
+        
+    
     
     
     def printAttributes(self):
@@ -77,26 +91,30 @@ class MapFastq(object):
             Exception("dbSNP File: Not found!!!")
         if not os.path.exists(self.refGenome):
             Exception("reference Genome File: Not found!!!")
-
+    
+        
     def start(self):
+        
+        
+        
         recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
         if os.path.isfile(recaledBamFile):
             print >> self.logFile, "* * * [Skipping] Mapping result File already exists * * *"
             self.logFile.flush()
             print "* * * [Skipping] Mapping result File already exists * * *"
-            return recaledBamFile
+            #return recaledBamFile
         
         
         if self.paired == True:  #For paired end sequencing
             #Align first Fastq Reads to the Genome
             saiFile1=self.outfilePrefix+"_1.sai"
             cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile1]
-            Helper.proceedCommand("Align first Reads with BWA", cmd, self.fastqFile, saiFile1, self.logFile, self.overwrite)
+            Helper.proceedCommand("Align first Reads with BWA", cmd, self.fastqFile1, saiFile1, self.logFile, self.overwrite)
             
             #Align second Fastq Reads to the Genome
             saiFile2=self.outfilePrefix+"_2.sai"
             cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile2]
-            Helper.proceedCommand("Align second Reads with BWA", cmd, self.fastqFile, saiFile2, self.logFile, self.overwrite)
+            Helper.proceedCommand("Align second Reads with BWA", cmd, self.fastqFile2, saiFile2, self.logFile, self.overwrite)
         
             #convert sai to sam
             samFile=self.outfilePrefix+".sam"
@@ -118,9 +136,9 @@ class MapFastq(object):
         #convert sam to bam
         bamFile=self.outfilePrefix+".bam"
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
-        Helper.proceedCommand("convert sam to bam", cmd, saiFile, bamFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.logFile, self.overwrite)
         
-        
+        return bamFile
         #run Alignement with tophat
         """
         bamFile=self.outfilePrefix+"/accepted_hits.bam"

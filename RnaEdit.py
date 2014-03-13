@@ -24,7 +24,7 @@ class RnaEdit(object):
                  seedDiff=2, paired=False, standCall=0, 
                  standEmit=0, edgeDistance=3, keepTemp=False, 
                  overwrite=False):
-               
+              
         self.mapFastQ=MapFastq(fastqFiles, refGenome, dbsnp, outfilePrefix, sourceDir, threads, maxDiff, seedDiff, paired, keepTemp, overwrite)
         mapResultFile=self.mapFastQ.start()
         
@@ -48,12 +48,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
     parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
     parser.add_argument('-r', '--RefGenome', metavar='Fasta-File', help='File that contains the reference sequences', type=str, default='/media/media/databases/human/human_g1k_v37.fa')
-    parser.add_argument('-s', '--dbsnp', help=' SNP database (dbSNP) in VCF format (downloaded from the GATK homepage)', type=str, default='/media/media/databases/human/dbsnp_135.b37.vcf')
-    parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/hapmap_3.3.b37.sites.vcf')
-    parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=str, default='/media/media/databases/human/1000G_omni2.5.b37.sites.vcf')
-    parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=str, default='/media/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
-    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=str, default='/media/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
-    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=argparse.FileType('r'), default='/media/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
+    parser.add_argument('-s', '--dbsnp', help=' SNP database (dbSNP) in VCF format (downloaded from the GATK homepage)', type=str, default='/media/databases/human/dbsnp_135.b37.vcf')
+    parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=str, default='/media/databases/human/hapmap_3.3.b37.sites.vcf')
+    parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=str, default='/media/databases/human/1000G_omni2.5.b37.sites.vcf')
+    parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=str, default='/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
+    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=str, default='/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
+    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=argparse.FileType('r'), default='/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
     parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
     parser.add_argument('-d', '--sourceDir', help='- Directory to all the tools [default: bin/]', default='bin/', type=Helper.readable_dir)
     parser.add_argument('-t', '--threads', help='number of threads', type=int, default=multiprocessing.cpu_count()-1)
