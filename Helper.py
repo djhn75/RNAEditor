@@ -44,6 +44,13 @@ class Helper():
         logFile.write("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *")
         logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * convert Quality encoding for " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *"
+        
+        if os.path.exists(outFile):
+            print >> self.logFile, "* * * [Skipping] Result File already exists * * *"
+            self.logFile.flush()
+            print "* * * [Skipping] Result File already exists * * *"
+            return outFile
+        
         outFile = open(outFile,"w")
         fastqFile=open(fastqFile,"r")
         

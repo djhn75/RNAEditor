@@ -42,7 +42,7 @@ class MapFastq(object):
         #check read Quality encoding
         for i in range(len(fastqFiles)):
             if Helper.isPhred33Encoding(fastqFiles[i], 100) == False:
-                fastqFiles[i]=Helper.convertPhred64toPhred33(self,fastqFiles[i],self.outfilePrefix+"_phred33.fastq",self.logFile)
+                fastqFiles[i]=Helper.convertPhred64toPhred33(self,fastqFiles[i],self.outfilePrefix+ "_" + str(i+1) + "_phred33.fastq",self.logFile)
                 
         
         
