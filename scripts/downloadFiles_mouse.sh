@@ -145,9 +145,12 @@ UCSC_MM10_BASE=ftp://hgdownload.cse.ucsc.edu/goldenPath/mm9/chromosomes
 DBSNP_MM10_BASE=ftp://ftp.ncbi.nih.gov/snp/organisms/mouse_10090/VCF
 GeneAnnotation_MM10_BASE=http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz
 
-OUTDIR=/media/media/databases/mouse/
+OUTDIR=$1
 GENOME=mouse.mm9.fasta
 DBSNP=dbsnp.mouse.mm10.vcf	
+
+echo $OUTDIR$GENOME
+#exit
 
 #download the file that was given by CMP 1
 #return faulire if wget and curl doent exist
@@ -205,7 +208,7 @@ if [ ! -f $OUTDIR$DBSNP ] ; then
 	#build dbsnp with header
 	awk 'NR<14 {print $0} !match($0,"##"){print $0}' ${INPUTS} > $OUTDIR$DBSNP #use awk to keep the header of the first .vcf file
 	rm ${INPUTS} #delete temporary files
-
+fi
 
 #TODO:download hapMap, omni, esp, aluRegions
 

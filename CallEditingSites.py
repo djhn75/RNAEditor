@@ -655,7 +655,8 @@ class CallEditingSites(object):
         self.removeIntronSpliceJunction(nonAlu, self.geneAnnotationFile, noSpliceSites)
         
         #remove sites from simple repeats
-        cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noStartMissmatches,"-b",self.simpleRepeats]
+        
+        #cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noStartMissmatches,"-b",self.simpleRepeats]
         
         #erase variants from homopolymer runs
         noHomo = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.vcf"

@@ -8,17 +8,25 @@ import argparse,sys
 from string import split, replace, ascii_letters
 import urllib2
 import zipfile
+import subprocess
+from subprocess import STDOUT
+
 
 parser = argparse.ArgumentParser(description='Download all the files for RNAeditor')
 parser.add_argument('-o', '--outDir', metavar='N', type=str, help='Directory where RNAeditor stores the Annotation Files', required=True)
 args = parser.parse_args()
 
 
-url = "http://hgdownload.cse.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz"
+url = "http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz"
 
 outDir=args.outDir
 file_name = url.split('/')[-1]
-u = urllib2.urlopen(url)
+
+cmd=["curl",url]
+subprocess.call(cmd,stdout=open(outDir+file_name,"w"))
+
+"""
+"u = urllib2.urlopen(url)
 f = open(outDir+file_name, 'wb')
 meta = u.info()
 file_size = int(meta.getheaders("Content-Length")[0])
@@ -38,3 +46,4 @@ while True:
     print status,
 
 f.close()
+"""
