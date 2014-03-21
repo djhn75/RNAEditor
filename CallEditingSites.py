@@ -257,7 +257,7 @@ class CallEditingSites(object):
         
         tempBedFile.close()
         #run fastaFromBed
-        cmd=["fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
+        cmd=[self.sourceDir+"bedtools/fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
         Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite)
         
         mmNumberTotal = len(mmDict)
