@@ -53,7 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=str, default='/media/databases/human/1000G_omni2.5.b37.sites.vcf')
     parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=str, default='/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
     parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=str, default='/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
-    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=argparse.FileType('r'), default='/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
+    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=str, default='/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
     parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
     parser.add_argument('-d', '--sourceDir', help='- Directory to all the tools [default: bin/]', default='bin/', type=Helper.readable_dir)
     parser.add_argument('-t', '--threads', help='number of threads', type=int, default=multiprocessing.cpu_count()-1)
