@@ -184,7 +184,7 @@ class CallEditingSites(object):
         self.logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         
-        #annotationFile=open(annotationFile)
+        annotationFile=open(annotationFile)
         if not exists(outFile):
             outFile=open(outFile,"w")
         else:
@@ -512,7 +512,7 @@ class CallEditingSites(object):
         #write header
         outFile.write("\t".join(["#CHROM","POS","ID","REF","ALT","QUAL","FILTER","GENE","INFO"])+"\n")
         
-        #annotationFile=open(annotationFile,"r")
+        annotationFile=open(annotationFile,"r")
         geneDict={} #save all genes according to the Chromosome in an Dictionary
         for line in annotationFile:
             line=line.split()

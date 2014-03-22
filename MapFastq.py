@@ -99,7 +99,7 @@ class MapFastq(object):
             print >> self.logFile, "* * * [Skipping] Mapping result File already exists * * *"
             self.logFile.flush()
             print "* * * [Skipping] Mapping result File already exists * * *"
-            #return recaledBamFile
+            return recaledBamFile
         
         
         if self.paired == True:  #For paired end sequencing
@@ -135,7 +135,9 @@ class MapFastq(object):
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.logFile, self.overwrite)
         
-        #return bamFile
+        return bamFile
+        
+        
         #run Alignement with tophat
         """
         bamFile=self.outfilePrefix+"/accepted_hits.bam"
@@ -157,27 +159,27 @@ class MapFastq(object):
         
         #Identify Target Regions for realignment
         intervalFile=self.outfilePrefix+".indels.intervals"
-        cmd=["java","-Xmx8G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.threads, "-T", "RealignerTargetCreator", "-R", self.refGenome, "-I", bamFile, "-o", intervalFile,"-l", "ERROR"]
+        cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.threads, "-T", "RealignerTargetCreator", "-R", self.refGenome, "-I", bamFile, "-o", intervalFile,"-l", "ERROR"]
         Helper.proceedCommand("Identify Target Regions for realignment", cmd, bamFile, intervalFile, self.logFile, self.overwrite)
         
         #Proceed Realignement
         realignedFile=self.outfilePrefix+".realigned.bam"
-        cmd=["java","-Xmx8G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.refGenome, "-I", bamFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
+        cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.refGenome, "-I", bamFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
         Helper.proceedCommand("Proceed Realignement", cmd, intervalFile, realignedFile, self.logFile, self.overwrite)
         
         #mark PCR duplicates
         markedFile=self.outfilePrefix+".realigned.marked.bam"
-        cmd=["java","-Xmx8G","-jar",self.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.outfilePrefix+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
+        cmd=["java","-Xmx16G","-jar",self.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.outfilePrefix+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.logFile, self.overwrite)
         
         #Find Quality Score recalibration spots
         recalFile=self.outfilePrefix+".recalSpots.grp"
-        cmd=["java","-Xmx8G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "BaseRecalibrator", "-l", "ERROR", "-R", self.refGenome, "-knownSites", self.dbsnp, "-I", markedFile, "-cov", "CycleCovariate", "-cov", "ContextCovariate", "-o", recalFile]
+        cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "BaseRecalibrator", "-l", "ERROR", "-R", self.refGenome, "-knownSites", self.dbsnp, "-I", markedFile, "-cov", "CycleCovariate", "-cov", "ContextCovariate", "-o", recalFile]
         Helper.proceedCommand("Find Quality Score recalibration spots", cmd, markedFile, recalFile, self.logFile, self.overwrite)
         
         #proceed Quality Score recalibration
         #recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
-        cmd=["java","-Xmx8G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.refGenome, "-I", markedFile, "-BQSR", recalFile, "-o",recaledBamFile]
+        cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.refGenome, "-I", markedFile, "-BQSR", recalFile, "-o",recaledBamFile]
         Helper.proceedCommand("Proceed Quality Score recalibration", cmd, recalFile, recaledBamFile, self.logFile, self.overwrite)
         
         return recaledBamFile
