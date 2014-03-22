@@ -135,7 +135,7 @@ class MapFastq(object):
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.logFile, self.overwrite)
         
-        return bamFile
+        #return bamFile
         
         
         #run Alignement with tophat

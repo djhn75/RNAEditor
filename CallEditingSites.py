@@ -614,7 +614,7 @@ class CallEditingSites(object):
     def start(self):
         #Rough variant calling with GATK
         vcfFile=self.outfilePrefix+".vcf"
-        cmd = ["java","-Xmx6G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", 
+        cmd = ["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", 
                "-T","UnifiedGenotyper","-R", self.refGenome, "-glm", "SNP","-I", self.bamFile, 
                "-D", self.dbsnp, "-o", vcfFile, "-metrics", self.outfilePrefix+".snp.metrics", "-nt", self.threads, "-l","ERROR",
                "-stand_call_conf", self.standCall, "-stand_emit_conf", self.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
