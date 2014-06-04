@@ -535,6 +535,9 @@ class CallEditingSites(object):
             if mmChr not in geneDict.keys(): #if chromosome not in GeneDict
                 continue 
             
+            if not ((mmRef=="T" and  mmAlt=="C") or (mmRef=="A" and mmAlt=="G")): #only proceed with A->G or T->C events
+                continue
+            
             location = "intergenic"
             geneName = "-"
             for gene in geneDict[mmChr]: #loop through all chromosome Genes
@@ -583,7 +586,7 @@ class CallEditingSites(object):
             
         #print count Table        
         geneCountsFile = open(self.outfilePrefix + ".editedGenes.counts","w+")
-        geneCountsFile.write("\t".join(["#5'utr","#3'utr","#intronic","#exonic","#total"])+"\n")
+        geneCountsFile.write("\t".join(["Gene","#5'utr","#3'utr","#intronic","#exonic","#total"])+"\n")
         for geneName in geneCountDict.keys():
             temp=map(str,geneCountDict[geneName]) #convert list to list of str
             geneCountsFile.write(geneName + "\t" + "\t".join(temp)+"\n")               
