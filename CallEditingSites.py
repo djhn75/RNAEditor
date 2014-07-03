@@ -67,6 +67,8 @@ class CallEditingSites(object):
         self.keepTemp=keepTemp
         self.overwrite=overwrite
         
+        self.features = Helper.readGeneFetaures(self.geneAnnotationFile)
+        
         
         self.logFile=open(self.outfilePrefix + ".log","a")
         if self.debug==True:
@@ -372,110 +374,112 @@ class CallEditingSites(object):
         self.logFile.flush()
         print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
         
-        #open psl file
-        pslFile=open(pslFile)
-        blatDict={}
-        for line in pslFile: #summarize the blat hits
-            pslFields = line.split()
-            name = pslFields[9]
-            blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
-            if name in blatDict:
-                blatDict[name] = blatDict[name] + [blatScore]
-            else:
-                blatDict[name] = [blatScore]
-
-
-        siteDict = {}
-        discardDict = {}
-        
-        #loop over blat Hits
-        for pslKey in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
-            keepSNP=False
-            chr,pos=pslKey.split("-")[0:2]
-            
-            site = ":".join([chr,pos])
-            pslLine = blatDict[pslKey]
-            largestScore=0
-            largestScoreLine=pslLine[0]
-            scoreArray=[]
-            
-            #look for largest blatScore and save the largest line too
-            for blatHit in pslLine: 
-                lineScore=int(blatHit[0])
-                scoreArray.append(lineScore)
-                if lineScore > largestScore:
-                    largestScore = lineScore
-                    largestScoreLine=blatHit
-            pos=int(pos)
-            scoreArray.sort(reverse=True)
-            if len(scoreArray) < 2:   #test if more than one blat Hit exists
-                scoreArray.append(0)
-            if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 perchen of first hit
-                blockCount,blockSizes,blockStarts = int(largestScoreLine[2]),largestScoreLine[3].split(",")[:-1],largestScoreLine[4].split(",")[:-1]
-                for i in range(blockCount):
-                    startPos = int(blockStarts[i])+1
-                    endPos = startPos + int(blockSizes[i])
-                    if pos >= startPos and pos < endPos: #check if alignement overlaps missmatch
-                        keepSNP = True
-            
-            if keepSNP == True:
-                if site in siteDict:
-                    siteDict[site]+=1
+        if not os.path.isfile(outFile):
+            #open psl file
+            pslFile=open(pslFile)
+            blatDict={}
+            for line in pslFile: #summarize the blat hits
+                pslFields = line.split()
+                name = pslFields[9]
+                blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
+                if name in blatDict:
+                    blatDict[name] = blatDict[name] + [blatScore]
                 else:
-                    siteDict[site]=1
-            elif keepSNP == False: #when read not passes the blat criteria
-                if site in discardDict:
-                    discardDict[site]+=1
-                else:
-                    discardDict[site]=1
-        pslFile.close() 
+                    blatDict[name] = [blatScore]
+    
+    
+            siteDict = {}
+            discardDict = {}
+            
         
+            #loop over blat Hits
+            for pslKey in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
+                keepSNP=False
+                chr,pos=pslKey.split("-")[0:2]
                 
-        #loop through variant file again and check what passes the blat criteria
-        variantFile=open(vcfFile)
-        resultFile=open(outFile,"w+")
-        
-        mmNumberTotal=0
-        mmNumberTooSmall=0
-        mmReadsSmallerDiscardReads=0 
-        for line in variantFile:
-            line = line.split()
-            name=":".join(line[0:2])
-            numberBlatReads=0
-            numberDiscardReads=0
-            if name in siteDict:
-                numberBlatReads = siteDict[name]
-            if name in discardDict:
-                numberDiscardReads = discardDict[name]
+                site = ":".join([chr,pos])
+                pslLine = blatDict[pslKey]
+                largestScore=0
+                largestScoreLine=pslLine[0]
+                scoreArray=[]
+                
+                #look for largest blatScore and save the largest line too
+                for blatHit in pslLine: 
+                    lineScore=int(blatHit[0])
+                    scoreArray.append(lineScore)
+                    if lineScore > largestScore:
+                        largestScore = lineScore
+                        largestScoreLine=blatHit
+                pos=int(pos)
+                scoreArray.sort(reverse=True)
+                if len(scoreArray) < 2:   #test if more than one blat Hit exists
+                    scoreArray.append(0)
+                if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 perchen of first hit
+                    blockCount,blockSizes,blockStarts = int(largestScoreLine[2]),largestScoreLine[3].split(",")[:-1],largestScoreLine[4].split(",")[:-1]
+                    for i in range(blockCount):
+                        startPos = int(blockStarts[i])+1
+                        endPos = startPos + int(blockSizes[i])
+                        if pos >= startPos and pos < endPos: #check if alignement overlaps missmatch
+                            keepSNP = True
+                
+                if keepSNP == True:
+                    if site in siteDict:
+                        siteDict[site]+=1
+                    else:
+                        siteDict[site]=1
+                elif keepSNP == False: #when read not passes the blat criteria
+                    if site in discardDict:
+                        discardDict[site]+=1
+                    else:
+                        discardDict[site]=1
+            pslFile.close() 
             
-            if numberBlatReads >= minMissmatch and numberBlatReads >= numberDiscardReads:
-                resultFile.write("\t".join(line)+"\n")
+                    
+            #loop through variant file again and check what passes the blat criteria
+            variantFile=open(vcfFile)
+            resultFile=open(outFile,"w+")
             
+            mmNumberTotal=0
+            mmNumberTooSmall=0
+            mmReadsSmallerDiscardReads=0 
+            for line in variantFile:
+                line = line.split()
+                name=":".join(line[0:2])
+                numberBlatReads=0
+                numberDiscardReads=0
+                if name in siteDict:
+                    numberBlatReads = siteDict[name]
+                if name in discardDict:
+                    numberDiscardReads = discardDict[name]
+                
+                if numberBlatReads >= minMissmatch and numberBlatReads >= numberDiscardReads:
+                    resultFile.write("\t".join(line)+"\n")
+                
+                
+                #count statistics
+                if numberBlatReads < minMissmatch:
+                    mmNumberTooSmall+=1
+                elif numberBlatReads < numberDiscardReads: #check if more readd fit the blat criteria than not
+                    mmReadsSmallerDiscardReads+=1    
+                mmNumberTotal+=1
+            variantFile.close()
             
-            #count statistics
-            if numberBlatReads < minMissmatch:
-                mmNumberTooSmall+=1
-            elif numberBlatReads < numberDiscardReads: #check if more readd fit the blat criteria than not
-                mmReadsSmallerDiscardReads+=1    
-            mmNumberTotal+=1
-        variantFile.close()
-        
-        if self.keepTemp == False:
-            os.remove(tempFasta)
-            os.remove(pslFile.name)
-        
-        #output statisticsttkkg
-        
-        duration=Helper.getTime()-startTime
-        mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
-        print >> self.logFile, "\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal)
-        print >> self.logFile, "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
-        print >> self.logFile, "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
-        self.logFile.flush()
-        print "\t\t %d out of %d passed blat criteria (%d percent)" % (mmPassedNumber, mmNumberTotal,(mmPassedNumber/mmNumberTotal)*100)
-        print "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
-        print "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
-        
+            if self.keepTemp == False:
+                os.remove(tempFasta)
+                os.remove(pslFile.name)
+            
+            #output statisticsttkkg
+            
+            duration=Helper.getTime()-startTime
+            mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
+            print >> self.logFile, "\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal)
+            print >> self.logFile, "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
+            print >> self.logFile, "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
+            self.logFile.flush()
+            print "\t\t %d out of %d passed blat criteria (%d percent)" % (mmPassedNumber, mmNumberTotal,(mmPassedNumber/mmNumberTotal)*100)
+            print "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
+            print "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
+            
         duration=Helper.getTime()-startTime
         print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
         self.logFile.flush()
@@ -510,9 +514,9 @@ class CallEditingSites(object):
             return
         
         #write header
-        outFile.write("\t".join(["#CHROM","POS","ID","REF","ALT","QUAL","FILTER","GENE","INFO"])+"\n")
+        outFile.write("\t".join(["#CHROM","POS","ID","REF","ALT","QUAL","GENE","INFO"])+"\n")
         
-        annotationFile=open(annotationFile,"r")
+        """annotationFile=open(annotationFile,"r")
         geneDict={} #save all genes according to the Chromosome in an Dictionary
         for line in annotationFile:
             line=line.split()
@@ -522,6 +526,8 @@ class CallEditingSites(object):
             elif chr not in geneDict:
                 geneDict[chr] = [line]
         annotationFile.close()
+"""        
+        
         
         
         geneCountDict = {}
@@ -551,42 +557,40 @@ class CallEditingSites(object):
                     if geneId  in geneCountDict:
                         countList = geneCountDict[geneId]
                     else:
-                        #countList = [5'utr,3'utr,intronic,exonic,totalNumber]
+                        #countList = [chr,refStart,refStop,5'utr,3'utr,intronic,exonic,totalNumber]
                         countList = [refChr,refStart,refStop,0,0,0,0,0]
-                    
-                    if mmPos < exonStarts[0]:
-                        if strand == "+":
-                            location = "3'UTR"
-                            countList[4]+=1
-                        elif strand == "-":
-                            location = "5'UTR"
-                            countList[3]+=1
-                    elif mmPos > exonEnds[-1]:
+                    if mmPos < int(exonStarts[0]):
                         if strand == "+":
                             location = "5'UTR"
                             countList[3]+=1
                         elif strand == "-":
                             location = "3'UTR"
                             countList[4]+=1
+                    elif mmPos > int(exonEnds[-2]):
+                        if strand == "+":
+                            location = "3'UTR"
+                            countList[4]+=1
+                        elif strand == "-":
+                            location = "5'UTR"
+                            countList[3]+=1
                     else:
                         for i in range(numberExons): #check if variant lies in Exon
-                            if int(exonStarts[i]) < mmPos and int(exonStarts[i]) > mmPos: #read is in front of exon
+                            if int(exonStarts[i]) < mmPos and int(exonEnds[i]) > mmPos: #read is in front of exon
                                 location = "exonic"
-                                countList[6]+=1
+                                countList[5]+=1
                         if location != "exonic":
                             location = "intronic"
-                            countList[5]+=1
+                            countList[6]+=1
                     
                     countList[7]+=1 #count total number of missmatches in 
                     geneCountDict[geneId]=countList
             
             #write ouputFile 
-            
             outFile.write("\t".join([line[0],line[1],line[2],line[3],line[4],line[5],geneName,location]) + "\n")
             
         #print count Table        
         geneCountsFile = open(self.outfilePrefix + ".editedGenes.counts","w+")
-        geneCountsFile.write("\t".join(["Gene","#5'utr","#3'utr","#intronic","#exonic","#total"])+"\n")
+        geneCountsFile.write("\t".join(["Gene", "start", "stop","#5'utr","#3'utr","#intronic","#exonic","#total"])+"\n")
         for geneName in geneCountDict.keys():
             temp=map(str,geneCountDict[geneName]) #convert list to list of str
             geneCountsFile.write(geneName + "\t" + "\t".join(temp)+"\n")               

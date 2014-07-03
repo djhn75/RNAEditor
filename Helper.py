@@ -4,9 +4,11 @@ Created on May 22, 2013
 @author: david
 '''
 
-
 from datetime import datetime, date, time
 import argparse, sys, os, subprocess, errno
+
+
+
 
 
 class Helper():
@@ -17,6 +19,10 @@ class Helper():
     '''
     check if given directory is a readable directory and give the right data type 
     '''
+    
+    prefix = "*** "
+    praefix = " ***"
+    
     @staticmethod
     def readable_dir(prospective_dir):
         if not os.path.isdir(prospective_dir):
@@ -143,9 +149,22 @@ class Helper():
         else:
             print "\t [SKIP] File already exist"
 
+
+
     @staticmethod
     def getCommandOutput(command):
         #print command
         #print os.path.dirname(os.path.abspath(__file__))
         #print os.getcwd()
         return subprocess.check_output(command)
+    
+    
+    @staticmethod
+    def info (message):
+        sys.stderr.write(message + Helper.praefix + "\n")
+    @staticmethod
+    def warning (message):
+        sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
+    @staticmethod
+    def debug (message):
+        sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")

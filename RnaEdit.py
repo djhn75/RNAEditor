@@ -13,9 +13,6 @@ import multiprocessing, argparse
 
 
 class RnaEdit(object):
-    
-    
-    
 
     def __init__(self, fastqFiles, refGenome, dbsnp, 
                  hapmap, omni, esp, 
