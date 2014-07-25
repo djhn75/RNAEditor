@@ -6,7 +6,7 @@ Created on 03.07.2014
 
 class Transcript(object):
     '''
-    classdocs
+    represents a transcript (ENST-Number)
     '''
 
     def __init__(self, gene, transcriptId, names, protId, exonIndices, codingExonIndices,

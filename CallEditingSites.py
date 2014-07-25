@@ -67,7 +67,7 @@ class CallEditingSites(object):
         self.keepTemp=keepTemp
         self.overwrite=overwrite
         
-        self.features = Helper.readGeneFetaures(self.geneAnnotationFile)
+        #self.features = Helper.readGeneFeatures(self.geneAnnotationFile)
         
         
         self.logFile=open(self.outfilePrefix + ".log","a")
@@ -179,7 +179,7 @@ class CallEditingSites(object):
     
     
     ''' remove variant near splice junctions'''
-    def removeIntronSpliceJunction(self,vcfFile,annotationFile,outFile):
+    def removeIntronSpliceJunctions(self,vcfFile,annotationFile,outFile):
         startTime=Helper.getTime()
         description = "remove Missmatches from intronic splice junctions"
         print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
@@ -194,7 +194,7 @@ class CallEditingSites(object):
             print "\t [SKIP] File already exist"
             return
         
-        geneDict={} #save all genes according to the Chromosome in an Dictionary
+        geneDict={} #save all genes according to the Chromosome in a Dictionary
         for line in annotationFile:
             line=line.split()
             chr=line[1]
@@ -488,13 +488,13 @@ class CallEditingSites(object):
     #write two variantFiles together
     
     '''combine two variant File'''
-    def combineVariants(self,aluSites,nonAuluSites,outFile):
-        aluSites=open(aluSites,"r")
-        nonAuluSites = open(nonAuluSites,"r")
+    def combineFiles(self,aluSites,nonAuluSites,outFile):
+        file1=open(aluSites,"r")
+        file2 = open(nonAuluSites,"r")
         outFile = open(outFile,"w+")
-        for line in aluSites:
+        for line in file1:
             outFile.write(line)
-        for line in nonAuluSites:
+        for line in file2:
             outFile.write(line)
         
         
@@ -627,7 +627,10 @@ class CallEditingSites(object):
                "-stand_call_conf", self.standCall, "-stand_emit_conf", self.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
         #print cmd
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.logFile, self.overwrite)
-    
+        
+        #read in initial SNPs
+        
+        
         #delete SNPs from dbSNP
         noDbsnp=self.outfilePrefix+".no_dbsnp.vcf"
         cmd = [self.sourceDir+"bedtools/intersectBed","-v","-a",vcfFile,"-b",self.dbsnp]
@@ -675,7 +678,7 @@ class CallEditingSites(object):
         
         #combine alu and non Alu sites
         combinedFile = self.outfilePrefix + ".editingSites.vcf"
-        self.combineVariants(alu, blatOutfile, combinedFile)
+        self.combineFiles(alu, blatOutfile, combinedFile)
         
         annotatedFile = self.outfilePrefix + ".annotated.vcf"
         self.annotateVariants(self.geneAnnotationFile, combinedFile, annotatedFile)

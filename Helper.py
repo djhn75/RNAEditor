@@ -6,7 +6,7 @@ Created on May 22, 2013
 
 from datetime import datetime, date, time
 import argparse, sys, os, subprocess, errno
-
+from collections import defaultdict
 
 
 
@@ -148,6 +148,49 @@ class Helper():
             print "\t[DONE]" + " Duration [" + str(duration) + "]"
         else:
             print "\t [SKIP] File already exist"
+
+    """
+    return a dictionary whith chromosome as keys and a set of variants as values
+    variantDict={chromosome:(variantPos1,variantPos2,....)}
+    """
+    @staticmethod
+    def getPositionDictFromVcfFile(vcfFile):
+        variantFile=open(vcfFile)
+        variantDict=defaultdict(set)
+        Helper.info("reading Variants from %s" % vcfFile)
+        for line in variantFile:
+            #skip comments
+            if line.startswith("#"): continue
+            line=line.split("\t")
+            chromosome,position,ref,alt = line[0],line[1],line[3],line[4]
+            variantDict[chromosome].add(position)
+        return variantDict
+    
+    @staticmethod
+    def removeVariantsAFromVariantsB(variantsA,variantsB):
+        varDictA = Helper.getPositionDictFromVcfFile(variantsA)
+        varDictB = Helper.getPositionDictFromVcfFile(variantsB)
+        resultDict = defaultdict(set)
+        for chr in varDictB.keys():
+            for variant in varDictB[chr]:
+                if variant not in varDictA[chr]:
+                    resultDict[chr].add(variant)
+        return resultDict
+       
+    @staticmethod
+    def returnVariantDictFromVcfFile(vcfFile):
+        """
+        returns the vcfFile as dictionary with (chr,position) as  key  and vcfLine as value
+        """
+        vcfFile=open(vcfFile)
+        vcfDict = defaultdict(list)
+        for line in vcfFile:
+            #skip comments
+            if line.startswith("#"): continue
+            line=line.rstrip().split("\t")
+            chromosome,position,ref, alt = line[0],line[1], line[3], line[4]
+            vcfDict[(chromosome,position,ref,alt)].append(line[5:])
+        return vcfFile
 
 
 

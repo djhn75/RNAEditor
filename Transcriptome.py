@@ -12,75 +12,19 @@ from itertools import izip
 from array import array
 from Transcript import Transcript
 
-def non_str_sequence (arg):
-    """
-    Whether arg is a sequence.
-    We treat strings / dicts however as a singleton not as a sequence
-
-    """
-    if (isinstance(arg, (basestring, dict))):
-        return False
-    try:
-        test = iter(arg)
-        return True
-    except TypeError:
-        return False
-
-#_____________________________________________________________________________________
-#
-#   overlapping_combined
-#_____________________________________________________________________________________
-def overlapping_combined( orig_data, reverse = False):
-    """
-    Return list of intervals with overlapping neighbours merged together
-    Assumes sorted intervals unless reverse is set
-
-    """
-    if not orig_data or not len(orig_data): return []
-    if len(orig_data) == 1:
-        return orig_data
-
-    new_data = []
-
-    if reverse:
-        data = orig_data[:]
-        data.reverse()
-    else:
-        data = orig_data
-
-    if not data[0][0] <= data[1][0]:
-        print data, reverse
-    assert(data[0][0] <= data[1][0])
-
-    # start with the first interval
-    prev_beg, prev_end = data[0]
-
-    # check if any subsequent intervals overlap
-    for beg, end in data[1:]:
-        if beg - prev_end + 1 > 0:
-            new_data.append((prev_beg, prev_end))
-            prev_beg = beg
-        prev_end = max(end, prev_end)
-
-    new_data.append((prev_beg, prev_end))
-
-    if reverse:
-        new_data.reverse()
-    return new_data
-
+'''
+classdocs
+'''
 class Transcriptome(object):
-    '''
-    classdocs
-    '''
-
-
+    
     def __init__(self):
         '''
         Constructor
         '''
         
-        #Dict for all Genes
-        self.geneByTypes = defaultdict(list)
+        #Dict / List for all Genes
+        self.geneList = []
+        self.genesByChromosome = defaultdict(list)
         
         # list of all features
         self.featureTypes = set() #set of all possible featuresTypes
@@ -89,8 +33,7 @@ class Transcriptome(object):
 
         #
         #   gene_id -> beg/end/cdna_id/exon_index
-        #   gene_id -> gene_name
-        #           -> contig / strand
+        #   gene_id -> (gene_name,contig,strand)
         #
         self.uniqGeneSet = set()
         self.uniqGene_to_source = dict()
@@ -184,9 +127,9 @@ class Transcriptome(object):
             geneCds = dict(izip(geneCds,xrange(1000000))) 
             
             
+            self.geneList.append(gene)
             
-            self.geneByTypes[geneType].append(gene)
-            
+           
             #construct transcripts
             for transcriptId in self.uniqGene_to_transcriptIds[uniqGene]:
                 transcriptNames = self.transcriptId_to_names[transcriptId]
@@ -208,6 +151,7 @@ class Transcriptome(object):
                 
                 gene.addTranscript(transcript)
             
+        self.genesByChromosome = self.getGenesByChromosome()
             
     def createTranscriptomeFromFile(self,gtfFilePath):
         """
@@ -230,6 +174,7 @@ class Transcriptome(object):
         duration = Helper.getTime() -startTime
         Helper.info(" Finished parsing in %s" % (str(duration)))
         
+        #delete unneccesarry variables
         del self.uniqGeneSet
         del self.uniqGene_to_source
         del self.uniqGene_to_names
@@ -248,5 +193,36 @@ class Transcriptome(object):
         del self.transcriptId_to_codingFrames
 
         del self.transcriptIds
+    
+    """
+    Finds the gene wich are overlapping the given region
+    """
+    def findOverlappingGenes(self, chromosome, start, stop):
+       
+        if len(self.genesByChromosome):
+            raise Exception("GeneByChromosome Dictionary is empty")
+        
+        overlappingGenes = []
+        
+        try:
+            for gene in self.genesByChromosome[chromosome]:
+                if gene.start < start and gene.end > stop:
+                    overlappingGenes.append(gene)
+        except KeyError:
+            Helper.warning("chromosome %s not found in geneByChromosome" % chromosome)
+        return overlappingGenes
+    
+    """
+    Returns a dictionary with chromosomes as key and all the genes on the chromosome as values
+    {"1":[Gene1,Gene2....]}  
+    """
+    def getGenesByChromosome(self):
+        genesByChr = defaultdict(list)
+        if len(self.geneList):
+            raise Exception("Gene List is empty")
+        else:
+            for gene in self.geneList:
+                genesByChr[gene.chromosome].append(gene)
+            return genesByChr    
         
         
