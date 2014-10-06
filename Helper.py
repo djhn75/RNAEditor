@@ -167,30 +167,35 @@ class Helper():
         return variantDict
     
     @staticmethod
-    def removeVariantsAFromVariantsB(variantsA,variantsB):
-        varDictA = Helper.getPositionDictFromVcfFile(variantsA)
-        varDictB = Helper.getPositionDictFromVcfFile(variantsB)
+    def removeVariantsAFromVariantsB(variantsDictA,variantsDictB):
+        
+        
+        if type(variantsDictA) is str:
+            variantsDictA = Helper.returnVariantDictFromVcfFile(variantsDictA)
+        if type(variantsDictB) is str:
+            variantsDictB = Helper.returnVariantDictFromVcfFile(variantsDictB)
+            
         resultDict = defaultdict(set)
-        for chr in varDictB.keys():
-            for variant in varDictB[chr]:
-                if variant not in varDictA[chr]:
-                    resultDict[chr].add(variant)
+        for variant in variantsDictB.iterkeys():
+            if variant not in variantsDictA[chr]:
+                resultDict[chr].append(variant)
         return resultDict
        
     @staticmethod
     def returnVariantDictFromVcfFile(vcfFile):
         """
-        returns the vcfFile as dictionary with (chr,position) as  key  and vcfLine as value
+        returns the vcfFile as a two instance dictionary with chromosome as first key and a Tuple of (position,ref,alt) as second key  and  the rest of the vcfLine as a list
+        {chr1: {(position1, 'A', 'G'): [dbSNP_id, ' quality', 'filter', 'info'], (4, 324, 'dsgdf', 'dsfsd'): [42, 243, 324]}})
         """
         vcfFile=open(vcfFile)
-        vcfDict = defaultdict(list)
+        vcfDict = defaultdict(dict)
         for line in vcfFile:
             #skip comments
             if line.startswith("#"): continue
             line=line.rstrip().split("\t")
             chromosome,position,ref, alt = line[0],line[1], line[3], line[4]
-            vcfDict[(chromosome,position,ref,alt)].append(line[5:])
-        return vcfFile
+            vcfDict[chromosome][position,ref,alt]=([line[2]]+line[5:])
+        return vcfDict
 
 
 
@@ -202,9 +207,14 @@ class Helper():
         return subprocess.check_output(command)
     
     
+    
+    @staticmethod
+    def printTimeDiff(startTime):
+        duration = Helper.getTime() - startTime
+        sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
     def info (message):
-        sys.stderr.write(message + Helper.praefix + "\n")
+        sys.stderr.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
     @staticmethod
     def warning (message):
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")

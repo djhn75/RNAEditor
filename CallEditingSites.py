@@ -8,7 +8,8 @@ import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
 from fileinput import close
-
+import vcfHandler
+from vcfHandler import deleteOverlappsFromA, parseVcfFile_variantsDict, Variant
 
 
 class CallEditingSites(object):
@@ -91,49 +92,55 @@ class CallEditingSites(object):
             Exception("reference Genome File: Not found!!!")
         
     '''delete variants from Bam file which appear near read edges'''
-    def removeEdgeMissmatches(self,vcfFile,bamFile,minDistance, minBaseQual, outFile):
-        #pass
+    def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
         #Loop through vcf-File
-            #call overlapping reads
+            #call overlapping reads with samtools view
             #loop over reads
                 #discard variants wich appear ONLY near edges
                 #write the rest to the output file
         startTime=Helper.getTime()
-        description = "remove Missmatches from the first " + str(minDistance) + "bp of the reads"
-        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        self.logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        num_lines = len(variants)
         
-        num_lines = str(sum(1 for line in open(vcfFile)))
+        #check type of variants
+        if type(variants) == dict:
+            pass
+        elif type(variants) == file or type(variants) == str:
+            variants = parseVcfFile_variantsDict(variants)
+            
+        else: 
+            raise TypeError("variants has wrong type, need variantDict, str or file, %s found" % type(variants))
+    
         
-        vcfFile=open(vcfFile,"r")
         counter=0
-        if not exists(outFile):
-            outFile=open(outFile,"w")
-        else:
-            print "\t [SKIP] File already exist"
-            return
-        for line in vcfFile:
-            line=line.split("\t")
-            snpPos=int(line[1])
-            mmBase = line[4]
-            position=line[0]+":"+line[1]+"-"+line[1]
+        
+        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)))
+        
+        for varKey in variants.keys():
+            
+            variant = variants[varKey]
+            snpPos = variant.position
+            position=variant.chromosome+":" + str(snpPos) + "-" + str(snpPos) 
+            #line[1]+"-"+line[1]
             keepSNP=False
             
             #print position, str(minDistance)
             #samout= os.system("samtools view " + bamFile + " " + position)
             #command="samtools view " + bamFile + " " + position
-            command = ["samtools", "view", bamFile, position]
+            command = [self.sourceDir+"samtools", "view", bamFile, position]
             samout = Helper.getCommandOutput(command).splitlines()
             for samLine in samout:
                 samfields=samLine.split()
-                flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
+                try:
+                    flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
+                except ValueError:
+                    raise ValueError("Error in line '%s'" % " ".join(samfields))
+
                 readPos=0
                 mmReadPos=0
                 cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
                 cigarLetters=re.split("[0-9]+",cigar)[1:]
                 
-                
+                #loop over read cigar (check insertions,deletions and skipped regions) 
                 for i in range(len(cigarLetters)): #parse over single read
                     if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
                         readPos = readPos + int(cigarNums[i])
@@ -142,49 +149,42 @@ class CallEditingSites(object):
                     elif cigarLetters[i] in {"M"}: #Matches
                         for j in range(int(cigarNums[i])):
                             if startPos == snpPos:
-                                mmReadPos = readPos 
+                                mmReadPos = readPos
                             readPos += 1
                             startPos += 1
+                            
                 
                 if mmReadPos != 0:
                                    
-                    edgeDistance = int(snpPos) - int(startPos)
+                    edgeDistance = snpPos - startPos
                 
                     #only remove the snps from first 6 bases
-                    revStrand = int(flag) & 16
+                    revStrand = int(flag) & 16 #check if 5th bit is set (results: 0 = +strand; 16= -strand)
                     if (revStrand == 0 and mmReadPos > minDistance) or (revStrand == 16 and mmReadPos < readPos - minDistance):
                         mmBaseQual= ord(seqQual[mmReadPos])
                         mmReadBase= sequence[mmReadPos]
-                        if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == mmBase): #check for quality of the base and the read contains the missmatch
+                        if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == variant.alt): #check for quality of the base and the read contains the missmatch
                             keepSNP=True
                     #print "   ".join([str(revStrand),str(keepSNP),str(edgeDistance),str(len(sequence)),flag,startPos,mapQual,cigar,sequence,seqQual])
                 #print distance
             
             
-            if keepSNP:
-                outFile.write("\t".join(line))  #print SNP
+            if not keepSNP:
+                del variants[varKey]    
             counter+=1
-            if counter % 1000 == 0:
-                sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatches finished")
+            if counter % 10 == 0:
+                sys.stdout.write("\r" + str(counter) + " of " + str(num_lines) + " missmatches finished")
                 sys.stdout.flush()
-        sys.stdout.write("\r" + num_lines + " of " + num_lines + " missmatches finished")
-        sys.stdout.flush()
-        duration=Helper.getTime()-startTime
-        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
-        self.logFile.flush()
-        print "\t[DONE]" + " Duration [" + str(duration) + "]"    
-            #sys.exit(0)
-    
-
-    
+        Helper.info("\r" + num_lines + " of " + str(num_lines) + " missmatches finished")
+        
+        Helper.printTimeDiff(startTime)
+        return variants
     
     ''' remove variant near splice junctions'''
     def removeIntronSpliceJunctions(self,vcfFile,annotationFile,outFile):
         startTime=Helper.getTime()
-        description = "remove Missmatches from intronic splice junctions"
-        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        self.logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        
+        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")))
         
         annotationFile=open(annotationFile)
         if not exists(outFile):
@@ -226,12 +226,8 @@ class CallEditingSites(object):
             if keepSnp == True:
                 outFile.write("\t".join(line) + "\n")
         
-        duration=Helper.getTime()-startTime
-        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
-        self.logFile.flush()
-        print "\t[DONE]" + " Duration [" + str(duration) + "]"
-    
-    
+        Helper.printTimeDiff(startTime)
+        
     '''remove missmatches from homopolymers'''
     def removeHomopolymers(self,vcfFile,outFile,distance):
         startTime=Helper.getTime()
@@ -295,8 +291,7 @@ class CallEditingSites(object):
         if self.keepTemp == False:
             os.remove(tempBedFile.name)
             os.remove(tempSeqFile.name)   
-            
-        
+                
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,vcfFile, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
@@ -497,7 +492,6 @@ class CallEditingSites(object):
         for line in file2:
             outFile.write(line)
         
-        
     def annotateVariants(self,annotationFile,variantFile,outFile):
         startTime=Helper.getTime()
         description = "Annotate Missmatches"
@@ -608,14 +602,14 @@ class CallEditingSites(object):
     def __del__(self):
         if self.keepTemp==False:
             os.remove(self.outfilePrefix+".vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.vcf")
            
-            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
-            os.remove(self.outfilePrefix+".nonAlu.vcf")
-            os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
-            os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.noHomo.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
+            #os.remove(self.outfilePrefix+".nonAlu.vcf")
+            #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
+            #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.noHomo.vcf")
             
     
     def start(self):
@@ -629,27 +623,26 @@ class CallEditingSites(object):
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.logFile, self.overwrite)
         
         #read in initial SNPs
-        
+        rawSnps = parseVcfFile_variantsDict(vcfFile)
+        print len(rawSnps)
         
         #delete SNPs from dbSNP
-        noDbsnp=self.outfilePrefix+".no_dbsnp.vcf"
-        cmd = [self.sourceDir+"bedtools/intersectBed","-v","-a",vcfFile,"-b",self.dbsnp]
-        #print cmd
-        Helper.proceedCommand("delete SNPs from dbSNP",cmd, vcfFile, noDbsnp, self.logFile, self.overwrite)
-        
+        noDbsnp = deleteOverlappsFromA(rawSnps,self.dbsnp)
+        print len(noDbsnp)
+       
         #delete variants from 1000 Genome Project
-        no1000G = self.outfilePrefix + ".no_dbsnp.no_1000genome.vcf"
-        cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noDbsnp,"-b",self.omni]
-        Helper.proceedCommand("delete SNPs from 1000 Genome Omni database",cmd, noDbsnp, no1000G, self.logFile, self.overwrite)
+        noOmni = deleteOverlappsFromA(noDbsnp, self.omni)
+        print len(noOmni)
         
         #delete variants from UW exome calls
-        noEsp = self.outfilePrefix + ".no_dbsnp.no_1000genome.no_esp.vcf"
-        cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",no1000G,"-b",self.esp]
-        Helper.proceedCommand("delete SNPs from Exome Sequencing Project",cmd, noDbsnp, noEsp, self.logFile, self.overwrite)
+        noEsp = deleteOverlappsFromA(noOmni, self.esp)
+        print len(noEsp)
         
         #erase artificial missmatches from read-starts
-        noStartMissmatches= self.outfilePrefix + ".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf"
-        self.removeEdgeMissmatches(noEsp, self.bamFile, self.edgeDistance, 25, noStartMissmatches)
+        noStartMissmatches = self.removeEdgeMissmatches(noEsp, self.bamFile, self.edgeDistance, 25)
+        print len(noStartMissmatches)
+        
+        return noStartMissmatches
         
         #split non-Alu and Alu regions
         nonAlu = self.outfilePrefix + ".nonAlu.vcf"
