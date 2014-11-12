@@ -9,7 +9,9 @@ from Helper import Helper
 from genericpath import exists
 from fileinput import close
 import vcfHandler
-from vcfHandler import deleteOverlappsFromA, parseVcfFile_variantsDict, Variant
+from vcfHandler import deleteOverlappsFromA, parseVcfFile_variantsDict, Variant, checkVariantType
+from Transcriptome import Transcriptome
+
 
 
 class CallEditingSites(object):
@@ -76,6 +78,10 @@ class CallEditingSites(object):
             self.printAttributes()
         
         self.checkDependencies()
+        
+        #create transcriptome from GTF-File
+        self.transcriptome = Transcriptome()
+        self.transcriptome.createTranscriptomeFromFile(geneAnnotationFile)
     
     
     
@@ -100,35 +106,21 @@ class CallEditingSites(object):
                 #write the rest to the output file
         startTime=Helper.getTime()
         num_lines = len(variants)
-        
-        #check type of variants
-        if type(variants) == dict:
-            pass
-        elif type(variants) == file or type(variants) == str:
-            variants = parseVcfFile_variantsDict(variants)
-            
-        else: 
-            raise TypeError("variants has wrong type, need variantDict, str or file, %s found" % type(variants))
-    
-        
-        counter=0
+        counter=0    
+        variants = checkVariantType(variants)
         
         Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)))
         
         for varKey in variants.keys():
-            
             variant = variants[varKey]
             snpPos = variant.position
             position=variant.chromosome+":" + str(snpPos) + "-" + str(snpPos) 
             #line[1]+"-"+line[1]
             keepSNP=False
             
-            #print position, str(minDistance)
-            #samout= os.system("samtools view " + bamFile + " " + position)
-            #command="samtools view " + bamFile + " " + position
-            command = [self.sourceDir+"samtools", "view", bamFile, position]
-            samout = Helper.getCommandOutput(command).splitlines()
-            for samLine in samout:
+            command = [self.sourceDir+"samtools", "view", bamFile, position] 
+            samout = Helper.getCommandOutput(command).splitlines() #get the reads wich are overlapping the snp region
+            for samLine in samout: #loop over reads
                 samfields=samLine.split()
                 try:
                     flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
@@ -151,41 +143,43 @@ class CallEditingSites(object):
                             if startPos == snpPos:
                                 mmReadPos = readPos
                             readPos += 1
-                            startPos += 1
-                            
-                
-                if mmReadPos != 0:
-                                   
+                            startPos += 1         
+                if mmReadPos != 0: #happens when snp is in non matching regions (like Insertion, Soft Clipping and Hard Clipping, Deletions ans skipped regions)    
                     edgeDistance = snpPos - startPos
                 
-                    #only remove the snps from first 6 bases
+                    #only remove the snps from first minDistance bases
                     revStrand = int(flag) & 16 #check if 5th bit is set (results: 0 = +strand; 16= -strand)
                     if (revStrand == 0 and mmReadPos > minDistance) or (revStrand == 16 and mmReadPos < readPos - minDistance):
                         mmBaseQual= ord(seqQual[mmReadPos])
                         mmReadBase= sequence[mmReadPos]
                         if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == variant.alt): #check for quality of the base and the read contains the missmatch
                             keepSNP=True
-                    #print "   ".join([str(revStrand),str(keepSNP),str(edgeDistance),str(len(sequence)),flag,startPos,mapQual,cigar,sequence,seqQual])
-                #print distance
-            
-            
+
             if not keepSNP:
                 del variants[varKey]    
             counter+=1
-            if counter % 10 == 0:
+            if counter % 10 == 0: #print out current status
                 sys.stdout.write("\r" + str(counter) + " of " + str(num_lines) + " missmatches finished")
                 sys.stdout.flush()
         Helper.info("\r" + num_lines + " of " + str(num_lines) + " missmatches finished")
-        
         Helper.printTimeDiff(startTime)
         return variants
     
-    ''' remove variant near splice junctions'''
-    def removeIntronSpliceJunctions(self,vcfFile,annotationFile,outFile):
+    #TODO: has to be finished
+    def removeIntronicSpliceJunctions(self,variants):
+        '''
+        remove variant near splice junctions and returns the other variants
+        :param variants:
+        '''
         startTime=Helper.getTime()
         
         Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")))
+        variants = checkVariantType(variants)
         
+        
+        
+        
+        """
         annotationFile=open(annotationFile)
         if not exists(outFile):
             outFile=open(outFile,"w")
@@ -203,8 +197,12 @@ class CallEditingSites(object):
             elif chr not in geneDict:
                 geneDict[chr] = [line]
         annotationFile.close()
+        """
         
-        vcfFile = open(vcfFile)
+        vcfFile,geneDict = self.transcriptome.getGenesByChromosome()
+        
+        
+        #vcfFile = open(vcfFile)
         for line in vcfFile:
             keepSnp=True
             line=line.split()
@@ -224,7 +222,8 @@ class CallEditingSites(object):
                         elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:  #read is at the end of exon
                             keepSnp=False
             if keepSnp == True:
-                outFile.write("\t".join(line) + "\n")
+                pass
+                #outFile.write("\t".join(line) + "\n")
         
         Helper.printTimeDiff(startTime)
         

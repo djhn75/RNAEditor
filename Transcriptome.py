@@ -11,6 +11,7 @@ from Gene import Gene
 from itertools import izip
 from array import array
 from Transcript import Transcript
+from __builtin__ import SyntaxError
 
 '''
 classdocs
@@ -54,8 +55,6 @@ class Transcriptome(object):
 
         self.transcriptIds        = defaultdict(set)
         
-        
-        
     def parseGtf(self,gtfFile):
         """
             fill the dictionarys with the correspending attributes
@@ -95,11 +94,14 @@ class Transcriptome(object):
                     self.transcriptId_to_stopCodons[f.transcriptId] += (exonNumber, interval),
                     
         except:
-            print lineNumber, "    " + f.geneId
-            raise
+            raise SyntaxError("In line %s with Gene %s! Check your gtf file" % lineNumber,f.geneId)
         
-    
     def assembleTranscriptome(self):
+        """
+        Loop over uniqueGeneSet, in which the ENSG-IDs are saved, 
+        and assemble all the transcripts and exons for this gene and save it as a Gene object.
+        This gene obeject ist then added to the geneList of this Transcriptome object
+        """ 
         transcriptsByType = defaultdict(list)
         
         #construct Genes
@@ -113,7 +115,7 @@ class Transcriptome(object):
             
             #get exons from all transcripts
             for transcriptId in self.uniqGene_to_transcriptIds[uniqGene]:
-                geneExons |= self.transcriptId_to_exons[transcriptId]
+                geneExons |= self.transcriptId_to_exons[transcriptId] # add new exon tuples to geneExons set
                 geneCds  |= self.transcriptId_to_cds[transcriptId]
             
             #usually gtf Files are sorted, but this can't be assumed    
@@ -156,7 +158,11 @@ class Transcriptome(object):
     def createTranscriptomeFromFile(self,gtfFilePath):
         """
         Construct Transcriptome from GTF File
-            Saves all the information in dictionarys
+        Saves all the information in dictionarys
+        
+        This function calls internally:
+            -parseGTF
+            -assembleTranscriptome
         """
         startTime = Helper.getTime()
         Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
@@ -193,12 +199,11 @@ class Transcriptome(object):
         del self.transcriptId_to_codingFrames
 
         del self.transcriptIds
-    
-    """
-    Finds the gene wich are overlapping the given region
-    """
+     
     def findOverlappingGenes(self, chromosome, start, stop):
-       
+        """
+        Finds the gene wich are overlapping the given region
+        """   
         if len(self.genesByChromosome):
             raise Exception("GeneByChromosome Dictionary is empty")
         
@@ -212,17 +217,43 @@ class Transcriptome(object):
             Helper.warning("chromosome %s not found in geneByChromosome" % chromosome)
         return overlappingGenes
     
-    """
-    Returns a dictionary with chromosomes as key and all the genes on the chromosome as values
-    {"1":[Gene1,Gene2....]}  
-    """
     def getGenesByChromosome(self):
+        """
+        Returns a dictionary with chromosomes as key and all the genes on the chromosome as values
+        {"1":[Gene1,Gene2....]}  
+        """
+        
         genesByChr = defaultdict(list)
-        if len(self.geneList):
+        if len(self.geneList) == 0:
             raise Exception("Gene List is empty")
         else:
             for gene in self.geneList:
                 genesByChr[gene.chromosome].append(gene)
             return genesByChr    
         
+    def getGenesByGeneID(self):
+        """
+        Returns a dictionary with geneID (ENSG000001) as key and the gene object as value
+        {"ENSG000001":GeneObject;"ENSG000002":GeneObject2}  
+    """
+        genesByGeneID = defaultdict()
+        for gene in self.geneList:
+            genesByGeneID[gene.geneId]=gene
+        return genesByGeneID
+    
+    def annotateRegion(self,chromosome,start,stop):
+        """
+            returns information for the given region like (3'UTR,Exon,Intron,5'UTR)
+        """
         
+    def annotatePosition(self,chromosome, position):
+        """
+            returns information for the given position like (3'UTR,Exon,Intron,5'UTR)
+        """
+        
+
+        #Loop over the genes of the chromosome
+        for gene in self.genesByChromosome[chromosome]:
+            #check if the position is in the current gene
+            if gene.start < position and gene.end > position:
+                pass
