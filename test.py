@@ -11,11 +11,11 @@ import vcfHandler
 from CallEditingSites import CallEditingSites
 
 
-'''
+
 gtfFile = "/media/Storage/databases/rnaEditor_annotations/human/genes_small.gtf"
 transcriptome = Transcriptome()
 transcriptome.createTranscriptomeFromFile(gtfFile)
-
+transcriptome.sortGenesByChromosomeDict()
 genes = transcriptome.getGenesByGeneID()
 gene = genes["ENSG00000163131"]
 print gene
@@ -24,7 +24,7 @@ print str(gene.codingExons)
 gene.printInfo()
 
 print "%s %d $d $s %s CDS:%s Exons:%s" % (gene.chromosome,gene.start,gene.end,gene.names[0],gene.geneType,str(gene.codingExons),str(gene.exons))
-'''
+
 #for geneType in a.geneByTypes:
 #genesByChromosome = transcriptome.getGenesByChromosome()
    

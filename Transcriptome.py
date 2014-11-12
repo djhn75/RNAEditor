@@ -12,6 +12,7 @@ from itertools import izip
 from array import array
 from Transcript import Transcript
 from __builtin__ import SyntaxError
+import operator
 
 '''
 classdocs
@@ -257,3 +258,13 @@ class Transcriptome(object):
             #check if the position is in the current gene
             if gene.start < position and gene.end > position:
                 pass
+            
+    def sortGenesByChromosomeDict(self):
+        '''
+        Sorts a Gene Dictionary by the start and end position
+        :param geneByChromosome:
+        '''
+        #if type(geneByChromosome) != list:
+        #    raise TypeError("variants has wrong type, need geneByChromosome, %s found" % type(geneByChromosome))
+        for key in self.genesByChromosome.keys():
+            self.genesByChromosome[key] = sorted(self.genesByChromosome[key], key=operator.attrgetter('start','end'))
