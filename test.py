@@ -14,8 +14,17 @@ from CallEditingSites import CallEditingSites
 
 gtfFile = "/media/Storage/databases/rnaEditor_annotations/human/genes_small.gtf"
 transcriptome = Transcriptome()
-transcriptome.createTranscriptomeFromFile(gtfFile)
-transcriptome.sortGenesByChromosomeDict()
+genesByChromosome = transcriptome.createTranscriptomeFromFile(gtfFile)
+
+variantsB = "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.vcf"
+variants = vcfHandler.parseVcfFile_variantSetByChromosome(variantsB)
+vcfHandler.sortVariantDict(variants)
+
+for key in genesByChromosome.keys():
+    for gene in genesByChromosome[key]:
+        print gene
+
+
 genes = transcriptome.getGenesByGeneID()
 gene = genes["ENSG00000163131"]
 print gene

@@ -98,11 +98,12 @@ class Transcriptome(object):
             raise SyntaxError("In line %s with Gene %s! Check your gtf file" % lineNumber,f.geneId)
         
     def assembleTranscriptome(self):
-        """
+        '''
         Loop over uniqueGeneSet, in which the ENSG-IDs are saved, 
         and assemble all the transcripts and exons for this gene and save it as a Gene object.
-        This gene obeject ist then added to the geneList of this Transcriptome object
-        """ 
+        This gene obeject ist then added to the geneList of this Transcriptome object        
+        '''
+        
         transcriptsByType = defaultdict(list)
         
         #construct Genes
@@ -155,6 +156,8 @@ class Transcriptome(object):
                 gene.addTranscript(transcript)
             
         self.genesByChromosome = self.getGenesByChromosome()
+        self.sortGenesByChromosomeDict()
+        
             
     def createTranscriptomeFromFile(self,gtfFilePath):
         """
@@ -164,6 +167,8 @@ class Transcriptome(object):
         This function calls internally:
             -parseGTF
             -assembleTranscriptome
+        Returns a list with all the genes for each chromosome in a dictionary
+        return: genesByChromosome
         """
         startTime = Helper.getTime()
         Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
@@ -200,6 +205,8 @@ class Transcriptome(object):
         del self.transcriptId_to_codingFrames
 
         del self.transcriptIds
+        
+        return self.genesByChromosome
      
     def findOverlappingGenes(self, chromosome, start, stop):
         """
@@ -236,7 +243,7 @@ class Transcriptome(object):
         """
         Returns a dictionary with geneID (ENSG000001) as key and the gene object as value
         {"ENSG000001":GeneObject;"ENSG000002":GeneObject2}  
-    """
+        """
         genesByGeneID = defaultdict()
         for gene in self.geneList:
             genesByGeneID[gene.geneId]=gene
