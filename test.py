@@ -6,24 +6,24 @@ Created on 05.06.2014
 from Transcriptome import Transcriptome
 from Helper import Helper
 from collections import defaultdict
-from vcfHandler import Variant
-import vcfHandler
+from VariantSet import Variant
+from VariantSet import VariantSet
 from CallEditingSites import CallEditingSites
 
 
 
 gtfFile = "/media/Storage/databases/rnaEditor_annotations/human/genes_small.gtf"
 transcriptome = Transcriptome()
-genesByChromosome = transcriptome.createTranscriptomeFromFile(gtfFile)
+#genesByChromosome = transcriptome.createTranscriptomeFromFile(gtfFile)
 
 variantsB = "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.vcf"
-variants = vcfHandler.parseVcfFile_variantSetByChromosome(variantsB)
-vcfHandler.sortVariantDict(variants)
+variants = VariantSet(variantsB)
 
-for key in genesByChromosome.keys():
+
+"""for key in genesByChromosome.keys():
     for gene in genesByChromosome[key]:
         print gene
-
+"""
 
 genes = transcriptome.getGenesByGeneID()
 gene = genes["ENSG00000163131"]
@@ -42,9 +42,8 @@ startTime = Helper.getTime()
 vcfFile="/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37.vcf"
 variantsB = "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.vcf"
 
-variants = vcfHandler.parseVcfFile_variantSetByChromosome(variantsB)
+variants = VariantSet(variantsB)
 
-vcfHandler.sortVariantDict(variants)
 
 """"a= Helper.removeVariantsAFromVariantsB(vcfFile, variantsB)
 i=0
@@ -57,7 +56,7 @@ print "finished"
 """
 
 
-#scrambleN=vcfHandler.parseVcfFile("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.vcf")
+#scrambleN=VariantSet.parseVcfFile("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.vcf")
 
 
 edit = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
@@ -78,6 +77,6 @@ edit = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/
 A = edit.start()
 
 #print len(A)
-#vcfHandler.printVariantDict(A,"dink.vcf")
+#VariantSet.printVariantDict(A,"dink.vcf")
 
 print "finished"

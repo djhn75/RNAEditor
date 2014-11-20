@@ -7,9 +7,9 @@ Created on May 23, 2013
 import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
-from fileinput import close
-import vcfHandler
-from vcfHandler import deleteOverlappsFromA, parseVcfFile_variantsDict, Variant, checkVariantType
+
+import VariantSet
+
 from Transcriptome import Transcriptome
 
 
