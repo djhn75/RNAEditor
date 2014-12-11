@@ -13,7 +13,7 @@ class Variant:
     '''
     reflects a Variant
     '''
-    
+    annotation={}
     def __init__(self, chromosome, position, id, ref, alt, qual, filter, info, baseCounts ):
         self.chromosome = chromosome
         self.position = position
@@ -30,9 +30,12 @@ class Variant:
 
 
 class VariantSet(object):
-    
+    '''
+    handles a vcfFile and stores the results internally as a Dictionary with Tuple of (chromosome,pos,ref,alt) as keys and a the VariantObject as value
+    '''
     def __init__(self,vcfFile):
-        return self.parseVcfFile_variantSetByChromosome(vcfFile)
+        self.variantDict = self.parseVcf(vcfFile)
+        #return self.parseVcfFile_variantSetByChromosome(vcfFile)
     
     def readline(self,line):
         '''
@@ -48,8 +51,7 @@ class VariantSet(object):
             
         except ValueError:
             raise ValueError("Error in line '%s'" % " ".join(line))
-    
-        
+
         #parse info
         info = vcfList[7]
         #trim comments
@@ -71,16 +73,15 @@ class VariantSet(object):
             if type(variants) == dict:
                 return variants
             elif type(variants) == file or type(variants) == str:
-                variants = self.parseVcfFile_variantsDict(variants)
+                variants = self.parseVcf(variants)
                 return variants
                 
             else: 
                 raise TypeError("variants has wrong type, need variantDict, str or file, %s found" % type(variants))
-         
-             
+                  
     def iterator(self,infile):
     
-        while 1:
+        while True:
             line = infile.readline()
             if not line: raise StopIteration
             if line.startswith("#"): continue #skip comments
@@ -88,29 +89,29 @@ class VariantSet(object):
             variant = Variant(vcfList[0],vcfList[1],vcfList[2],vcfList[3],vcfList[4],vcfList[5],vcfList[6],vcfList[7],vcfList[8])
             yield variant
     
-    def parseVcfFile_variantSetByChromosome(self,vcfFile):
+    def getVariantSetByChromosome(self):
         '''
         Imports a given Variant File and returns the variants as Dictionary with chromosome as key and a list of VariantObjects as values
         {"1":[VariantObject1,VariantObject2....],"2":[VariantObject1,VariantObject2....]}
         
         '''
         startTime = Helper.getTime()
-        Helper.info(" [%s] Parsing Variant Data from %s" % (startTime.strftime("%c"),vcfFile))
+        #Helper.info(" [%s] Parsing Variant Data from %s" % (startTime.strftime("%c"),vcfFile))
         
         #check correct Type
-        if type(vcfFile) == str:
+        '''if type(vcfFile) == str:
             vcfFile = open(vcfFile)
         elif type(vcfFile) != file:
             raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(vcfFile)) 
-            
+        '''
         variantsByChromosome = defaultdict(list)
-        for v in self.iterator(vcfFile):
+        for v in self.variantDict.values():
             variantsByChromosome[v.chromosome].append(v)
         
-        Helper.printTimeDiff(startTime)
+        #Helper.printTimeDiff(startTime)
         return variantsByChromosome
     
-    def parseVcfFile_variantsDict(self,vcfFile):
+    def parseVcf(self,vcfFile):
         '''
         Imports a given Variant File and returns the variants as Dictionary with Tuple of (chromosome,pos,ref,alt) as key and a the VariantObject as value
         {(1,45435,"A","G"):VariantObject1,(1,45435,"A","G"):VariantObject1,.....}
@@ -134,7 +135,6 @@ class VariantSet(object):
         
         Helper.printTimeDiff(startTime)
         return variantDict
-    
     
     def printVariantDict(self,variantDict,outfile=None):
         '''
@@ -171,11 +171,9 @@ class VariantSet(object):
                 v = variantDict[key]
                 print "\t".join([v.chromosome,str(v.position),v.ref,v.alt,str(v.qual),v.filter,v.info,"\n"])
             
-    
-    
     def getVariantTuble(self,line):
         '''
-        returns a tuple of (chromosome, position, alt, ref) from a vcfFile
+        returns a tuple of (chromosome, position, alt, ref) from a line of a vcfFile
         '''
         line=line.split("\t")
         try:
@@ -185,45 +183,35 @@ class VariantSet(object):
             raise ValueError("Error in line '%s'" % " ".join(line))
         return tuple
     
-    def deleteOverlappsFromA(self,variantsA,variantsB):
+    def deleteOverlapps(self,variants):
         '''
         delete the variants from 'variantsA' which also are in 'variantsB'
         '''
-    
-        
-        #determine type of variantsA 
-        if type(variantsA) == dict:
-            variantSetA = set(variantsA.keys())
-        elif type(variantsA) == file or type(variantsA) == str:
-            variantsA = self.parseVcfFile_variantsDict(variantsA)
-            variantSetA = set(variantsA.keys())
-        else: 
-            raise TypeError("variantsA has wrong type, need variantDict, str or file, %s found" % type(variantsA))
+
+        variantSetA = set(self.variantDict.keys())
         
         #detrmine type of variantB
-        if type(variantsB) == str:
-            variantsB = open(variantsB)
-        elif type(variantsB) != file:
+        if type(variants) == str:
+            variantsB = open(variants)
+        elif type(variants) != file:
             raise TypeError("variantB has wrong type, need str or file, %s found" % type(variantsB))
+        #TODO: variants could also be another object of VariantsSet
         
         #get Start time
         startTime = Helper.getTime()
         Helper.info(" [%s] Delete overlapps from %s" % (startTime.strftime("%c"),variantsB.name))
-    
-        
-        
+
         for line in variantsB:
             if line.startswith("#"):
                 continue
-            Btupple = self.getVariantTuble(line)
-            if Btupple in variantSetA:
-                #A.discard(Btupple)
-                variantSetA.remove(Btupple)
-                del variantsA[Btupple]
+            varTuple = self.getVariantTuble(line)
+            if varTuple in variantSetA:
+                #A.discard(varTuple)
+                variantSetA.remove(varTuple)
+                del self.variantDict[varTuple]
         
         #calculate duration 
         Helper.printTimeDiff(startTime)
-        return  variantsA    
     
     def sortVariantDict(self,variantDict):
         '''
@@ -234,4 +222,15 @@ class VariantSet(object):
         #    raise TypeError("variants has wrong type, need variantDict, %s found" % type(variantDict))
         for key in variantDict.keys():
             variantDict[key] = sorted(variantDict[key], key=operator.attrgetter('position'))
+
+    def annotateVariantDict(self,genome):
+        '''
+        adds the corresponding Gene and the exact segment wehre the SNP appears
+        :param genome: Genome
+        '''
+        for v in self.variantDict.values():
+            anno = genome.annotatePosition(v.chromosome,v.position) #[(gene1,segment1;segment2;..)..]
+            for gene,segments in anno:
+                v.annotation[gene]=segments
+        #TODO: Test this stupid shit
             
