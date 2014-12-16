@@ -185,7 +185,7 @@ class Helper():
     def returnVariantDictFromVcfFile(vcfFile):
         """
         returns the vcfFile as a two instance dictionary with chromosome as first key and a Tuple of (position,ref,alt) as second key  and  the rest of the vcfLine as a list
-        {chr1: {(position1, 'A', 'G'): [dbSNP_id, ' quality', 'filter', 'info'], (4, 324, 'dsgdf', 'dsfsd'): [42, 243, 324]}})
+        {chr1: {(position1, 'A', 'G'): [dbSNP_id, ' quality', 'filter', 'attributes'], (4, 324, 'dsgdf', 'dsfsd'): [42, 243, 324]}})
         """
         vcfFile=open(vcfFile)
         vcfDict = defaultdict(dict)
@@ -221,3 +221,7 @@ class Helper():
     @staticmethod
     def debug (message):
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
+    @staticmethod
+    def status(message):
+        sys.stdout.write("\r" + Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
+        sys.stdout.flush()

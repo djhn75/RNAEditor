@@ -8,9 +8,10 @@ import argparse, multiprocessing, os, sys, re
 from Helper import Helper
 from genericpath import exists
 
-import VariantSet
+from VariantSet import VariantSet
 
-from Transcriptome import Transcriptome
+from Genome import Genome
+from copy import copy
 
 
 
@@ -40,7 +41,7 @@ class CallEditingSites(object):
 
     def __init__(self, bamFile, refGenome, dbsnp,
                  hapmap, omni, esp, 
-                 aluRegions, geneAnnotationFile, outfilePrefix="default",
+                 aluRegions, gtfFile, outfilePrefix="default",
                  sourceDir="/usr/local/bin/", threads=multiprocessing.cpu_count()-1,standCall=0,
                  standEmit=0, edgeDistance=6, keepTemp=False, 
                  overwrite=False):
@@ -57,7 +58,7 @@ class CallEditingSites(object):
         self.omni=omni
         self.esp=esp
         self.aluRegions=aluRegions
-        self.geneAnnotationFile = geneAnnotationFile
+        self.genome = gtfFile
         if outfilePrefix=="default":
             self.outfilePrefix=self.bamFile[0:self.bamFile.rfind(".realigned")]
         else:
@@ -70,7 +71,7 @@ class CallEditingSites(object):
         self.keepTemp=keepTemp
         self.overwrite=overwrite
         
-        #self.features = Helper.readGeneFeatures(self.geneAnnotationFile)
+        #self.features = Helper.readGeneFeatures(self.genome)
         
         
         self.logFile=open(self.outfilePrefix + ".log","a")
@@ -80,8 +81,8 @@ class CallEditingSites(object):
         self.checkDependencies()
         
         #create transcriptome from GTF-File
-        self.transcriptome = Transcriptome()
-        self.transcriptome.createTranscriptomeFromFile(geneAnnotationFile)
+        self.genome = Genome(gtfFile)
+        
     
     
     
@@ -90,10 +91,14 @@ class CallEditingSites(object):
         #TODO: check for index Files
         if not os.path.exists(self.dbsnp):
             Exception("dbSNP File: Not found!!!")
-        if not os.path.exists(self.refGenome):
-            Exception("reference Genome File: Not found!!!")
+        if not os.path.exists(self.bamFile):
+            Exception(".bam File: Not found!!!")
         if not os.path.exists(self.hapmap):
-            Exception("reference Genome File: Not found!!!")
+            Exception("HapMap variant File File: Not found!!!")
+        if not os.path.exists(self.esp):
+            Exception("ESP variant File File: Not found!!!")
+        if not os.path.exists(self.aluRegions):
+            Exception("AluRegion File File: Not found!!!")
         if not os.path.exists(self.refGenome):
             Exception("reference Genome File: Not found!!!")
         
@@ -105,14 +110,14 @@ class CallEditingSites(object):
                 #discard variants wich appear ONLY near edges
                 #write the rest to the output file
         startTime=Helper.getTime()
-        num_lines = len(variants)
-        counter=0    
-        variants = checkVariantType(variants)
         
+        counter=0    
+        
+        num_lines = len(variants.variantDict)
         Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)))
         
-        for varKey in variants.keys():
-            variant = variants[varKey]
+        for varKey in variants.variantDict.keys():
+            variant = variants.variantDict[varKey]
             snpPos = variant.position
             position=variant.chromosome+":" + str(snpPos) + "-" + str(snpPos) 
             #line[1]+"-"+line[1]
@@ -156,99 +161,52 @@ class CallEditingSites(object):
                             keepSNP=True
 
             if not keepSNP:
-                del variants[varKey]    
+                del variants.variantDict[varKey]    
             counter+=1
             if counter % 10 == 0: #print out current status
-                sys.stdout.write("\r" + str(counter) + " of " + str(num_lines) + " missmatches finished")
-                sys.stdout.flush()
-        Helper.info("\r" + num_lines + " of " + str(num_lines) + " missmatches finished")
-        Helper.printTimeDiff(startTime)
-        return variants
+                Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished")
+        
     
-    #TODO: has to be finished
-    def removeIntronicSpliceJunctions(self,variants):
+    def removeIntronicSpliceJunctions(self,variants,genome,distance=4): 
         '''
         remove variant near splice junctions and returns the other variants
-        :param variants:
+        :param variants: VariantSet
+        :param genome: object of the class Genome
         '''
         startTime=Helper.getTime()
-        
         Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")))
-        variants = checkVariantType(variants)
+        #TODO Finish this fucking fuction
         
-        
-        
-        
-        """
-        annotationFile=open(annotationFile)
-        if not exists(outFile):
-            outFile=open(outFile,"w")
-        else:
-            print >> self.logFile, "\t [SKIP] File already exist"
-            print "\t [SKIP] File already exist"
-            return
-        
-        geneDict={} #save all genes according to the Chromosome in a Dictionary
-        for line in annotationFile:
-            line=line.split()
-            chr=line[1]
-            if chr in geneDict:
-                geneDict[chr] = geneDict[chr] + [line]
-            elif chr not in geneDict:
-                geneDict[chr] = [line]
-        annotationFile.close()
-        """
-        
-        vcfFile,geneDict = self.transcriptome.getGenesByChromosome()
-        
-        
-        #vcfFile = open(vcfFile)
-        for line in vcfFile:
-            keepSnp=True
-            line=line.split()
-            mmChr,mmPos = line[0],int(line[1])
-            if mmChr not in geneDict.keys():
-                continue 
-            for gene in geneDict[mmChr]:
-                
-                refChr,refStart,refStop = gene[1],int(gene[3]),int(gene[4])
-                if mmPos > refStart and mmPos < refStop: #check if is inside of gene location 
-                    numberExons = int(gene[7])
-                    exonStarts = gene[8].split(",")
-                    exonEnds = gene[9].split(",")
-                    for i in range(numberExons): #check if variant lies in Exon
-                        if int(exonStarts[i])-4 < mmPos and int(exonStarts[i])+1 > mmPos: #read is in front of exon
-                            keepSnp=False
-                        elif int(exonEnds[i]) < mmPos and  int(exonEnds[i])+4 > mmPos:  #read is at the end of exon
-                            keepSnp=False
-            if keepSnp == True:
-                pass
-                #outFile.write("\t".join(line) + "\n")
-        
+        geneDict = genome.getGenesByChromosome()
+
+        for key in variants.variantDict.keys():
+            delVar=False
+            chromosome,position,ref,alt = key
+            for gene in geneDict[chromosome]:
+                if gene.start < position < gene.end:#check if is inside of gene location
+                    for exon in gene.codingExons:
+                        if (exon[0]-distance < position < exon[0]) or (exon[1] < position < exon[1]+distance):
+                            print(key)
+                            delVar=True
+            if delVar:
+                del variants.variantDict[key]
+                            
         Helper.printTimeDiff(startTime)
         
     '''remove missmatches from homopolymers'''
-    def removeHomopolymers(self,vcfFile,outFile,distance):
+    def removeHomopolymers(self,variants,outFile,distance):
         startTime=Helper.getTime()
-        description = "remove Missmatches from homopolymers"
-        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        self.logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        Helper.info(" [%s] remove Missmatches from homopolymers " % (startTime.strftime("%c")))
         
-        tempBedFile = open(vcfFile+"_tmp.bed","w+")
-        tempSeqFile = vcfFile + "_tmp.tsv"
+        tempBedFile = open(outFile+"_tmp.bed","w+")
+        tempSeqFile = outFile + "_tmp.tsv"
         
-        vcfFile=open(vcfFile,"r")
-        mmDict = {}
-        #print BedFile
-        for line in vcfFile:
-            lineSplit = line.split()
-            chr,position,referenceNucleotide = lineSplit[0],lineSplit[1],lineSplit[3]
-            siteNuc = chr+":"+position+"-" + referenceNucleotide
-            mmDict[siteNuc] = line
-            
-            startPos = int(position) - distance if position >= distance else 0
-            endpos = int(position) + distance
+        #print temporary BedFile
+        for key in variants.variantDict.keys():
+            chr,position,ref,alt = key
+            siteNuc = ",".join([chr,str(position),ref,alt])
+            startPos = position - distance if position >= distance else 0
+            endpos = position + distance
             
             tempBedFile.write("\t".join([chr,str(startPos),str(endpos),siteNuc])+"\n")
         
@@ -257,17 +215,18 @@ class CallEditingSites(object):
         cmd=[self.sourceDir+"bedtools/fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
         Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite)
         
-        mmNumberTotal = len(mmDict)
+        mmNumberTotal = len(variants.variantDict)
         
         #read sequence file
         tempSeqFile= open(tempSeqFile)
         for line in tempSeqFile:
             siteNuc,sequence = line.split()
-            site,referenceNucleotide = siteNuc.split("-")
+            chr,position,ref,alt = siteNuc.split(",")
             #check if mm sorounding sequence are homopolymer nukleotides
             
-            pattern = referenceNucleotide*distance
+            pattern = ref*distance
             
+            #TODO:
             """ !!!Test if this gives better results
                 !!!ONLY DELETE IF MM IS AT THE END OF A HOMOPOLYMER NUKLEOTIDES
             if sequence.startswith(pattern):
@@ -276,45 +235,35 @@ class CallEditingSites(object):
                 del mmDict[site]
             """
             if pattern in sequence:
-                del mmDict[siteNuc]
-            
-        #output the surviving Missmatches
-        outFile = open(outFile,"w+")        
-        for site in mmDict.keys():
-            outFile.write(mmDict[site])
-        
+                del variants.variantDict[(chr,int(position),ref,alt)]
+                
         #output statistics
-        print >> self.logFile, "\t\t %d out of %d passed the Homopolymer-Filter" % (len(mmDict), mmNumberTotal)
-        print "\t\t %d out of %d passed the Homopolymer-Filter" % (len(mmDict), mmNumberTotal)
+        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal))
+        Helper.printTimeDiff(startTime)
         
         if self.keepTemp == False:
             os.remove(tempBedFile.name)
             os.remove(tempSeqFile.name)   
                 
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
-    def blatSearch(self,vcfFile, outFile, minBaseQual, minMissmatch):
+    def blatSearch(self,variants, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
-        description = "look for non uniquely mapped reads by blat"
-        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        self.logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-       
+        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")))
+        
         counter=0
         geneHash = {}
-        variantFile=open(vcfFile,"r")
-        tempFasta = vcfFile + "_tmp.fa"
+        tempFasta = outFile + "_tmp.fa"
         if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0: #check if temFast exists and is not empty. If it exist it will not be created again
             tempFastaFile=open(tempFasta,"w+")
-            num_lines = str(sum(1 for line in open(vcfFile)))
+            mmNumberTotal = len(variants.variantDict)
             
             #write missmatch read to fasta file
-            for line in variantFile:
-                line=line.split("\t")
-                chromosome,snpPos,mmBase = line[0], int(line[1]), line[4]
-                position=line[0]+":"+ str(snpPos)+"-"+str(snpPos)
+            for key in variants.variantDict.keys():
+                chromosome,position,ref,alt = key
+                samPos=chromosome+":"+ str(position)+"-"+str(position)
                 missmatchReadCount=1
     
-                samout = Helper.getCommandOutput([self.sourceDir+"samtools", "view", "-F", "1024", self.bamFile, position]).splitlines() #-F 1024 to filter out duplicate reads
+                samout = Helper.getCommandOutput([self.sourceDir+"samtools", "view", "-F", "1024", self.bamFile, samPos]).splitlines() #-F 1024 to filter out duplicate reads
                 for samLine in samout:
                     samfields=samLine.split()
                     flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
@@ -331,42 +280,36 @@ class CallEditingSites(object):
                             startPos = startPos + int(cigarNums[i])
                         elif cigarLetters[i] in {"M"}: #Matches
                             for j in range(int(cigarNums[i])):
-                                if startPos == snpPos:
+                                if startPos == position:
                                     mmReadPos = readPos
                                     mmBaseQual= ord(seqQual[mmReadPos])
                                     mmReadBase= sequence[mmReadPos]
-                                    if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == mmBase): #check for quality of the base and the read contains the missmatch
+                                    if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == alt): #check for quality of the base and the read contains the missmatch
                                         keepRead=True
                                 readPos += 1
                                 startPos += 1
                     if keepRead == True: #if read contains the missmatch 
-                        tempFastaFile.write("> " + chromosome + "-" + str(snpPos) + "-" + str(missmatchReadCount) + "\n" + sequence + "\n")
+                        tempFastaFile.write("> "+chromosome+"-"+str(position)+"-"+ref+"-"+alt+"-"+str(missmatchReadCount)+"\n"+sequence+"\n")
                         missmatchReadCount += 1
     
                 counter += 1
                 if counter % 1000 == 0:
-                    sys.stdout.write("\r" + str(counter) + " of " + num_lines + " missmatched reads written")
+                    sys.stdout.write("\r" + str(counter) + " of " + mmNumberTotal + " variants done")
                     sys.stdout.flush()
         
-            
-            print "\n created fasta file " + tempFasta
+            Helper.info("\n created fasta file " + tempFasta)
+            Helper.printTimeDiff(startTime)
             tempFastaFile.close()
-        variantFile.close()    
-        
+                
         
         #do blat search
         pslFile=outFile+".psl"
         if not os.path.isfile(pslFile) or not os.path.getsize(pslFile) > 0:
             cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta, pslFile]
-            print cmd
+            #print cmd
             Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite)
-            
         
-        startTime=Helper.getTime()
-        description = "check for variants that pass the blat criteria"
-        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        self.logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
+        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")))    
         
         if not os.path.isfile(outFile):
             #open psl file
@@ -374,25 +317,22 @@ class CallEditingSites(object):
             blatDict={}
             for line in pslFile: #summarize the blat hits
                 pslFields = line.split()
-                name = pslFields[9]
+                chr,pos,ref,alt,mmReadCount = pslFields[9].split("-")
+                varTuple=(chr,int(pos),ref,alt)
                 blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
-                if name in blatDict:
-                    blatDict[name] = blatDict[name] + [blatScore]
+                if varTuple in blatDict:
+                    blatDict[varTuple] = blatDict[varTuple] + [blatScore]
                 else:
-                    blatDict[name] = [blatScore]
-    
-    
+                    blatDict[varTuple] = [blatScore]
+
             siteDict = {}
             discardDict = {}
             
-        
             #loop over blat Hits
-            for pslKey in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
+            for varTuple in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
                 keepSNP=False
-                chr,pos=pslKey.split("-")[0:2]
-                
-                site = ":".join([chr,pos])
-                pslLine = blatDict[pslKey]
+                chr,pos,ref,alt=varTuple             
+                pslLine = blatDict[varTuple]
                 largestScore=0
                 largestScoreLine=pslLine[0]
                 scoreArray=[]
@@ -404,7 +344,7 @@ class CallEditingSites(object):
                     if lineScore > largestScore:
                         largestScore = lineScore
                         largestScoreLine=blatHit
-                pos=int(pos)
+                
                 scoreArray.sort(reverse=True)
                 if len(scoreArray) < 2:   #test if more than one blat Hit exists
                     scoreArray.append(0)
@@ -417,37 +357,34 @@ class CallEditingSites(object):
                             keepSNP = True
                 
                 if keepSNP == True:
-                    if site in siteDict:
-                        siteDict[site]+=1
+                    if varTuple in siteDict:
+                        siteDict[varTuple]+=1
                     else:
-                        siteDict[site]=1
+                        siteDict[varTuple]=1
                 elif keepSNP == False: #when read not passes the blat criteria
-                    if site in discardDict:
-                        discardDict[site]+=1
+                    if varTuple in discardDict:
+                        discardDict[varTuple]+=1
                     else:
-                        discardDict[site]=1
+                        discardDict[varTuple]=1
             pslFile.close() 
             
                     
-            #loop through variant file again and check what passes the blat criteria
-            variantFile=open(vcfFile)
-            resultFile=open(outFile,"w+")
+            #loop through variants again and check what passes the blat criteria
+            
             
             mmNumberTotal=0
             mmNumberTooSmall=0
             mmReadsSmallerDiscardReads=0 
-            for line in variantFile:
-                line = line.split()
-                name=":".join(line[0:2])
+            for key in variants.variantDict.keys():
                 numberBlatReads=0
                 numberDiscardReads=0
-                if name in siteDict:
-                    numberBlatReads = siteDict[name]
-                if name in discardDict:
-                    numberDiscardReads = discardDict[name]
+                if key in siteDict:
+                    numberBlatReads = siteDict[key]
+                if key in discardDict:
+                    numberDiscardReads = discardDict[key]
                 
-                if numberBlatReads >= minMissmatch and numberBlatReads >= numberDiscardReads:
-                    resultFile.write("\t".join(line)+"\n")
+                if  numberBlatReads <= minMissmatch and numberBlatReads <= numberDiscardReads:
+                    del variants.variantDict[key]
                 
                 
                 #count statistics
@@ -456,153 +393,26 @@ class CallEditingSites(object):
                 elif numberBlatReads < numberDiscardReads: #check if more readd fit the blat criteria than not
                     mmReadsSmallerDiscardReads+=1    
                 mmNumberTotal+=1
-            variantFile.close()
             
             if self.keepTemp == False:
                 os.remove(tempFasta)
                 os.remove(pslFile.name)
             
             #output statisticsttkkg
-            
-            duration=Helper.getTime()-startTime
             mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
-            print >> self.logFile, "\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal)
-            print >> self.logFile, "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
-            print >> self.logFile, "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
-            self.logFile.flush()
-            print "\t\t %d out of %d passed blat criteria (%d percent)" % (mmPassedNumber, mmNumberTotal,(mmPassedNumber/mmNumberTotal)*100)
-            print "\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch)
-            print "\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads)
             
-        duration=Helper.getTime()-startTime
-        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
-        self.logFile.flush()
-        print "\t[DONE]" + " Duration [" + str(duration) + "]"
+            Helper.info("\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal))
+            Helper.info("\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch))
+            Helper.info("\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads))
+            
+        Helper.printTimeDiff(startTime)
 
-    #write two variantFiles together
-    
-    '''combine two variant File'''
-    def combineFiles(self,aluSites,nonAuluSites,outFile):
-        file1=open(aluSites,"r")
-        file2 = open(nonAuluSites,"r")
-        outFile = open(outFile,"w+")
-        for line in file1:
-            outFile.write(line)
-        for line in file2:
-            outFile.write(line)
-        
-    def annotateVariants(self,annotationFile,variantFile,outFile):
-        startTime=Helper.getTime()
-        description = "Annotate Missmatches"
-        print >> self.logFile, "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        self.logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * " + description + " * * *"
-        
-        #check if file exitsts
-        if not exists(outFile):
-            outFile=open(outFile,"w")
-        else:
-            print >> self.logFile, "\t [SKIP] File already exist"
-            print "\t [SKIP] File already exist"
-            return
-        
-        #write header
-        outFile.write("\t".join(["#CHROM","POS","ID","REF","ALT","QUAL","GENE","INFO"])+"\n")
-        
-        """annotationFile=open(annotationFile,"r")
-        geneDict={} #save all genes according to the Chromosome in an Dictionary
-        for line in annotationFile:
-            line=line.split()
-            chr=line[1]
-            if chr in geneDict:
-                geneDict[chr] = geneDict[chr] + [line]
-            elif chr not in geneDict:
-                geneDict[chr] = [line]
-        annotationFile.close()
-"""        
-        
-        
-        
-        geneCountDict = {}
-        vcfFile = open(variantFile) 
-        for line in vcfFile:
-            keepSnp=True
-            line=line.split()
-            mmChr, mmPos, mmRef, mmAlt = line[0],int(line[1]), line[3], line[4]
-            
-            
-            if mmChr not in geneDict.keys(): #if chromosome not in GeneDict
-                continue 
-            
-            if not ((mmRef=="T" and  mmAlt=="C") or (mmRef=="A" and mmAlt=="G")): #only proceed with A->G or T->C events
-                continue
-            
-            location = "intergenic"
-            geneName = "-"
-            for gene in geneDict[mmChr]: #loop through all chromosome Genes
-                
-                geneId,refChr,strand,refStart,refStop = gene[0],gene[1],gene[2],int(gene[3]),int(gene[4])
-                if mmPos > refStart and mmPos < refStop: #check if is inside of gene location 
-                    numberExons = int(gene[7])
-                    exonStarts = gene[8].split(",")
-                    exonEnds = gene[9].split(",")
-                    geneName=geneId
-                    if geneId  in geneCountDict:
-                        countList = geneCountDict[geneId]
-                    else:
-                        #countList = [chr,refStart,refStop,5'utr,3'utr,intronic,exonic,totalNumber]
-                        countList = [refChr,refStart,refStop,0,0,0,0,0]
-                    if mmPos < int(exonStarts[0]):
-                        if strand == "+":
-                            location = "5'UTR"
-                            countList[3]+=1
-                        elif strand == "-":
-                            location = "3'UTR"
-                            countList[4]+=1
-                    elif mmPos > int(exonEnds[-2]):
-                        if strand == "+":
-                            location = "3'UTR"
-                            countList[4]+=1
-                        elif strand == "-":
-                            location = "5'UTR"
-                            countList[3]+=1
-                    else:
-                        for i in range(numberExons): #check if variant lies in Exon
-                            if int(exonStarts[i]) < mmPos and int(exonEnds[i]) > mmPos: #read is in front of exon
-                                location = "exonic"
-                                countList[5]+=1
-                        if location != "exonic":
-                            location = "intronic"
-                            countList[6]+=1
-                    
-                    countList[7]+=1 #count total number of missmatches in 
-                    geneCountDict[geneId]=countList
-            
-            #write ouputFile 
-            outFile.write("\t".join([line[0],line[1],line[2],line[3],line[4],line[5],geneName,location]) + "\n")
-            
-        #print count Table        
-        geneCountsFile = open(self.outfilePrefix + ".editedGenes.counts","w+")
-        geneCountsFile.write("\t".join(["Gene", "start", "stop","#5'utr","#3'utr","#intronic","#exonic","#total"])+"\n")
-        for geneName in geneCountDict.keys():
-            temp=map(str,geneCountDict[geneName]) #convert list to list of str
-            geneCountsFile.write(geneName + "\t" + "\t".join(temp)+"\n")               
-            
-            
-            
-            
-            
-        
-        duration=Helper.getTime()-startTime
-        print >> self.logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
-        self.logFile.flush()
-        print "\t[DONE]" + " Duration [" + str(duration) + "]"
             
     def __del__(self):
         if self.keepTemp==False:
-            os.remove(self.outfilePrefix+".vcf")
+            pass
+            #os.remove(self.outfilePrefix+".vcf")
             #os.remove(self.outfilePrefix+".no_dbsnp.vcf")
-           
             #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
             #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
             #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
@@ -610,6 +420,16 @@ class CallEditingSites(object):
             #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
             #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.noHomo.vcf")
             
+    def deleteNonEditingBases(self,variants):
+        startTime=Helper.getTime()
+        Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
+        
+        for varTuple in variants.variantDict.keys():
+            chr,pos,ref,alt = varTuple
+            if (ref =="A" and alt == "G") or (ref=="T" and alt=="C"):
+                pass
+            else:
+                del variants.variantDict[varTuple]
     
     def start(self):
         #Rough variant calling with GATK
@@ -622,58 +442,67 @@ class CallEditingSites(object):
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.logFile, self.overwrite)
         
         #read in initial SNPs
-        rawSnps = parseVcfFile_variantsDict(vcfFile)
-        print len(rawSnps)
+        variants = VariantSet(vcfFile)
+        
+        
+        #annotate all Variants
+        variants.annotateVariantDict(self.genome)
+        #print len(rawSnps)
         
         #delete SNPs from dbSNP
-        noDbsnp = deleteOverlappsFromA(rawSnps,self.dbsnp)
-        print len(noDbsnp)
+        variants.deleteOverlappsFromVcf(self.dbsnp)
+        #print len(noDbsnp)
        
         #delete variants from 1000 Genome Project
-        noOmni = deleteOverlappsFromA(noDbsnp, self.omni)
-        print len(noOmni)
+        variants.deleteOverlappsFromVcf(self.omni)
+        #print len(noOmni)
         
         #delete variants from UW exome calls
-        noEsp = deleteOverlappsFromA(noOmni, self.esp)
-        print len(noEsp)
+        variants.deleteOverlappsFromVcf(self.esp)
+        #print len(noEsp)
         
         #erase artificial missmatches from read-starts
-        noStartMissmatches = self.removeEdgeMissmatches(noEsp, self.bamFile, self.edgeDistance, 25)
-        print len(noStartMissmatches)
+        noStartMissmatches = self.removeEdgeMissmatches(variants, self.bamFile, self.edgeDistance, 25)
         
-        return noStartMissmatches
+        #print len(noStartMissmatches)
         
-        #split non-Alu and Alu regions
-        nonAlu = self.outfilePrefix + ".nonAlu.vcf"
-        alu = self.outfilePrefix + ".alu.vcf"
-        cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noStartMissmatches,"-b",self.aluRegions]
-        Helper.proceedCommand("write variants from non-alu regions",cmd, noStartMissmatches, nonAlu, self.logFile, self.overwrite)  # write nonAlu-Regions
-        cmd =  [self.sourceDir+"bedtools/intersectBed","-a",noStartMissmatches,"-b",self.aluRegions]
-        Helper.proceedCommand("write variants from alu regions",cmd, noStartMissmatches, alu, self.logFile, self.overwrite) #write alu-regions
+        nonAluVariants=copy(variants)
+        nonAluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=True)
+        
+        aluVariants=copy(variants)
+        aluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=False)
+        
+        
+        
+        #print out variants from Alu regions
+        
+        aluVariants.printVariantDict(self.outfilePrefix+".alu.vcf")
+        aluVariants.printGeneList(self.outfilePrefix+".alu.gvf", printSummary=True)
         
         #proceed with non-Alu reads only!!!
         #erase variants from intronic splice junctions
-        noSpliceSites = self.outfilePrefix + ".nonAlu.noSpliceSites.vcf"
-        self.removeIntronSpliceJunction(nonAlu, self.geneAnnotationFile, noSpliceSites)
+        self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
         
-        #remove sites from simple repeats
-        
-        #cmd =  [self.sourceDir+"bedtools/intersectBed","-v","-a",noStartMissmatches,"-b",self.simpleRepeats]
         
         #erase variants from homopolymer runs
-        noHomo = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.vcf"
-        self.removeHomopolymers(noSpliceSites, noHomo, 4)
+        self.removeHomopolymers(nonAluVariants,self.outfilePrefix, 4)
         
         #do blat search
-        blatOutfile = self.outfilePrefix + ".nonAlu.noSpliceSites.noHomo.blat.vcf"
-        self.blatSearch(noHomo, blatOutfile, 25, 1)
+        blatOutfile = self.outfilePrefix + "_blat"
+        self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
         
+        #print nonAlu variants
+        nonAluVariants.printVariantDict(self.outfilePrefix+".nonAlu.vcf")
+        nonAluVariants.printGeneList(self.outfilePrefix+".nonAlu.gvf", printSummary=True)
+        
+        variants=aluVariants+nonAluVariants
+        self.deleteNonEditingBases(variants)
+        
+        
+        variants.printVariantDict(self.outfilePrefix+".editingSites.vcf")
+        variants.printGeneList(self.outfilePrefix+".editingSites.gvf", printSummary=True)
         #combine alu and non Alu sites
-        combinedFile = self.outfilePrefix + ".editingSites.vcf"
-        self.combineFiles(alu, blatOutfile, combinedFile)
         
-        annotatedFile = self.outfilePrefix + ".annotated.vcf"
-        self.annotateVariants(self.geneAnnotationFile, combinedFile, annotatedFile)
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
@@ -684,7 +513,7 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=argparse.FileType('r'), default='/media/media/databases/human/1000G_omni2.5.b37.sites.vcf')
     parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=argparse.FileType('r'), default='/media/media/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
     parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=argparse.FileType('r'), default='/media/media/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
-    parser.add_argument('-G', '--geneAnnotation', help='Gene annotation File in bed format', type=argparse.FileType('r'), default='/media/media/databases/human/hg19/UCSC_Genes_noChr.ucsc')
+    parser.add_argument('-gtf', '--gtfFile', help='Gene annotation File in GTF format', type=argparse.FileType('r'))
     parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
     parser.add_argument('-d', '--sourceDir', help='- Directory to all the tools [default: bin/]', default='bin/', type=Helper.readable_dir)
     parser.add_argument('-t', '--threads', help='number of threads', type=int, default=multiprocessing.cpu_count()-1)
@@ -698,7 +527,7 @@ if __name__ == '__main__':
 
     call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, 
                           args.hapmap.name, args.omni.name, args.esp, 
-                          args.aluRegions, args.geneAnnotation, args.output, 
+                          args.aluRegions, args.gtfFile, args.output, 
                           args.sourceDir, args.threads, args.standCall, 
                           args.standEmit, args.edgeDistance, args.keepTemp, 
                           args.overwrite)

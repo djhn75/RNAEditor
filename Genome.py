@@ -12,14 +12,14 @@ from itertools import izip
 from array import array
 from Transcript import Transcript
 from __builtin__ import SyntaxError
-import operator
+from operator import attrgetter
 
 '''
 classdocs
 '''
-class Transcriptome(object):
+class Genome(object):
     
-    def __init__(self):
+    def __init__(self,gtfFile):
         '''
         Constructor
         '''
@@ -33,19 +33,13 @@ class Transcriptome(object):
         self.geneTypes  = set() #set of all possible geneTypes (sources)
 
 
-        #
-        #   gene_id -> beg/end/cdna_id/exon_index
         #   gene_id -> (gene_name,contig,strand)
-        #
         self.uniqGeneSet = set()
         self.uniqGene_to_source = dict()
         self.uniqGene_to_names          = defaultdict(set)
         self.uniqGene_to_transcriptIds       = defaultdict(set)
         
-
-        #
         #   transcriptId
-        #
         self.transcriptId_to_names        = defaultdict(set)
         self.transcriptId_to_protId      = dict()
         self.transcriptId_to_startCodons = defaultdict(tuple)
@@ -55,6 +49,11 @@ class Transcriptome(object):
         self.transcriptId_to_codingFrames= defaultdict(set)
 
         self.transcriptIds        = defaultdict(set)
+        
+        #this fills also the dictionary self.geneByChromosome
+        self.createTranscriptomeFromFile(gtfFile)
+        self.genesByChromosome = self.getGenesByChromosome()
+        
         
     def parseGtf(self,gtfFile):
         """
@@ -101,14 +100,14 @@ class Transcriptome(object):
         '''
         Loop over uniqueGeneSet, in which the ENSG-IDs are saved, 
         and assemble all the transcripts and exons for this gene and save it as a Gene object.
-        This gene obeject ist then added to the geneList of this Transcriptome object        
+        This gene obeject ist then added to the geneList of this Genome object        
         '''
         
-        transcriptsByType = defaultdict(list)
+        #transcriptsByType = defaultdict(list)
         
         #construct Genes
         for uniqGene in self.uniqGeneSet:
-            geneId, chr, strand = uniqGene
+            geneId, chromosome, strand = uniqGene
             
             geneNames = list(self.uniqGene_to_names[uniqGene])
             geneType = self.uniqGene_to_source[uniqGene]
@@ -124,8 +123,7 @@ class Transcriptome(object):
             geneExons = sorted(geneExons, reverse = not strand)    
             geneCds = sorted(geneCds, reverse = not strand)
             
-            gene = Gene(geneId, chr, strand, geneType, geneNames, geneExons, geneCds)
-            
+            gene = Gene(geneId, chromosome, strand, geneType, geneNames, geneExons, geneCds)
             
             geneExons = dict(izip(geneExons,xrange(1000000)))
             geneCds = dict(izip(geneCds,xrange(1000000))) 
@@ -155,13 +153,9 @@ class Transcriptome(object):
                 
                 gene.addTranscript(transcript)
             
-        self.genesByChromosome = self.getGenesByChromosome()
-        self.sortGenesByChromosomeDict()
-        
-            
     def createTranscriptomeFromFile(self,gtfFilePath):
         """
-        Construct Transcriptome from GTF File
+        Construct Genome from GTF File
         Saves all the information in dictionarys
         
         This function calls internally:
@@ -186,6 +180,9 @@ class Transcriptome(object):
         duration = Helper.getTime() -startTime
         Helper.info(" Finished parsing in %s" % (str(duration)))
         
+        del self.featureTypes
+        del self.geneTypes
+        
         #delete unneccesarry variables
         del self.uniqGeneSet
         del self.uniqGene_to_source
@@ -205,8 +202,6 @@ class Transcriptome(object):
         del self.transcriptId_to_codingFrames
 
         del self.transcriptIds
-        
-        return self.genesByChromosome
      
     def findOverlappingGenes(self, chromosome, start, stop):
         """
@@ -228,6 +223,7 @@ class Transcriptome(object):
     def getGenesByChromosome(self):
         """
         Returns a dictionary with chromosomes as key and all the genes on the chromosome as values
+        The genes are also sorted
         {"1":[Gene1,Gene2....]}  
         """
         
@@ -237,7 +233,12 @@ class Transcriptome(object):
         else:
             for gene in self.geneList:
                 genesByChr[gene.chromosome].append(gene)
-            return genesByChr    
+            
+            #sort genes by by start and end
+            for key in genesByChr.keys():
+                genesByChr[key] = sorted(genesByChr[key], key=attrgetter('start','end'))
+        
+        return genesByChr    
         
     def getGenesByGeneID(self):
         """
@@ -253,25 +254,58 @@ class Transcriptome(object):
         """
             returns information for the given region like (3'UTR,Exon,Intron,5'UTR)
         """
+        #TODO: write this function like annotate Region
         
     def annotatePosition(self,chromosome, position):
-        """
-            returns information for the given position like (3'UTR,Exon,Intron,5'UTR)
-        """
-        
+        '''
+        returns the gene and information for the given position like (3'UTR,Exon,Intron,5'UTR)
+        :param chromosome: String
+        :param position: Int
+        :return list of Tuples List[(gene,segment1;segment2..)...]
+        '''
+        result=[]
 
         #Loop over the genes of the chromosome
         for gene in self.genesByChromosome[chromosome]:
             #check if the position is in the current gene
-            if gene.start < position and gene.end > position:
-                pass
             
-    def sortGenesByChromosomeDict(self):
-        '''
-        Sorts a Gene Dictionary by the start and end position
-        :param geneByChromosome:
-        '''
-        #if type(geneByChromosome) != list:
-        #    raise TypeError("variants has wrong type, need geneByChromosome, %s found" % type(geneByChromosome))
-        for key in self.genesByChromosome.keys():
-            self.genesByChromosome[key] = sorted(self.genesByChromosome[key], key=operator.attrgetter('start','end'))
+            #geneName=None
+            segment = set()
+            
+            if gene.start < position < gene.end:
+                #geneName=gene.names[0]    
+                
+                if len(gene.codingExons)>0:
+                    #check if position is in front of first coding exon
+                    if (gene.strand and position < gene.codingExons[0][0]) or (not gene.strand and position > gene.codingExons[0][1]):
+                        for exon in gene.exons:
+                            if exon[0]<position<exon[1]:
+                                segment.add("5'UTR")
+                                continue
+                    #check if position is behind the last coding exon
+                    elif (gene.strand and position > gene.codingExons[-1][1]) or not gene.strand and position < gene.codingExons[-1][0] :
+                        for exon in gene.exons:
+                            if exon[0]<position<exon[1]:
+                                segment.add("3'UTR")
+                                continue
+                    
+                    for cds in gene.codingExons:
+                        if cds[0] < position < cds[1]:
+                            segment.add("coding-exon")
+                            continue
+                else:
+                    for exon in gene.exons:
+                        if exon[0] < position < exon[1]:
+                            segment.add("noncoding-exon")
+                            continue
+                
+                if len(segment)==0:
+                    segment.add("intron")
+                    
+                result.append((gene,tuple(segment)))
+        if result == []:
+            result.append(("-",tuple(["intergenic"]))) 
+        #return geneName, segment    
+        return result
+        
+  

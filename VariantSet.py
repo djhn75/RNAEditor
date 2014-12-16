@@ -7,14 +7,15 @@ from Helper import Helper
 from collections import defaultdict
 import os
 import operator
+from copy import copy
 
 
 class Variant:
     '''
     reflects a Variant
     '''
-    annotation={}
-    def __init__(self, chromosome, position, id, ref, alt, qual, filter, info, baseCounts ):
+
+    def __init__(self, chromosome, position, id, ref, alt, qual, filter, info):
         self.chromosome = chromosome
         self.position = position
         self.id = id
@@ -22,11 +23,8 @@ class Variant:
         self.alt = alt
         self.qual = qual
         self.filter = filter
-        self.info = info
-        if type(baseCounts) == list and len(baseCounts) == 4 or baseCounts == None:
-            self.baseCounts = baseCounts #[A,C,G,T] number of reads which contain the appropriate base 
-        else:
-            raise TypeError("Parameter Basecount is malformed: %s " % str(baseCounts))
+        self.attributes = info
+        
 
 
 class VariantSet(object):
@@ -36,6 +34,14 @@ class VariantSet(object):
     def __init__(self,vcfFile):
         self.variantDict = self.parseVcf(vcfFile)
         #return self.parseVcfFile_variantSetByChromosome(vcfFile)
+    
+    def __add__(self,other):
+        newVariantSet = copy(self)
+        newDict = {}
+        newDict.update(self.variantDict)
+        newDict.update(other.variantDict)
+        newVariantSet.variantDict=newDict
+        return newVariantSet
     
     def readline(self,line):
         '''
@@ -47,8 +53,7 @@ class VariantSet(object):
         try:
             vcfList[1] = int(vcfList[1]) #position of SNP
             vcfList[5] = float(vcfList[5]) if vcfList[5] !="." else 0.0
-            
-            
+
         except ValueError:
             raise ValueError("Error in line '%s'" % " ".join(line))
 
@@ -57,12 +62,31 @@ class VariantSet(object):
         #trim comments
         info=info[:info.find("#")].rstrip()
         
-        baseCountPos = info.find("BaseCounts")
-        if baseCountPos != -1:
-            #extract BaseCounts from list and save it in a list
-            vcfList[8] = info[baseCountPos:info.find(";", baseCountPos)].split("=")[1].split(",") 
-        else:
-            vcfList[8] = None
+        values = map(lambda x: x.strip(), info.split(";")[:-1])
+        
+        attributes={}
+        for info in values:
+            info = map( lambda x: x.strip(), info.split("="))
+            if len(info)>1:
+                name, value=info[0], info[1]
+                try:
+                    value=float(value)
+                    value=int(value)
+                except ValueError:
+                        pass
+                except TypeError:
+                        pass    
+               
+                if name == "BaseCounts":
+                    value = value.split(",")
+                if name == "GI":
+                    a=[]
+                    for anno in value.split(","):
+                        gene,segments=anno.split(":")
+                        a.append((gene,set(segments.split("|"))))
+                attributes[name]=value
+        
+        vcfList[7]=attributes    
         return vcfList
     
     def checkVariantType(self,variants):
@@ -86,23 +110,14 @@ class VariantSet(object):
             if not line: raise StopIteration
             if line.startswith("#"): continue #skip comments
             vcfList=self.readline(line)
-            variant = Variant(vcfList[0],vcfList[1],vcfList[2],vcfList[3],vcfList[4],vcfList[5],vcfList[6],vcfList[7],vcfList[8])
+            variant = Variant(vcfList[0],vcfList[1],vcfList[2],vcfList[3],vcfList[4],vcfList[5],vcfList[6],vcfList[7])
             yield variant
     
     def getVariantSetByChromosome(self):
         '''
-        Imports a given Variant File and returns the variants as Dictionary with chromosome as key and a list of VariantObjects as values
+        returns the variants as Dictionary with chromosome as key and a list of VariantObjects as values
         {"1":[VariantObject1,VariantObject2....],"2":[VariantObject1,VariantObject2....]}
         
-        '''
-        startTime = Helper.getTime()
-        #Helper.info(" [%s] Parsing Variant Data from %s" % (startTime.strftime("%c"),vcfFile))
-        
-        #check correct Type
-        '''if type(vcfFile) == str:
-            vcfFile = open(vcfFile)
-        elif type(vcfFile) != file:
-            raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(vcfFile)) 
         '''
         variantsByChromosome = defaultdict(list)
         for v in self.variantDict.values():
@@ -136,7 +151,7 @@ class VariantSet(object):
         Helper.printTimeDiff(startTime)
         return variantDict
     
-    def printVariantDict(self,variantDict,outfile=None):
+    def printVariantDict(self,outfile):
         '''
         print the variants from the dictionary to the outfile if defined
         '''
@@ -145,32 +160,85 @@ class VariantSet(object):
                 outfile=open(outfile,"w")
             except IOError:
                 Helper.warning("Could not open %s to write Variant" % outfile )
-        elif type(outfile) == file:   
-            outfile.write("\t".join(["#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "\n"]))
-            for v in variantDict.values():
-                
-                outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, v.info, "\n"]))    
-        else:
-            raise AttributeError("Invalid outfile type in 'parseVcfFile' (need string or file, %s found)" % type(outfile))
+        if type(outfile) != file:   
+            raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
             
-    def printVariantSet(self,variantSet,variantDict,outfile=None):
+        outfile.write("\t".join(["#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "\n"]))
+        for v in self.variantDict.values():
+            attributeString=""
+            for key in v.attributes.keys():
+                if key =="GI":
+                    a=""
+                    for anno in v.attributes["GI"]:
+                        gene,segment = anno
+                        if gene == "-":
+                            a += gene+":"+"|".join(segment)  
+                        else: 
+                            gene.geneId+":"+"|".join(segment)+","  
+                    attributeString+=key+"="+a+";"
+                    continue
+                attributeString+= key+"="+str(v.attributes[key])+";"
+            outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, attributeString+"\n"]))    
+
+    def printGeneList(self,outfile,printSummary=True):
+        '''print List of genes with all the variants
+        Gene-Variation-File
+        "Gene_ID","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"
+        
+        Gene Summary File
+        "Gene_ID",#3'UTR,#5'UTR,#EXON,'INTRON,#TOTAL
+        
         '''
-        prints variants from the set to the outfile if defined
-        ''' 
-        if outfile != None:
+        sumDict={}
+        
+        if type(outfile) == str:
+            sumFile=outfile[:outfile.rfind(".")]+".summary"
             try:
                 outfile=open(outfile,"w")
+                
             except IOError:
                 Helper.warning("Could not open %s to write Variant" % outfile )
-            
-            for key in variantDict.values():
-                v = variantDict[key] 
-                outfile.write("\t".join([v.chromosome,str(v.position),v.ref,v.alt,str(v.qual),v.filter,v.info,"\n"]))    
-        else:
-            for key in variantSet:
-                v = variantDict[key]
-                print "\t".join([v.chromosome,str(v.position),v.ref,v.alt,str(v.qual),v.filter,v.info,"\n"])
-            
+        if type(outfile) != file:   
+            raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
+        
+        sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
+        outfile.write("\t".join(["Gene_ID","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"]))
+        for v in self.variantDict.values():
+            anno = v.attributes["GI"]
+            for a in anno:
+                #TODO: change return type of annotate postion to gene-object
+                gene,segments = a
+                if gene == "-":
+                    outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),v.ref,v.alt,str(v.qual),",".join(v.attributes["BaseCounts"]),"\n"]))
+                else:
+                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),v.ref,v.alt,str(v.qual),",".join(v.attributes["BaseCounts"]),"\n"]))
+                
+                #count variations per gene
+                if gene not in sumDict:
+                    sumDict[gene]= [0,0,0,0,0]
+                
+                for seg in segments:
+                    if seg == "3'UTR":
+                        sumDict[gene][0]+=1
+                    elif seg == "5'UTR":
+                        sumDict[gene][1]+=1
+                    elif seg in ("coding-exon","noncoding-exon"):
+                        sumDict[gene][2]+=1
+                    elif seg == "intron":
+                        sumDict[gene][3]+=1
+                    sumDict[gene][4]+=1
+                    
+        #print number of variants per gene
+        if printSummary:
+            outfile.write("\t".join(["Gene_ID","#3'UTR","#5'UTR","#EXON","INTRON","#TOTAL"]))
+            for gene in sumDict.keys():
+                numbers=map(str,sumDict[gene])
+                if gene=="-":
+                    sumFile.write("\t".join(["intergenic","-"]+["-","-","-","-",numbers[4]]+["\n"]))
+                else:
+                    sumFile.write("\t".join([gene.geneId,gene.names[0]]+numbers+["\n"]))
+                
+        
     def getVariantTuble(self,line):
         '''
         returns a tuple of (chromosome, position, alt, ref) from a line of a vcfFile
@@ -183,7 +251,7 @@ class VariantSet(object):
             raise ValueError("Error in line '%s'" % " ".join(line))
         return tuple
     
-    def deleteOverlapps(self,variants):
+    def deleteOverlappsFromVcf(self,variants):
         '''
         delete the variants from 'variantsA' which also are in 'variantsB'
         '''
@@ -213,6 +281,46 @@ class VariantSet(object):
         #calculate duration 
         Helper.printTimeDiff(startTime)
     
+    def getOverlappsFromBed(self,bedFile,getNonOverlapps=False):
+        startTime=Helper.getTime()
+        
+        
+        if type(bedFile) == str:
+            bedFile = open(bedFile)
+        elif type(bedFile) != file:
+            raise TypeError("bedFile has wrong type, need str or file, %s found" % type(bedFile))
+        
+        startTime=Helper.getTime()
+        Helper.info(("Delete overlaps with %s" % bedFile.name))
+        
+        variantsByChromosome = self.getVariantSetByChromosome() 
+        overlapps = set()
+        for line in bedFile:
+            try:
+                sl = line.split("\t") 
+                #if "\t" in line else line.split(" ")
+                chromosome,start,stop = sl[:3]
+                start,stop=(int(start),int(stop))
+            except ValueError:
+                raise ValueError("Error in line '%s'" % line)
+            
+            for v in variantsByChromosome[chromosome]:
+                if start < v.position < stop:
+                    overlapps.add((v.chromosome,v.position,v.ref,v.alt))
+                     
+        if getNonOverlapps:
+            overlapps = set(self.variantDict.keys()) - overlapps #delete all accept the ones which are overlapping
+        
+        newSet={}
+        for variantTuple in overlapps:
+            #del self.variantDict[variantTuple]
+            newSet[variantTuple]=self.variantDict[variantTuple]
+        
+        Helper.printTimeDiff(startTime)
+        return newSet
+    
+    
+    
     def sortVariantDict(self,variantDict):
         '''
         Sorts a VariantDictionary by the variant position
@@ -230,7 +338,9 @@ class VariantSet(object):
         '''
         for v in self.variantDict.values():
             anno = genome.annotatePosition(v.chromosome,v.position) #[(gene1,segment1;segment2;..)..]
-            for gene,segments in anno:
-                v.annotation[gene]=segments
+            GI=[]
+            for a in anno:
+                GI.append(a)
+            v.attributes["GI"]=GI
         #TODO: Test this stupid shit
             
