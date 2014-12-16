@@ -202,7 +202,7 @@ class VariantSet(object):
             raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
         
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
-        outfile.write("\t".join(["Gene_ID","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"]))
+        outfile.write("\t".join(["#Gene_ID","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"]))
         for v in self.variantDict.values():
             anno = v.attributes["GI"]
             for a in anno:
@@ -230,7 +230,7 @@ class VariantSet(object):
                     
         #print number of variants per gene
         if printSummary:
-            outfile.write("\t".join(["Gene_ID","#3'UTR","#5'UTR","#EXON","INTRON","#TOTAL"]))
+            sumFile.write("\t".join(["#Gene_ID","#3'UTR","#5'UTR","#EXON","INTRON","#TOTAL","\n"]))
             for gene in sumDict.keys():
                 numbers=map(str,sumDict[gene])
                 if gene=="-":
