@@ -238,7 +238,6 @@ class VariantSet(object):
                 else:
                     sumFile.write("\t".join([gene.geneId,gene.names[0]]+numbers+["\n"]))
                 
-        
     def getVariantTuble(self,line):
         '''
         returns a tuple of (chromosome, position, alt, ref) from a line of a vcfFile
@@ -318,9 +317,7 @@ class VariantSet(object):
         
         Helper.printTimeDiff(startTime)
         return newSet
-    
-    
-    
+
     def sortVariantDict(self,variantDict):
         '''
         Sorts a VariantDictionary by the variant position
@@ -336,11 +333,15 @@ class VariantSet(object):
         adds the corresponding Gene and the exact segment wehre the SNP appears
         :param genome: Genome
         '''
+        startTime = Helper.getTime()
+        Helper.info(" [%s] Annotating Variants" % (startTime.strftime("%c")))
         for v in self.variantDict.values():
             anno = genome.annotatePosition(v.chromosome,v.position) #[(gene1,segment1;segment2;..)..]
             GI=[]
             for a in anno:
                 GI.append(a)
             v.attributes["GI"]=GI
+        
+        Helper.printTimeDiff(startTime)
         #TODO: Test this stupid shit
             

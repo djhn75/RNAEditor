@@ -163,7 +163,7 @@ class CallEditingSites(object):
             if not keepSNP:
                 del variants.variantDict[varKey]    
             counter+=1
-            if counter % 10 == 0: #print out current status
+            if counter % 100 == 0: #print out current status
                 Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished")
         
     
@@ -186,7 +186,7 @@ class CallEditingSites(object):
                 if gene.start < position < gene.end:#check if is inside of gene location
                     for exon in gene.codingExons:
                         if (exon[0]-distance < position < exon[0]) or (exon[1] < position < exon[1]+distance):
-                            print(key)
+                            #print(key)
                             delVar=True
             if delVar:
                 del variants.variantDict[key]
@@ -294,7 +294,7 @@ class CallEditingSites(object):
     
                 counter += 1
                 if counter % 1000 == 0:
-                    sys.stdout.write("\r" + str(counter) + " of " + mmNumberTotal + " variants done")
+                    sys.stdout.write("\r" + str(counter) + " of " + str(mmNumberTotal) + " variants done")
                     sys.stdout.flush()
         
             Helper.info("\n created fasta file " + tempFasta)

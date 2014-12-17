@@ -102,7 +102,6 @@ class Genome(object):
         and assemble all the transcripts and exons for this gene and save it as a Gene object.
         This gene obeject ist then added to the geneList of this Genome object        
         '''
-        
         #transcriptsByType = defaultdict(list)
         
         #construct Genes
@@ -167,7 +166,7 @@ class Genome(object):
         startTime = Helper.getTime()
         Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
         
-        #parse GTF file
+        #check fileType of Genome File
         if gtfFilePath.endswith(".gz"):
             gtfFile = gzip.open(gtfFilePath)
         else:
@@ -188,7 +187,6 @@ class Genome(object):
         del self.uniqGene_to_source
         del self.uniqGene_to_names
         del self.uniqGene_to_transcriptIds
-        
 
         #
         #   transcriptId
@@ -200,7 +198,6 @@ class Genome(object):
         del self.transcriptId_to_exons
         del self.transcriptId_to_cds
         del self.transcriptId_to_codingFrames
-
         del self.transcriptIds
      
     def findOverlappingGenes(self, chromosome, start, stop):

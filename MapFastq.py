@@ -48,7 +48,6 @@ class MapFastq(object):
         
         #set fastQ files
         if self.paired ==True:
-            
             self.fastqFile1=fastqFiles[0] if os.path.exists(fastqFiles[0]) else Exception("first Read-File not found!!!")
             self.fastqFile2=fastqFiles[1] if os.path.exists(fastqFiles[1]) else Exception("second Read-File not found!!!")
         elif self.paired==False:
