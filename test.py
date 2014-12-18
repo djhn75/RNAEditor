@@ -14,9 +14,10 @@ from itertools import izip
 from copy import copy, deepcopy
 import sys
 
-vcfFile=sys.argv[1]
+#vcfFile=sys.argv[1]
 #vcfFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcf"
 
+"""
 ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
                         refGenome="/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta", 
                         dbsnp="/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf", 
@@ -27,10 +28,11 @@ ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/s
                         gtfFile="/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf", 
                         outfilePrefix=vcfFile[:vcfFile.rfind(".")], 
                         sourceDir="/usr/local/bin/")
-
-
-#variants= VariantSet(vcfFile)
+"""
+g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
+variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.vcf")
+variants.annotateVariantDict(g)
 
 #ces.removeHomopolymers(variants, "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcfs", 4)
 
-ces.start()
+#ces.start()

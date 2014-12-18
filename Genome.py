@@ -278,28 +278,31 @@ class Genome(object):
                         for exon in gene.exons:
                             if exon[0]<position<exon[1]:
                                 segment.add("5'UTR")
-                                continue
+                                #continue
                     #check if position is behind the last coding exon
                     elif (gene.strand and position > gene.codingExons[-1][1]) or not gene.strand and position < gene.codingExons[-1][0] :
                         for exon in gene.exons:
                             if exon[0]<position<exon[1]:
                                 segment.add("3'UTR")
-                                continue
+                                #continue
                     
                     for cds in gene.codingExons:
                         if cds[0] < position < cds[1]:
                             segment.add("coding-exon")
-                            continue
+                            #continue
                 else:
                     for exon in gene.exons:
                         if exon[0] < position < exon[1]:
                             segment.add("noncoding-exon")
-                            continue
+                            #continue
                 
                 if len(segment)==0:
                     segment.add("intron")
                     
                 result.append((gene,tuple(segment)))
+                #if len(segment)>=2:
+                #   print(chromosome,gene.geneId,int(position),segment)
+                    
         if result == []:
             result.append(("-",tuple(["intergenic"]))) 
         #return geneName, segment    
