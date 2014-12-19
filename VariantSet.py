@@ -245,11 +245,13 @@ class VariantSet(object):
         '''
         line=line.split("\t")
         try:
-            tuple = (line[0],int(line[1]),line[3],line[4])
+            for alt in line[4].split(","):
+                tuple = (line[0],int(line[1]),line[3],alt)
+                yield tuple
             #tuple = (line[0],int(line[1]))
         except IndexError:
             raise ValueError("Error in line '%s'" % " ".join(line))
-        return tuple
+        #return tuple
     
     def deleteOverlappsFromVcf(self,variants):
         '''
@@ -272,11 +274,11 @@ class VariantSet(object):
         for line in variantsB:
             if line.startswith("#"):
                 continue
-            varTuple = self.getVariantTuble(line)
-            if varTuple in variantSetA:
+            for varTuple in self.getVariantTuble(line):
+                if varTuple in variantSetA:
                 #A.discard(varTuple)
-                variantSetA.remove(varTuple)
-                del self.variantDict[varTuple]
+                    variantSetA.remove(varTuple)
+                    del self.variantDict[varTuple]
         
         #calculate duration 
         Helper.printTimeDiff(startTime)

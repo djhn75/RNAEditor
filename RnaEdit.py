@@ -41,6 +41,11 @@ class RnaEdit(object):
         del self.callEditSites
         
 
+def checkTools(sourceDir):
+    if not os.path.isfile(sourceDir)
+    Helper.
+    pass
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
     parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
