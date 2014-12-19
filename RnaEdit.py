@@ -9,7 +9,7 @@
 from Helper import Helper
 from MapFastq import MapFastq
 from CallEditingSites import CallEditingSites
-import multiprocessing, argparse
+import multiprocessing, argparse, os
 
 
 class RnaEdit(object):
@@ -42,9 +42,25 @@ class RnaEdit(object):
         
 
 def checkTools(sourceDir):
-    if not os.path.isfile(sourceDir)
-    Helper.
-    pass
+    '''
+    Checks the existence of the necessary packages and tools
+    :param sourceDir: folder which contains all the software
+    '''
+    if not os.path.isfile(sourceDir+"bwa"):
+        Helper.error("BWA not found in %s" % sourceDir)
+    if not os.path.isfile(sourceDir+"picard-tools/SortSam.jar"):
+        Helper.error("SortSam.jar not found in %s" % sourceDir+"picard-tools")
+    if not os.path.isfile(sourceDir+"picard-tools/MarkDuplicates.jar"):
+        Helper.error("MarkDuplicates.jar not found in %s" % sourceDir+"picard-tools")
+    if not os.path.isfile(sourceDir+"GATK/GenomeAnalysisTK.jar"):
+        Helper.error("GenomeAnalysisTK.jar not found in %s" % sourceDir+"GATK/")
+    if not os.path.isfile(sourceDir+"bedtools/fastaFromBed"):
+        Helper.error("fastaFromBed not found in %s" % sourceDir+"bedtools/")
+    if not os.path.isfile(sourceDir+"blat"):
+        Helper.error("blat not found in %s" % sourceDir)
+    if not os.path.isfile(sourceDir+"samtools"):
+        Helper.error("samtools not found in %s" % sourceDir)
+        
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
@@ -69,7 +85,7 @@ if __name__ == '__main__':
     parser.add_argument('--overwrite', help='overwrite existing Files [False]', action='store_true', default=False)
     
     args = parser.parse_args()
-    
+    checkTools(args.sourceDir)
     edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
                  args.hapmap, args.omni, args.esp, 
                  args.aluRegions, args.geneAnnotation, args.output, 
@@ -78,7 +94,7 @@ if __name__ == '__main__':
                  args.standEmit,args.edgeDistance, args.keepTemp, 
                  args.overwrite)
     del edit
-    
+
     
     
 else:

@@ -218,6 +218,10 @@ class Helper():
     def warning (message):
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
     @staticmethod
+    def error (message):
+        #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
+        raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
+    @staticmethod
     def debug (message):
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
     @staticmethod
