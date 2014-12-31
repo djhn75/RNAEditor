@@ -29,10 +29,18 @@ ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/s
                         outfilePrefix=vcfFile[:vcfFile.rfind(".")], 
                         sourceDir="/usr/local/bin/")
 """
-#g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
+g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf")
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_Y.vcf")
-variants.deleteOverlappsFromVcf("/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf")
-#variants.annotateVariantDict(g)
+
+
+#variants.deleteOverlappsFromVcf("/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf")
+variants.annotateVariantDict(g)
+variants.printGeneList(g, "dink.gvf", True)
+gbc=g.getGenesByChromosome()
+
+for gene in gbc["Y"]:
+    print gene.geneId
+#print len(gbc["Y"])
 
 #ces.removeHomopolymers(variants, "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcfs", 4)
 

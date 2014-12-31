@@ -86,6 +86,7 @@ def iterator(infile):
         if not line: raise StopIteration
         if line.startswith("#"): continue #skip comments
         #added to handle GRCH38 which contains features for genes, transcripts and UTR's which have to be skipped
+        #TODO: change this to handle UTR's more precisely
         if line.split("\t")[2] not in ("CDS","exon","start_codon","stop_codon"): continue
         gtf = Feature()
         gtf.readline(line)

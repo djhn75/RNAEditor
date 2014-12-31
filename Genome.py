@@ -200,22 +200,6 @@ class Genome(object):
         del self.transcriptId_to_codingFrames
         del self.transcriptIds
      
-    def findOverlappingGenes(self, chromosome, start, stop):
-        """
-        Finds the gene wich are overlapping the given region
-        """   
-        if len(self.genesByChromosome):
-            raise Exception("GeneByChromosome Dictionary is empty")
-        
-        overlappingGenes = []
-        
-        try:
-            for gene in self.genesByChromosome[chromosome]:
-                if gene.start < start and gene.end > stop:
-                    overlappingGenes.append(gene)
-        except KeyError:
-            Helper.warning("chromosome %s not found in geneByChromosome" % chromosome)
-        return overlappingGenes
     
     def getGenesByChromosome(self):
         """

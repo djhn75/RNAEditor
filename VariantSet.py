@@ -8,7 +8,8 @@ from collections import defaultdict
 import os
 import operator
 from copy import copy
-
+from exceptions import KeyError
+from Genome import Genome
 
 class Variant:
     '''
@@ -181,16 +182,23 @@ class VariantSet(object):
                 attributeString+= key+"="+str(v.attributes[key])+";"
             outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, attributeString+"\n"]))    
 
-    def printGeneList(self,outfile,printSummary=True):
-        '''print List of genes with all the variants
+    def printGeneList(self,genome,outfile,printSummary=True):
+        '''
+        print List of genes with all the variants
         Gene-Variation-File
         "Gene_ID","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"
         
         Gene Summary File
         "Gene_ID",Gene_Name,#3'UTR,#5'UTR,#EXON,'INTRON,#TOTAL
-        
+        :param genome:  object of class Genome
+        :param outfile: 
+        :param printSummary: boolean wether to print summary-file
         '''
+
         sumDict={}
+        
+        if type(genome) != Genome:
+            raise AttributeError("Type of genome is %s, but has to be an object of Genome" % type(genome))
         
         if type(outfile) == str:
             sumFile=outfile[:outfile.rfind(".")]+".summary"
@@ -204,6 +212,7 @@ class VariantSet(object):
         
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
         outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"]))
+        
         for v in self.variantDict.values():
             anno = v.attributes["GI"]
             for a in anno:
@@ -228,9 +237,10 @@ class VariantSet(object):
                     elif seg == "intron":
                         sumDict[gene][3]+=1
                     sumDict[gene][4]+=1
-                    
+                         
         #print number of variants per gene
         if printSummary:
+            sumDictGeneIds=set()
             sumFile.write("\t".join(["#Gene_ID","Name","#3'UTR","#5'UTR","#EXON","INTRON","#TOTAL","\n"]))
             for gene in sumDict.keys():
                 numbers=map(str,sumDict[gene])
@@ -238,6 +248,18 @@ class VariantSet(object):
                     sumFile.write("\t".join(["intergenic","-"]+["-","-","-","-",numbers[4]]+["\n"]))
                 else:
                     sumFile.write("\t".join([gene.geneId,gene.names[0]]+numbers+["\n"]))
+                    sumDictGeneIds.add(gene.geneId)        
+            #print non effected Genes
+            #this was added to have the whole set og genes in the summary file
+            #so that it is easier to compare results in Excel
+            genesByGeneId=genome.getGenesByGeneID()
+            a=set(genesByGeneId.keys())
+            b=sumDictGeneIds
+            nonEffectedGenes = a-b
+            for geneId in nonEffectedGenes:
+                gene=genesByGeneId[geneId]
+                sumFile.write("\t".join([gene.geneId,gene.names[0]]+["0","0","0","0","0",]+["\n"]))
+                
                 
     def getVariantTuble(self,line):
         '''
@@ -252,6 +274,23 @@ class VariantSet(object):
         except IndexError:
             raise ValueError("Error in line '%s'" % " ".join(line))
         #return tuple
+    
+    def getVariantByGene(self):
+        '''
+        Returns a dictionary with geneId as key and all the variants on the gene as values
+        The genes are also sorted
+        {"1":[Gene1,Gene2....]}  
+        '''
+        variantByGene=defaultdict(set)
+        
+        try:
+            for v in self.variantDict.values():
+                for anno in v.attributes["GI"]:
+                    gene,segment = anno
+                    variantByGene[gene].add(v)
+        except KeyError:
+            raise KeyError("Variant has no attribute GI. Try to run 'annotateVariantDict' before to get GeneInfo")
+        return variantByGene
     
     def deleteOverlappsFromVcf(self,variants):
         '''
