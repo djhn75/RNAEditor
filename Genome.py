@@ -235,7 +235,7 @@ class Genome(object):
         """
             returns information for the given region like (3'UTR,Exon,Intron,5'UTR)
         """
-        #TODO: write this function like annotate Region
+        #TODO: write this function like annotate position
         
     def annotatePosition(self,chromosome, position):
         '''

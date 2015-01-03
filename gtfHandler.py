@@ -70,6 +70,8 @@ class Feature:
                 self.geneId = value
             elif name == "transcript_id":
                 self.transcriptId = value
+            elif name == "gene_biotype":
+                self.source=value
             else:
                 self.attributes[name]=value
 

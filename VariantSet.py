@@ -105,7 +105,6 @@ class VariantSet(object):
                 raise TypeError("variants has wrong type, need variantDict, str or file, %s found" % type(variants))
                   
     def iterator(self,infile):
-    
         while True:
             line = infile.readline()
             if not line: raise StopIteration
@@ -216,7 +215,6 @@ class VariantSet(object):
         for v in self.variantDict.values():
             anno = v.attributes["GI"]
             for a in anno:
-                #TODO: change return type of annotate postion to gene-object
                 gene,segments = a
                 if gene == "-":
                     outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),v.ref,v.alt,str(v.qual),",".join(v.attributes["BaseCounts"]),"\n"]))
@@ -385,5 +383,4 @@ class VariantSet(object):
             v.attributes["GI"]=GI
         
         Helper.printTimeDiff(startTime)
-        #TODO: Test this stupid shit
             

@@ -226,7 +226,6 @@ class CallEditingSites(object):
             
             pattern = ref*distance
             
-            #TODO:
             """ !!!Test if this gives better results
                 !!!ONLY DELETE IF MM IS AT THE END OF A HOMOPOLYMER NUKLEOTIDES
             if sequence.startswith(pattern):
