@@ -476,7 +476,7 @@ class CallEditingSites(object):
         #print out variants from Alu regions
         
         aluVariants.printVariantDict(self.outfilePrefix+".alu.vcf")
-        aluVariants.printGeneList(self.outfilePrefix+".alu.gvf", printSummary=True)
+        aluVariants.printGeneList(self.genome,self.outfilePrefix+".alu.gvf", printSummary=True)
         
         #proceed with non-Alu reads only!!!
         #erase variants from intronic splice junctions
@@ -492,14 +492,14 @@ class CallEditingSites(object):
         
         #print nonAlu variants
         nonAluVariants.printVariantDict(self.outfilePrefix+".nonAlu.vcf")
-        nonAluVariants.printGeneList(self.outfilePrefix+".nonAlu.gvf", printSummary=True)
+        nonAluVariants.printGeneList(self.genome,self.outfilePrefix+".nonAlu.gvf", printSummary=True)
         
         variants=aluVariants+nonAluVariants
         self.deleteNonEditingBases(variants)
         
         
         variants.printVariantDict(self.outfilePrefix+".editingSites.vcf")
-        variants.printGeneList(self.outfilePrefix+".editingSites.gvf", printSummary=True)
+        variants.printGeneList(self.genome,self.outfilePrefix+".editingSites.gvf", printSummary=True)
         #combine alu and non Alu sites
         
         

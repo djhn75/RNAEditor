@@ -114,7 +114,6 @@ class MapFastq(object):
         
             #convert sai to sam
             samFile=self.outfilePrefix+".sam"
-            #TODO:check for paired
             cmd = [self.sourceDir + "bwa", "sampe", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.refGenome, saiFile1, saiFile2, self.fastqFile1, self.fastqFile2]
             Helper.proceedCommand("convert sai to sam", cmd, saiFile1, samFile, self.logFile, self.overwrite)
         elif self.paired == False:  #For single end sequencing
@@ -125,7 +124,7 @@ class MapFastq(object):
             
             #convert sai to sam
             samFile=self.outfilePrefix+".sam"
-            #TODO:check for paired
+
             cmd = [self.sourceDir + "bwa", "samse", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.refGenome, saiFile, self.fastqFile]
             Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.logFile, self.overwrite)
         
