@@ -447,7 +447,7 @@ class CallEditingSites(object):
         #annotate all Variants
         variants.annotateVariantDict(self.genome)
         #print len(rawSnps)
-        
+        '''
         #delete SNPs from dbSNP
         variants.deleteOverlappsFromVcf(self.dbsnp)
         #print len(noDbsnp)
@@ -460,11 +460,9 @@ class CallEditingSites(object):
         variants.deleteOverlappsFromVcf(self.esp)
         #print len(noEsp)
         
-        #erase artificial missmatches from read-starts
-        noStartMissmatches = self.removeEdgeMissmatches(variants, self.bamFile, self.edgeDistance, 25)
-        
-        #print len(noStartMissmatches)
-        
+        #erase artificial missmatches at read-edges from variants
+        self.removeEdgeMissmatches(variants, self.bamFile, self.edgeDistance, 25)
+        '''
         nonAluVariants=copy(variants)
         nonAluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=True)
         
