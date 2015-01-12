@@ -234,7 +234,25 @@ class Genome(object):
     def annotateRegion(self,chromosome,start,stop):
         """
             returns information for the given region like (3'UTR,Exon,Intron,5'UTR)
+        
+        Gene ......|---------gene1-----------|...................|-----gene2------|...
+        pos1 ...|----pos1----|......................................
+        pos2 ................|---pos2----|..........................
+        pos3 ..........................|-------pos3----|............
+        pos4 ..|------------------------pos4---------------|........
+        pos5 |pos5|..................................................
+        pos6...|----------------------------------------pos6-------------------------|.....
         """
+       
+       
+       
+        for gene in self.genesByChromosome[chromosome]:
+            segment=set()
+            
+            if start < gene.start < stop and stop < gene.end:
+                #case 1
+                pass 
+        
         #TODO: write this function like annotate position
         
     def annotatePosition(self,chromosome, position):
