@@ -58,21 +58,23 @@ class Feature:
         for info in values:
             info = map( lambda x: x.strip(), info.split(" "))
             name, value=info[0], info[1].replace("\"","")
-            try:
-                value=float(value)
-                value=int(value)
-            except ValueError:
-                    pass
-            except TypeError:
-                    pass    
-           
+
             if name == "gene_id":
                 self.geneId = value
             elif name == "transcript_id":
                 self.transcriptId = value
             elif name == "gene_biotype":
                 self.source=value
+            elif name == "gene_name":
+                self.attributes[name]=value    
             else:
+                try:
+                    value=float(value)
+                    value=int(value)
+                except ValueError:
+                    pass
+                except TypeError:
+                    pass    
                 self.attributes[name]=value
 
         if not self.geneId:
