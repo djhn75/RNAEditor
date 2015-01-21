@@ -17,6 +17,15 @@ import sys
 #vcfFile=sys.argv[1]
 #vcfFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcf"
 
+import os
+
+if os.system("java -version")==0:
+    print 0
+else:
+    print 1
+while True:
+    pass
+
 """
 ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
                         refGenome="/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta", 
@@ -28,7 +37,7 @@ ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/s
                         gtfFile="/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf", 
                         outfilePrefix=vcfFile[:vcfFile.rfind(".")], 
                         sourceDir="/usr/local/bin/")
-"""
+
 g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf")
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_Y.vcf")
 
@@ -47,3 +56,4 @@ for gene in gbc["Y"]:
 #ces.removeHomopolymers(variants, "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcfs", 4)
 
 #ces.start()
+"""

@@ -46,6 +46,10 @@ def checkTools(sourceDir):
     Checks the existence of the necessary packages and tools
     :param sourceDir: folder which contains all the software
     '''
+    Helper.newline(3)
+    Helper.info("CHECK DEPENDENCIES")
+    
+    
     if not os.path.isfile(sourceDir+"bwa"):
         Helper.error("BWA not found in %s" % sourceDir)
     if not os.path.isfile(sourceDir+"picard-tools/SortSam.jar"):
@@ -60,6 +64,9 @@ def checkTools(sourceDir):
         Helper.error("blat not found in %s" % sourceDir)
     if not os.path.isfile(sourceDir+"samtools"):
         Helper.error("samtools not found in %s" % sourceDir)
+    if not os.system("java -version")==0:
+        Helper.error("Java could not be found, Please install java")
+    
         
 
 if __name__ == '__main__':
@@ -86,15 +93,16 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     checkTools(args.sourceDir)
-    edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
+    """edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
                  args.hapmap, args.omni, args.esp, 
                  args.aluRegions, args.geneAnnotation, args.output, 
                  args.sourceDir, args.threads, args.maxDiff, 
                  args.seedDiff, args.paired, args.standCall,
                  args.standEmit,args.edgeDistance, args.keepTemp, 
                  args.overwrite)
+    
     del edit
-
+    """
     
     
 else:

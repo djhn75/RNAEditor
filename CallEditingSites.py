@@ -247,7 +247,7 @@ class CallEditingSites(object):
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,variants, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
-        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")))
+        Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")))
         
         counter=0
         geneHash = {}

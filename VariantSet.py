@@ -162,6 +162,9 @@ class VariantSet(object):
                 Helper.warning("Could not open %s to write Variant" % outfile )
         if type(outfile) != file:   
             raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
+        
+        startTime=Helper.getTime()
+        Helper.info("[%s] Print Variants to %s" %  (startTime.strftime("%c"),outfile.name))
             
         outfile.write("\t".join(["#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "\n"]))
         for v in self.variantDict.values():
@@ -208,6 +211,9 @@ class VariantSet(object):
                 Helper.warning("Could not open %s to write Variant" % outfile )
         if type(outfile) != file:   
             raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
+        
+        startTime=Helper.getTime()
+        Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outfile.name))
         
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
         outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"]))
@@ -330,7 +336,7 @@ class VariantSet(object):
             raise TypeError("bedFile has wrong type, need str or file, %s found" % type(bedFile))
         
         startTime=Helper.getTime()
-        Helper.info(("Delete overlaps with %s" % bedFile.name))
+        Helper.info("[%s] Delete overlaps from %s" %  (startTime.strftime("%c"),bedFile.name))
         
         variantsByChromosome = self.getVariantSetByChromosome() 
         overlapps = set()

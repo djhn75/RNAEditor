@@ -212,6 +212,9 @@ class Helper():
         duration = Helper.getTime() - startTime
         sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
+    def newline (quantity=1):
+        sys.stderr.write("\n"*quantity)
+    @staticmethod
     def info (message):
         sys.stderr.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
     @staticmethod
