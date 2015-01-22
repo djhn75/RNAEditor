@@ -88,8 +88,9 @@ def checkDependencies(args):
         Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
     
     #Files for GATK
-    if not os.path.isfile(args.RefGenome+".dict"):
-        Helper.error("Could not find %s.dict" % args.RefGenome)
+    
+    if not os.path.isfile(args.RefGenome.replace(".fastq",".dict")):
+        Helper.error("Could not find %s" % args.RefGenomereplace(".fastq",".dict"))
         Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
     if not os.path.isfile(args.RefGenome+".sai"):
         Helper.error("Could not find %s.sai" % args.RefGenome)
