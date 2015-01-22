@@ -505,11 +505,11 @@ def checkDependencies(args):
         Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
     
     #Files for GATK
-    if not os.path.isfile(args.RefGenome+".dict"):
-        Helper.error("Could not find %s.dict" % args.RefGenome)
-        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
-    if not os.path.isfile(args.RefGenome+".sai"):
-        Helper.error("Could not find %s.sai" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome.replace(".fastq",".dict")):
+        Helper.error("Could not find %s" % args.RefGenome.replace(".fastq",".dict"))
+        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome.replace(".fastq",".dict")))
+    if not os.path.isfile(args.RefGenome+".fai"):
+        Helper.error("Could not find %s.fai" % args.RefGenome)
         Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
 
     #SNP databases
