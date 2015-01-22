@@ -218,10 +218,13 @@ class CallEditingSites(object):
         mmNumberTotal = len(variants.variantDict)
         
         #read sequence file
-        tempSeqFile= open(tempSeqFile)
+        tempSeqFile= open()
         for line in tempSeqFile:
             siteNuc,sequence = line.split()
-            chr,position,ref,alt = siteNuc.split(",")
+            try:
+                chr,position,ref,alt = siteNuc.split(",")
+            except (ValueError):
+                raise ValueError("Failed to read line: %s" % line)
             #check if mm sorounding sequence are homopolymer nukleotides
             
             pattern = ref*distance
