@@ -78,8 +78,6 @@ class CallEditingSites(object):
         if self.debug==True:
             self.printAttributes()
         
-        self.checkDependencies()
-        
         #create transcriptome from GTF-File
         self.genome = Genome(gtfFile)
           
