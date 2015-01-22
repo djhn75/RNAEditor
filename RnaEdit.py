@@ -41,7 +41,7 @@ class RnaEdit(object):
         del self.callEditSites
         
 
-def checkTools(sourceDir):
+def checkTools(args):
     '''
     Checks the existence of the necessary packages and tools
     :param sourceDir: folder which contains all the software
@@ -49,24 +49,30 @@ def checkTools(sourceDir):
     Helper.newline(3)
     Helper.info("CHECK DEPENDENCIES")
     
-    
-    if not os.path.isfile(sourceDir+"bwa"):
-        Helper.error("BWA not found in %s" % sourceDir)
-    if not os.path.isfile(sourceDir+"picard-tools/SortSam.jar"):
-        Helper.error("SortSam.jar not found in %s" % sourceDir+"picard-tools")
-    if not os.path.isfile(sourceDir+"picard-tools/MarkDuplicates.jar"):
-        Helper.error("MarkDuplicates.jar not found in %s" % sourceDir+"picard-tools")
-    if not os.path.isfile(sourceDir+"GATK/GenomeAnalysisTK.jar"):
-        Helper.error("GenomeAnalysisTK.jar not found in %s" % sourceDir+"GATK/")
-    if not os.path.isfile(sourceDir+"bedtools/fastaFromBed"):
-        Helper.error("fastaFromBed not found in %s" % sourceDir+"bedtools/")
-    if not os.path.isfile(sourceDir+"blat"):
-        Helper.error("blat not found in %s" % sourceDir)
-    if not os.path.isfile(sourceDir+"samtools"):
-        Helper.error("samtools not found in %s" % sourceDir)
+    #check if all tools are there
+    if not os.path.isfile(args.sourceDir+"bwa"):
+        Helper.error("BWA not found in %s" % args.sourceDir)
+    if not os.path.isfile(args.sourceDir+"picard-tools/SortSam.jar"):
+        Helper.error("SortSam.jar not found in %s" % args.sourceDir+"picard-tools")
+    if not os.path.isfile(args.sourceDir+"picard-tools/MarkDuplicates.jar"):
+        Helper.error("MarkDuplicates.jar not found in %s" % args.sourceDir+"picard-tools")
+    if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
+        Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
+    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
+        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
+    if not os.path.isfile(args.sourceDir+"blat"):
+        Helper.error("blat not found in %s" % args.sourceDir)
+    if not os.path.isfile(args.sourceDir+"samtools"):
+        Helper.error("samtools not found in %s" % args.sourceDir)
     if not os.system("java -version")==0:
         Helper.error("Java could not be found, Please install java")
     
+    #check if all files are there
+    if not os.path.isfile(args.RefGenome):
+        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
+    if not os.path.isfile(args.RefGenome):
+        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
+
         
 
 if __name__ == '__main__':
@@ -92,7 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('--overwrite', help='overwrite existing Files [False]', action='store_true', default=False)
     
     args = parser.parse_args()
-    checkTools(args.sourceDir)
+    checkTools(args)
     """edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
                  args.hapmap, args.omni, args.esp, 
                  args.aluRegions, args.geneAnnotation, args.output, 
