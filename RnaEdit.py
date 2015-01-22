@@ -92,7 +92,7 @@ def checkDependencies(args):
     if not os.path.isfile(args.RefGenome.replace(".fastq",".dict")):
         Helper.error("Could not find %s" % args.RefGenomereplace(".fastq",".dict"))
         Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
-    if not os.path.isfile(args.RefGenome+".sai"):
+    if not os.path.isfile(args.RefGenome+".fai"):
         Helper.error("Could not find %s.sai" % args.RefGenome)
         Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
 

@@ -78,69 +78,9 @@ class MapFastq(object):
         print "\t keepTemp:" + str(self.keepTemp)
         print "\t overwrite:" + str(self.overwrite)
         print
-
-def checkDependencies(args):
-    '''
-    Checks the existence of the necessary packages and tools
-    :param sourceDir: folder which contains all the software
-    '''
-    Helper.newline(1)
-    Helper.info("CHECK DEPENDENCIES")
-    
-    #check if all tools are there
-    if not os.path.isfile(args.sourceDir+"bwa"):
-        Helper.error("BWA not found in %s" % args.sourceDir)
-    if not os.path.isfile(args.sourceDir+"picard-tools/SortSam.jar"):
-        Helper.error("SortSam.jar not found in %s" % args.sourceDir+"picard-tools")
-    if not os.path.isfile(args.sourceDir+"picard-tools/MarkDuplicates.jar"):
-        Helper.error("MarkDuplicates.jar not found in %s" % args.sourceDir+"picard-tools")
-    if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
-        Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
-    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
-        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
-    if not os.path.isfile(args.sourceDir+"samtools"):
-        Helper.error("samtools not found in %s" % args.sourceDir)
-    if not os.system("java -version")==0:
-        Helper.error("Java could not be found, Please install java")
-    
-    #check if all files are there
-    if not os.path.isfile(args.RefGenome):
-        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
-    # Files for BWA
-    if not os.path.isfile(args.RefGenome+".amb"):
-        Helper.error("Could not find %s.amb" % args.RefGenome)
-        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
-    if not os.path.isfile(args.RefGenome+".ann"):
-        Helper.error("Could not find %s.ann" % args.RefGenome)
-        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
-    if not os.path.isfile(args.RefGenome+".bwt"):
-        Helper.error("Could not find %s.bwt" % args.RefGenome)
-        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
-    if not os.path.isfile(args.RefGenome+".pac"):
-        Helper.error("Could not find %s.pac" % args.RefGenome)
-        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
-    if not os.path.isfile(args.RefGenome+".sa"):
-        Helper.error("Could not find %s.sa" % args.RefGenome)
-        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
-    
-    #Files for GATK
-    if not os.path.isfile(args.RefGenome+".dict"):
-        Helper.error("Could not find %s.dict" % args.RefGenome)
-        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
-    if not os.path.isfile(args.RefGenome+".sai"):
-        Helper.error("Could not find %s.sai" % args.RefGenome)
-        Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
-
-    #SNP databases
-    if not os.path.isfile(args.dbsnp):
-        Helper.error("Could not find %s: " % args.dbsnp)
-
     
         
-    def start(self):
-        
-        
-        
+    def start(self):   
         recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
         if os.path.isfile(recaledBamFile):
             print >> self.logFile, "* * * [Skipping] Mapping result File already exists * * *"
@@ -244,6 +184,64 @@ def checkDependencies(args):
             #os.remove(self.outfilePrefix+".realigned.marked.recalibrated.bam")
             self.logFile.close()
     
+
+
+def checkDependencies(args):
+    '''
+    Checks the existence of the necessary packages and tools
+    :param sourceDir: folder which contains all the software
+    '''
+    Helper.newline(1)
+    Helper.info("CHECK DEPENDENCIES")
+    
+    #check if all tools are there
+    if not os.path.isfile(args.sourceDir+"bwa"):
+        Helper.error("BWA not found in %s" % args.sourceDir)
+    if not os.path.isfile(args.sourceDir+"picard-tools/SortSam.jar"):
+        Helper.error("SortSam.jar not found in %s" % args.sourceDir+"picard-tools")
+    if not os.path.isfile(args.sourceDir+"picard-tools/MarkDuplicates.jar"):
+        Helper.error("MarkDuplicates.jar not found in %s" % args.sourceDir+"picard-tools")
+    if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
+        Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
+    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
+        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
+    if not os.path.isfile(args.sourceDir+"samtools"):
+        Helper.error("samtools not found in %s" % args.sourceDir)
+    if not os.system("java -version")==0:
+        Helper.error("Java could not be found, Please install java")
+    
+    #check if all files are there
+    if not os.path.isfile(args.RefGenome):
+        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
+    # Files for BWA
+    if not os.path.isfile(args.RefGenome+".amb"):
+        Helper.error("Could not find %s.amb" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".ann"):
+        Helper.error("Could not find %s.ann" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".bwt"):
+        Helper.error("Could not find %s.bwt" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".pac"):
+        Helper.error("Could not find %s.pac" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".sa"):
+        Helper.error("Could not find %s.sa" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    
+    #Files for GATK
+    if not os.path.isfile(args.RefGenome.replace(".fastq",".dict")):
+        Helper.error("Could not find %s" % args.RefGenome.replace(".fastq",".dict"))
+        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome.replace(".fastq",".dict")))
+    if not os.path.isfile(args.RefGenome+".fai"):
+        Helper.error("Could not find %s.fai" % args.RefGenome)
+        Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
+
+    #SNP databases
+    if not os.path.isfile(args.dbsnp):
+        Helper.error("Could not find %s: " % args.dbsnp)
+
 
 '''
 when the script is called directly
