@@ -41,12 +41,12 @@ class RnaEdit(object):
         del self.callEditSites
         
 
-def checkTools(args):
+def checkDependencies(args):
     '''
     Checks the existence of the necessary packages and tools
     :param sourceDir: folder which contains all the software
     '''
-    Helper.newline(3)
+    Helper.newline(1)
     Helper.info("CHECK DEPENDENCIES")
     
     #check if all tools are there
@@ -70,10 +70,46 @@ def checkTools(args):
     #check if all files are there
     if not os.path.isfile(args.RefGenome):
         Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
-    if not os.path.isfile(args.RefGenome):
-        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
+    # Files for BWA
+    if not os.path.isfile(args.RefGenome+".amb"):
+        Helper.error("Could not find %s.amb" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".ann"):
+        Helper.error("Could not find %s.ann" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".bwt"):
+        Helper.error("Could not find %s.bwt" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".pac"):
+        Helper.error("Could not find %s.pac" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".sa"):
+        Helper.error("Could not find %s.sa" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    
+    #Files for GATK
+    if not os.path.isfile(args.RefGenome+".dict"):
+        Helper.error("Could not find %s.dict" % args.RefGenome)
+        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
+    if not os.path.isfile(args.RefGenome+".sai"):
+        Helper.error("Could not find %s.sai" % args.RefGenome)
+        Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
 
-        
+    #SNP databases
+    if not os.path.isfile(args.dbsnp):
+        Helper.error("Could not find %s: " % args.dbsnp)
+    if not os.path.isfile(args.hapmap):
+        Helper.error("Could not find %s: " % args.hapmap)
+    if not os.path.isfile(args.omni):
+        Helper.error("Could not find %s: " % args.omni)
+    if not os.path.isfile(args.esp):
+        Helper.error("Could not find %s: " % args.esp)
+    
+    #region Files
+    if not os.path.isfile(args.aluRegions):
+        Helper.error("Could not find %s: " % args.aluRegions)
+    if not os.path.isfile(args.geneAnnotation):
+        Helper.error("Could not find %s: " % args.geneAnnotation)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
@@ -98,8 +134,8 @@ if __name__ == '__main__':
     parser.add_argument('--overwrite', help='overwrite existing Files [False]', action='store_true', default=False)
     
     args = parser.parse_args()
-    checkTools(args)
-    """edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
+    checkDependencies(args)
+    edit=RnaEdit(args.input, args.RefGenome, args.dbsnp,
                  args.hapmap, args.omni, args.esp, 
                  args.aluRegions, args.geneAnnotation, args.output, 
                  args.sourceDir, args.threads, args.maxDiff, 
@@ -108,7 +144,7 @@ if __name__ == '__main__':
                  args.overwrite)
     
     del edit
-    """
+    
     
     
 else:

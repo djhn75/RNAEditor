@@ -39,7 +39,7 @@ class MapFastq(object):
         
         self.logFile=open(self.outfilePrefix + ".log","w+")
         
-        #check read Quality encoding
+        #check read Quality encoding and convert to phred33 quality if necessary
         for i in range(len(fastqFiles)):
             if Helper.isPhred33Encoding(fastqFiles[i], 100) == False:
                 fastqFiles[i]=Helper.convertPhred64toPhred33(self,fastqFiles[i],self.outfilePrefix+ "_" + str(i+1) + "_phred33.fastq",self.logFile)
@@ -57,7 +57,7 @@ class MapFastq(object):
         if self.debug==True:
             self.printAttributes()
         
-        self.checkDependencies()
+        #self.checkDependencies()
     
     def printAttributes(self):
         print
@@ -79,14 +79,62 @@ class MapFastq(object):
         print "\t overwrite:" + str(self.overwrite)
         print
 
-    '''check if all the needed files are there'''
-    def checkDependencies(self):
-        if not os.path.exists(self.dbsnp):
-            Exception("dbSNP File: Not found!!!")
-            exit()
-        if not os.path.exists(self.refGenome):
-            Exception("reference Genome File: Not found!!!")
-            exit()
+def checkDependencies(args):
+    '''
+    Checks the existence of the necessary packages and tools
+    :param sourceDir: folder which contains all the software
+    '''
+    Helper.newline(1)
+    Helper.info("CHECK DEPENDENCIES")
+    
+    #check if all tools are there
+    if not os.path.isfile(args.sourceDir+"bwa"):
+        Helper.error("BWA not found in %s" % args.sourceDir)
+    if not os.path.isfile(args.sourceDir+"picard-tools/SortSam.jar"):
+        Helper.error("SortSam.jar not found in %s" % args.sourceDir+"picard-tools")
+    if not os.path.isfile(args.sourceDir+"picard-tools/MarkDuplicates.jar"):
+        Helper.error("MarkDuplicates.jar not found in %s" % args.sourceDir+"picard-tools")
+    if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
+        Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
+    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
+        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
+    if not os.path.isfile(args.sourceDir+"samtools"):
+        Helper.error("samtools not found in %s" % args.sourceDir)
+    if not os.system("java -version")==0:
+        Helper.error("Java could not be found, Please install java")
+    
+    #check if all files are there
+    if not os.path.isfile(args.RefGenome):
+        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
+    # Files for BWA
+    if not os.path.isfile(args.RefGenome+".amb"):
+        Helper.error("Could not find %s.amb" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".ann"):
+        Helper.error("Could not find %s.ann" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".bwt"):
+        Helper.error("Could not find %s.bwt" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".pac"):
+        Helper.error("Could not find %s.pac" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    if not os.path.isfile(args.RefGenome+".sa"):
+        Helper.error("Could not find %s.sa" % args.RefGenome)
+        Helper.error("run: 'bwa index %s' to create it" % args.RefGenome)
+    
+    #Files for GATK
+    if not os.path.isfile(args.RefGenome+".dict"):
+        Helper.error("Could not find %s.dict" % args.RefGenome)
+        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
+    if not os.path.isfile(args.RefGenome+".sai"):
+        Helper.error("Could not find %s.sai" % args.RefGenome)
+        Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
+
+    #SNP databases
+    if not os.path.isfile(args.dbsnp):
+        Helper.error("Could not find %s: " % args.dbsnp)
+
     
         
     def start(self):
@@ -184,7 +232,7 @@ class MapFastq(object):
         
     def __del__(self):
         if self.keepTemp==False:
-            os.remove(self.outfilePrefix+".sai")
+            #os.remove(self.outfilePrefix+".sai")
             os.remove(self.outfilePrefix+".sam")
             #os.remove(self.outfilePrefix+".bam")
             os.remove(self.outfilePrefix+".indels.intervals")
@@ -216,6 +264,7 @@ if __name__ == '__main__':
     parser.add_argument('--overwrite', help='overwrite existing Files [False]', action='store_true', default=False)
     
     args = parser.parse_args()
+    checkDependencies(args)
     
     mapFastQ=MapFastq(args.input, args.RefGenome.name, args.dbsnp.name,args.output, args.sourceDir, args.threads, args.maxDiff, args.seedDiff, args.paired, args.keepTemp, args.overwrite)
     mapFastQ.start()

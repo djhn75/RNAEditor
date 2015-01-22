@@ -82,26 +82,7 @@ class CallEditingSites(object):
         
         #create transcriptome from GTF-File
         self.genome = Genome(gtfFile)
-        
-    
-    
-    
-    '''check if all the needed files are there'''
-    def checkDependencies(self):
-        #TODO: check for index Files
-        if not os.path.exists(self.dbsnp):
-            Exception("dbSNP File: Not found!!!")
-        if not os.path.exists(self.bamFile):
-            Exception(".bam File: Not found!!!")
-        if not os.path.exists(self.hapmap):
-            Exception("HapMap variant File File: Not found!!!")
-        if not os.path.exists(self.esp):
-            Exception("ESP variant File File: Not found!!!")
-        if not os.path.exists(self.aluRegions):
-            Exception("AluRegion File File: Not found!!!")
-        if not os.path.exists(self.refGenome):
-            Exception("reference Genome File: Not found!!!")
-        
+          
     '''delete variants from Bam file which appear near read edges'''
     def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
         #Loop through vcf-File
@@ -446,11 +427,10 @@ class CallEditingSites(object):
         #read in initial SNPs
         variants = VariantSet(vcfFile)
         
-        
         #annotate all Variants
         variants.annotateVariantDict(self.genome)
         #print len(rawSnps)
-        '''
+        
         #delete SNPs from dbSNP
         variants.deleteOverlappsFromVcf(self.dbsnp)
         #print len(noDbsnp)
@@ -465,24 +445,20 @@ class CallEditingSites(object):
         
         #erase artificial missmatches at read-edges from variants
         self.removeEdgeMissmatches(variants, self.bamFile, self.edgeDistance, 25)
-        '''
+
         nonAluVariants=copy(variants)
         nonAluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=True)
         
         aluVariants=copy(variants)
         aluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=False)
         
-        
-        
         #print out variants from Alu regions
-        
         aluVariants.printVariantDict(self.outfilePrefix+".alu.vcf")
         aluVariants.printGeneList(self.genome,self.outfilePrefix+".alu.gvf", printSummary=True)
         
         #proceed with non-Alu reads only!!!
         #erase variants from intronic splice junctions
         self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
-        
         
         #erase variants from homopolymer runs
         self.removeHomopolymers(nonAluVariants,self.outfilePrefix, 4)
@@ -502,7 +478,55 @@ class CallEditingSites(object):
         variants.printVariantDict(self.outfilePrefix+".editingSites.vcf")
         variants.printGeneList(self.genome,self.outfilePrefix+".editingSites.gvf", printSummary=True)
         #combine alu and non Alu sites
-        
+
+
+def checkDependencies(args):
+    '''
+    Checks the existence of the necessary packages and tools
+    :param sourceDir: folder which contains all the software
+    '''
+    Helper.newline(1)
+    Helper.info("CHECK DEPENDENCIES")
+    
+    #check if all tools are there
+    if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
+        Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
+    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
+        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
+    if not os.path.isfile(args.sourceDir+"blat"):
+        Helper.error("blat not found in %s" % args.sourceDir)
+    if not os.path.isfile(args.sourceDir+"samtools"):
+        Helper.error("samtools not found in %s" % args.sourceDir)
+    if not os.system("java -version")==0:
+        Helper.error("Java could not be found, Please install java")
+    
+    #check if all files are there
+    if not os.path.isfile(args.RefGenome):
+        Helper.error("Could not find Reference Genome in %s: " % args.RefGenome)
+    
+    #Files for GATK
+    if not os.path.isfile(args.RefGenome+".dict"):
+        Helper.error("Could not find %s.dict" % args.RefGenome)
+        Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (args.sourceDir,args.RefGenome,args.RefGenome))
+    if not os.path.isfile(args.RefGenome+".sai"):
+        Helper.error("Could not find %s.sai" % args.RefGenome)
+        Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
+
+    #SNP databases
+    if not os.path.isfile(args.dbsnp):
+        Helper.error("Could not find %s: " % args.dbsnp)
+    if not os.path.isfile(args.hapmap):
+        Helper.error("Could not find %s: " % args.hapmap)
+    if not os.path.isfile(args.omni):
+        Helper.error("Could not find %s: " % args.omni)
+    if not os.path.isfile(args.esp):
+        Helper.error("Could not find %s: " % args.esp)
+    
+    #region Files
+    if not os.path.isfile(args.aluRegions):
+        Helper.error("Could not find %s: " % args.aluRegions)
+    if not os.path.isfile(args.geneAnnotation):
+        Helper.error("Could not find %s: " % args.geneAnnotation)        
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
@@ -524,7 +548,8 @@ if __name__ == '__main__':
     parser.add_argument('--overwrite', help='overwrite existing Files [False]', action='store_true', default=False)
     
     args = parser.parse_args()
-
+    checkDependencies(args)
+    
     call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, 
                           args.hapmap.name, args.omni.name, args.esp, 
                           args.aluRegions, args.gtfFile, args.output, 
