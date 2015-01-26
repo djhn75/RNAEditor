@@ -197,7 +197,7 @@ class CallEditingSites(object):
         mmNumberTotal = len(variants.variantDict)
         
         #read sequence file
-        tempSeqFile= open()
+        tempSeqFile= open(tempSeqFile)
         for line in tempSeqFile:
             siteNuc,sequence = line.split()
             try:
@@ -221,6 +221,8 @@ class CallEditingSites(object):
         #output statistics
         Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal))
         Helper.printTimeDiff(startTime)
+        
+        tempSeqFile.close()
         
         if self.keepTemp == False:
             os.remove(tempBedFile.name)
