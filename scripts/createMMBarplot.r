@@ -1,4 +1,4 @@
-#
+#!/usr/bin/R
 
 Args <- commandArgs(trailingOnly=TRUE)
 inFile <- Args[1]

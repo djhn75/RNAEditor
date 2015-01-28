@@ -93,7 +93,7 @@ class CallEditingSites(object):
         counter=0    
         
         num_lines = len(variants.variantDict)
-        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)))
+        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)),self.logFile)
         
         for varKey in variants.variantDict.keys():
             variant = variants.variantDict[varKey]
@@ -142,8 +142,8 @@ class CallEditingSites(object):
             if not keepSNP:
                 del variants.variantDict[varKey]    
             counter+=1
-            if counter % 100 == 0: #print out current status
-                Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished")
+            if counter % 10000 == 0: #print out current status
+                Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished",self.logFile)
         
     
     def removeIntronicSpliceJunctions(self,variants,genome,distance=4): 
@@ -153,7 +153,7 @@ class CallEditingSites(object):
         :param genome: object of the class Genome
         '''
         startTime=Helper.getTime()
-        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")))
+        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.logFile)
         #TODO Finish this fucking fuction
         
         geneDict = genome.getGenesByChromosome()
@@ -170,12 +170,12 @@ class CallEditingSites(object):
             if delVar:
                 del variants.variantDict[key]
                             
-        Helper.printTimeDiff(startTime)
+        Helper.printTimeDiff(startTime,self.logFile)
         
     '''remove missmatches from homopolymers'''
     def removeHomopolymers(self,variants,outFile,distance):
         startTime=Helper.getTime()
-        Helper.info(" [%s] remove Missmatches from homopolymers " % (startTime.strftime("%c")))
+        Helper.info(" [%s] remove Missmatches from homopolymers " % (startTime.strftime("%c")),self.logFile)
         
         tempBedFile = open(outFile+"_tmp.bed","w+")
         tempSeqFile = outFile + "_tmp.tsv"
@@ -216,11 +216,14 @@ class CallEditingSites(object):
                 del mmDict[site]
             """
             if pattern in sequence:
-                del variants.variantDict[(chr,int(position),ref,alt)]
+                try:
+                    del variants.variantDict[(chr,int(position),ref,alt)]
+                except KeyError:
+                    pass
                 
         #output statistics
-        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal))
-        Helper.printTimeDiff(startTime)
+        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal),self.logFile)
+        Helper.printTimeDiff(startTime,self.logFile)
         
         tempSeqFile.close()
         
@@ -231,7 +234,7 @@ class CallEditingSites(object):
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,variants, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
-        Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")))
+        Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")),self.logFile)
         
         counter=0
         geneHash = {}
@@ -280,8 +283,8 @@ class CallEditingSites(object):
                     sys.stdout.write("\r" + str(counter) + " of " + str(mmNumberTotal) + " variants done")
                     sys.stdout.flush()
         
-            Helper.info("\n created fasta file " + tempFasta)
-            Helper.printTimeDiff(startTime)
+            Helper.info("\n created fasta file " + tempFasta,self.logFile)
+            Helper.printTimeDiff(startTime,self.logFile)
             tempFastaFile.close()
                 
         
@@ -292,7 +295,7 @@ class CallEditingSites(object):
             #print cmd
             Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite)
         
-        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")))    
+        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")),self.logFile)    
         
         if not os.path.isfile(outFile):
             #open psl file
@@ -384,11 +387,11 @@ class CallEditingSites(object):
             #output statisticsttkkg
             mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
             
-            Helper.info("\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal))
-            Helper.info("\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch))
-            Helper.info("\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads))
+            Helper.info("\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal),self.logFile)
+            Helper.info("\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch),self.logFile)
+            Helper.info("\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads),self.logFile)
             
-        Helper.printTimeDiff(startTime)
+        Helper.printTimeDiff(startTime,self.logFile)
 
             
     def __del__(self):
@@ -405,7 +408,7 @@ class CallEditingSites(object):
             
     def deleteNonEditingBases(self,variants):
         startTime=Helper.getTime()
-        Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
+        Helper.info("Delete non Editing Bases (keep only T->C and A->G)",self.logFile)
         
         for varTuple in variants.variantDict.keys():
             chr,pos,ref,alt = varTuple

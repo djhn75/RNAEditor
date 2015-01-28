@@ -35,6 +35,8 @@ class RnaEdit(object):
                                             standEmit, edgeDistance, keepTemp, 
                                             overwrite)
         self.callEditSites.start()
+        
+        Helper.status("rnaEditor Finished with %s" % outfilePrefix)
      
     def __del__(self):
         #del self.mapFastQ

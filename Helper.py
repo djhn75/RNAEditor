@@ -208,26 +208,41 @@ class Helper():
     
     
     @staticmethod
-    def printTimeDiff(startTime):
+    def printTimeDiff(startTime,logFile=None):
         duration = Helper.getTime() - startTime
+        if logFile!=None:
+            logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
+        
         sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
-    def newline (quantity=1):
+    def newline (quantity=1,logFile=None):
+        if logFile!=None:
+            logFile.write("\n"*quantity)
         sys.stderr.write("\n"*quantity)
     @staticmethod
-    def info (message):
+    def info (message,logFile=None):
+        if logFile!=None:
+            logFile.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
         sys.stderr.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
     @staticmethod
-    def warning (message):
+    def warning (message,logFile=None):
+        if logFile!=None:
+            logFile.write(Helper.prefix + "WARNING:    "  + message + Helper.praefix + "\n")
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def error (message):
+    def error (message,logFile=None):
+        if logFile!=None:
+            logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
         #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
         raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def debug (message):
+    def debug (message,logFile=None):
+        if logFile!=None:
+            logFile.write(Helper.prefix + "DEBUG:    "  + message + Helper.praefix + "\n")
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
     @staticmethod
-    def status(message):
+    def status(message,logFile=None):
+        if logFile!=None:
+            logFile.write(Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
         sys.stdout.write("\r" + Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
         sys.stdout.flush()
