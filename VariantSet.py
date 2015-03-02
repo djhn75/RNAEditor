@@ -26,7 +26,8 @@ class Variant:
         self.filter = filter
         self.attributes = info
         
-
+    def __iter__(self):
+        return self.var
 
 class VariantSet(object):
     '''
@@ -35,6 +36,9 @@ class VariantSet(object):
     def __init__(self,vcfFile):
         self.variantDict = self.parseVcf(vcfFile)
         #return self.parseVcfFile_variantSetByChromosome(vcfFile)
+    
+    def __iter__(self):
+        return iter((self.variantDict.values()))
     
     def __add__(self,other):
         newVariantSet = copy(self)
@@ -216,7 +220,7 @@ class VariantSet(object):
         Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outfile.name))
         
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
-        outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"]))
+        outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_ID","VAR_POS","REF","ALT","QUAL","#A","#C","#G","T","\n"]))
         
         for v in self.variantDict.values():
             anno = v.attributes["GI"]
@@ -225,7 +229,7 @@ class VariantSet(object):
                 if gene == "-":
                     outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),v.ref,v.alt,str(v.qual),",".join(v.attributes["BaseCounts"]),"\n"]))
                 else:
-                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),v.ref,v.alt,str(v.qual),",".join(v.attributes["BaseCounts"]),"\n"]))
+                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),"\n"]))
                 
                 #count variations per gene
                 if gene not in sumDict:

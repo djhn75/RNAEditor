@@ -3,31 +3,57 @@ Created on 05.06.2014
 
 @author: david
 '''
-from Genome import Genome
-from Helper import Helper
-from collections import defaultdict
-from VariantSet import Variant
+
 from VariantSet import VariantSet
-from CallEditingSites import CallEditingSites
-import gtfHandler
-from itertools import izip
-from copy import copy, deepcopy
-import sys
+from dbCluster import dbCluster
+import numpy as np
+from sklearn import metrics
+from numpy.ma.core import mean, std
 
-#vcfFile=sys.argv[1]
-#vcfFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcf"
+variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
+Yclust = dbCluster()
 
-import os
+varPosList = []
 
-if os.system("java -version")==0:
-    print 0
-else:
-    print 1
-while True:
-    pass
 
-"""
-ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
+for v in variants:
+    varPosList.append(v.position)
+varPosList = np.asarray(varPosList)
+Yclust.dbscan(varPosList, eps=20, min_samples=3)
+
+print "%d number of variants" % len(varPosList)
+
+core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
+# Number of clusters in labels, ignoring noise if present.w
+n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+
+labelNames = set(labels)
+#labels = list(labels)
+
+
+for label in labelNames:
+    if label !=-1:
+        #get indices of poinst which belong to the current dbCluster
+        labelIndices = np.where(labels == label)[0]
+        clusterPoints = varPosList[labelIndices]
+        #print "%d" % label
+        #print "%s" % ",".join(map(str,clusterPoints))
+        mini=min(clusterPoints)
+        maxi= max(clusterPoints)
+        mean= std(clusterPoints)
+        dens= float(len(clusterPoints))/ float((maxi-mini))
+        print "dbCluster %d: [%s] ,min: %d, max: %d, mean: %d, Density: %f" % (int(label),",".join(map(str,clusterPoints)),mini, maxi, mean,dens)
+
+X = []
+for el in varPosList:
+    X.append([el,0])
+X = np.array(X)
+
+
+print('Estimated number of clusters: %d' % n_clusters_)
+print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+
+"""ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
                         refGenome="/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta", 
                         dbsnp="/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf", 
                         hapmap="/media/Storage/databases/rnaEditor_annotations/human/hapmap_3.3.b37.sites.vcf",
@@ -38,22 +64,21 @@ ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/s
                         outfilePrefix=vcfFile[:vcfFile.rfind(".")], 
                         sourceDir="/usr/local/bin/")
 
-g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf")
-variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_Y.vcf")
+g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf")"""
 
 
 
 
 #variants.deleteOverlappsFromVcf("/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf")
-variants.annotateVariantDict(g)
+"""variants.annotateVariantDict(g)
 variants.printGeneList(g, "dink.gvf", True)
 gbc=g.getGenesByChromosome()
 
 for gene in gbc["Y"]:
-    print gene.geneId
+    print gene.geneId"""
 #print len(gbc["Y"])
 
 #ces.removeHomopolymers(variants, "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcfs", 4)
 
 #ces.start()
-"""
+
