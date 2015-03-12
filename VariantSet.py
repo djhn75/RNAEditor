@@ -227,7 +227,7 @@ class VariantSet(object):
             for a in anno:
                 gene,segments = a
                 if gene == "-":
-                    outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),v.ref,v.alt,str(v.qual),",".join(v.attributes["BaseCounts"]),"\n"]))
+                    outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),"\n"]))
                 else:
                     outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),"\n"]))
                 

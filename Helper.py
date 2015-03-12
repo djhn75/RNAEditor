@@ -102,7 +102,7 @@ class Helper():
     @staticmethod
     def proceedCommand(description,cmd,infile,outfile,logFile,overwrite=False):
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *")
+        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile)
         
         
         #check if infile exists

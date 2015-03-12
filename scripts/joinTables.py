@@ -14,7 +14,7 @@ parser.add_argument('-t', '--top', metavar='N', type=str, nargs="+", help='list 
 parser.add_argument('-c', '--columns', metavar='N', type=int, nargs='+', help='columns to keep (space separated)',default=[2],)
 parser.add_argument('-k', '--keys', metavar='N', nargs='+', type=int, help='columnnumber on which to join',default=[1])
 parser.add_argument('-d', '--delimiter', metavar='N', type=str, help='delimiter', default="\t")
-parser.add_argument('-e', '--empty', metavar='N', type=str, help='Sign for empty Values', default="\t")
+parser.add_argument('-e', '--empty', metavar='N', type=str, help='Sign for empty Values', default="--")
 args = parser.parse_args()
 
 idDict = {}
