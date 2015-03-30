@@ -34,6 +34,7 @@ def fillDicts(files,columns,keys):
     keySet=()
     fileCounter=0
     for file in files: #loop through all files
+        Helper.info("Get information from %s" % file)
         file = open(file)
         
         for line in file: #loop through current file
@@ -59,6 +60,10 @@ def fillDicts(files,columns,keys):
                 currentDefaultList[fileCounter]=value
                 idDict[keyTuple]=currentDefaultList
                 keySet=keySet+(keyTuple,)
+            
+            i+=1
+            if i % 1000:
+                Helper.status("%s lines parsed" % i)
         fileCounter+=1
     return idDict,keySet
 
@@ -139,7 +144,7 @@ defaultList= ["--"]*len(args.columns)
 for bamFile in args.bams:
     i=0
     #Helper.status("recounting Reads for %s" % bamFile)    
-    print "recounting Reads from %s" % bamFile
+    Helper.info("recounting Reads from %s" % bamFile)
     samfile = pysam.AlignmentFile(bamFile, "rb")
     for keyTuple in keySet[1:]:
         i+=1
