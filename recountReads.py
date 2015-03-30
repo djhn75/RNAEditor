@@ -11,7 +11,7 @@ from Helper import Helper
 import argparse, os, re
 
 
-parser = argparse.ArgumentParser(description='Merge tables.')
+parser = argparse.ArgumentParser(description='Merges the GTF Files and recalculates the base Counts after RnaEditor is finished.')
 parser.add_argument('-f', '--files', metavar='N', type=str, nargs='+', help='the list of files')
 parser.add_argument('-b', '--bams', metavar='N', type=str, nargs='+', help='the list of bam files')
 parser.add_argument('-t', '--top', metavar='N', type=str, nargs="+", help='list of header names (space separated)')
@@ -63,7 +63,14 @@ def fillDicts(files,columns,keys):
     return idDict,keySet
 
 def getBaseCount(reads, varPos):
+    '''
     
+    :param reads: 
+    :param varPos:
+    '''
+    '''
+        returns the baseCount for the 
+    '''
     baseCount = {'A':0,'C':0,'G':0,'T':0}
     for read in reads:
         
@@ -111,11 +118,10 @@ for bam in args.bams:
      
     if bamBase != gtfBase:
         raise ValueError("BAM and GVF Files have to be in the same order")
-    
     counter+=1
 
 
-
+'''Fill the header'''
 idDict = {}
 if args.top==None:
     header=[] 
@@ -129,30 +135,29 @@ idDict,keySet = fillDicts(args.files, args.columns,args.keys)
 
 '''recount Reads'''
 fileCounter=0
+defaultList= ["--"]*len(args.columns)
 for bamFile in args.bams:
-    #Helper.status("recounting Reads for %s" % bamFile)
-    
+    i=0
+    #Helper.status("recounting Reads for %s" % bamFile)    
     print "recounting Reads from %s" % bamFile
     samfile = pysam.AlignmentFile(bamFile, "rb")
     for keyTuple in keySet[1:]:
-        a=idDict[keyTuple][fileCounter]
-        b= ["--"]*len(args.columns)
-        
-        chr,start = keyTuple[3],int(keyTuple[7])-1 #pysam is zero based        
-        reads=samfile.fetch(chr, start, start+1)
-        baseCount = getBaseCount(reads,start)
-        
-        if a == b:
+        i+=1
+        '''check if basecount is unset for current condition''' 
+        if idDict[keyTuple][fileCounter] == defaultList: 
+            chr,start = keyTuple[3],int(keyTuple[7])-1 #pysam is zero based        
+            reads=samfile.fetch(chr, start, start+1)
+            baseCount = getBaseCount(reads,start)
             idDict[keyTuple][fileCounter] = baseCount
-            #print chr+":"+ str(start+1) + str(baseCount)
+    if counter % 1000 == 0:
+        Helper.status("%s out of %s editing sites finished" % (i,len(keySet)))
+    
     fileCounter+=1
     
         
-    
+'''write the results to the output file'''
 outFile = open(args.outFile,"rw")     
-#print results   
 deli="\t"*len(args.columns)
-#print "\t"*len(args.keys),deli.join(header)
 outFile.write("\t"*len(args.keys),deli.join(header))
 for keyTuple in keySet:
     output=list(keyTuple)
