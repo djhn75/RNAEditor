@@ -34,6 +34,7 @@ def fillDicts(files,columns,keys):
     keySet=()
     fileCounter=0
     for file in files: #loop through all files
+        i=0
         Helper.info("Get information from %s" % file)
         file = open(file)
         
@@ -62,7 +63,7 @@ def fillDicts(files,columns,keys):
                 keySet=keySet+(keyTuple,)
             
             i+=1
-            if i % 1000:
+            if i % 1000 == 0:
                 Helper.status("%s lines parsed" % i)
         fileCounter+=1
     return idDict,keySet
