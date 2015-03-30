@@ -19,7 +19,28 @@ varPosList = []
 for v in variants:
     varPosList.append(v.position)
 varPosList = np.asarray(varPosList)
-Yclust.dbscan(varPosList, eps=20, min_samples=3)
+
+for eps in range(2,100):
+    for min_samples in range(3,50):
+        print('EPS: %s, minSamples: %s' % (eps,min_samples))
+        Yclust.dbscan(varPosList, eps=eps, min_samples=min_samples)
+        core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
+        
+        # Number of clusters in labels, ignoring noise if present.w
+        n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+        labelNames = set(labels)
+        X = []
+        for el in varPosList:
+            X.append([el,0])
+        X = np.array(X)
+
+
+        #print('#Clusters: %d, SC: %0.3f' % (n_clusters_,metrics.silhouette_score(X, labels)))
+        print('Estimated number of clusters: %d' % n_clusters_)
+        print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+        #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+
+"""Yclust.dbscan(varPosList, eps=20, min_samples=5)
 
 print "%d number of variants" % len(varPosList)
 
@@ -53,7 +74,7 @@ X = np.array(X)
 print('Estimated number of clusters: %d' % n_clusters_)
 print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
 
-"""ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
+ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
                         refGenome="/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta", 
                         dbsnp="/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf", 
                         hapmap="/media/Storage/databases/rnaEditor_annotations/human/hapmap_3.3.b37.sites.vcf",
