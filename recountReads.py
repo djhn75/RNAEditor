@@ -162,11 +162,11 @@ for bamFile in args.bams:
     
         
 '''write the results to the output file'''
-outFile = open(args.outFile,"rw")     
+outFile = open(args.outFile,"w")     
 deli="\t"*len(args.columns)
-outFile.write("\t"*len(args.keys),deli.join(header))
+outFile.write("\t"*len(args.keys)+deli.join(header)+"\n")
 for keyTuple in keySet:
     output=list(keyTuple)
     for v in idDict[keyTuple]:
         output=output+v
-    outFile.write("\t".join(output))
+    outFile.write("\t".join(output)+"\n")
