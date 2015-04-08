@@ -20,9 +20,9 @@ for v in variants:
     varPosList.append(v.position)
 varPosList = np.asarray(varPosList)
 
-for eps in range(2,100):
+for eps in range(2,24):
     for min_samples in range(3,50):
-        print('EPS: %s, minSamples: %s' % (eps,min_samples))
+        #print('EPS: %s, minSamples: %s' % (eps,min_samples))
         Yclust.dbscan(varPosList, eps=eps, min_samples=min_samples)
         core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
         
@@ -34,13 +34,18 @@ for eps in range(2,100):
             X.append([el,0])
         X = np.array(X)
 
-
-        #print('#Clusters: %d, SC: %0.3f' % (n_clusters_,metrics.silhouette_score(X, labels)))
-        print('Estimated number of clusters: %d' % n_clusters_)
-        print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+        if n_clusters_ > 0:
+            print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, metrics.silhouette_score(X, labels)))
+            #print('#Clusters: %d, SC: %0.3f' % (n_clusters_,metrics.silhouette_score(X, labels)))
+        else:
+            continue
+            #print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, 0))
+            
+        #print('Estimated number of clusters: %d' % n_clusters_)
+        #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
         #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
 
-"""Yclust.dbscan(varPosList, eps=20, min_samples=5)
+"""Yclust.dbscan(varPosList, eps=2, min_samples=5)
 
 print "%d number of variants" % len(varPosList)
 
@@ -74,32 +79,5 @@ X = np.array(X)
 print('Estimated number of clusters: %d' % n_clusters_)
 print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
 
-ces = CallEditingSites(bamFile="/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.realigned.marked.recalibrated.bam",
-                        refGenome="/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta", 
-                        dbsnp="/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf", 
-                        hapmap="/media/Storage/databases/rnaEditor_annotations/human/hapmap_3.3.b37.sites.vcf",
-                        omni="/media/Storage/databases/rnaEditor_annotations/human/1000G_omni2.5.b37.sites.vcf",
-                        esp="/media/Storage/databases/rnaEditor_annotations/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf", 
-                        aluRegions="/media/Storage/databases/rnaEditor_annotations/human/Alu_repeats_noCHR.bed", 
-                        gtfFile="/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf", 
-                        outfilePrefix=vcfFile[:vcfFile.rfind(".")], 
-                        sourceDir="/usr/local/bin/")
 
-g=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes_Y.gtf")"""
-
-
-
-
-#variants.deleteOverlappsFromVcf("/media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37_Y.vcf")
-"""variants.annotateVariantDict(g)
-variants.printGeneList(g, "dink.gvf", True)
-gbc=g.getGenesByChromosome()
-
-for gene in gbc["Y"]:
-    print gene.geneId"""
-#print len(gbc["Y"])
-
-#ces.removeHomopolymers(variants, "/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN.nonAlu_Y.vcfs", 4)
-
-#ces.start()
-
+"""
