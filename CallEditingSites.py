@@ -398,12 +398,12 @@ class CallEditingSites(object):
         if self.keepTemp==False:
             #pass
             #os.remove(self.outfilePrefix+".vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
-            os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
-            os.remove(self.outfilePrefix+".nonAlu.vcf")
-            os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
+            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
+            #os.remove(self.outfilePrefix+".nonAlu.vcf")
+            #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
             os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.noHomo.vcf")
             
     def deleteNonEditingBases(self,variants):
