@@ -102,8 +102,11 @@ def getBaseCount(reads, varPos):
                     if startPos == varPos:
                         mmReadPos = readPos
                         mmReadBase= read.seq[mmReadPos]
-                        baseCount[mmReadBase]+=1 #increase number for the base at the mm pos
-                        
+                        try:
+                            baseCount[mmReadBase]+=1 #increase number for the base at the mm pos
+                        except (KeyError):
+                            sys.stderr.write("unknown Base %s" % mmReadBase)
+                            
                     readPos += 1
                     startPos += 1
 

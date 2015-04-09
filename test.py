@@ -20,7 +20,7 @@ for v in variants:
     varPosList.append(v.position)
 varPosList = np.asarray(varPosList)
 
-for eps in range(3,24):
+for eps in range(24,37):
     for min_samples in range(3,50):
         #print('EPS: %s, minSamples: %s' % (eps,min_samples))
         Yclust.dbscan(varPosList, eps=eps, min_samples=min_samples)
