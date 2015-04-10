@@ -8,7 +8,7 @@ If there is an
 
 import pysam
 from Helper import Helper
-import argparse, os, re
+import argparse, os, re, sys
 
 
 parser = argparse.ArgumentParser(description='Merges the GTF Files and recalculates the base Counts after RnaEditor is finished.')
@@ -105,7 +105,7 @@ def getBaseCount(reads, varPos):
                         try:
                             baseCount[mmReadBase]+=1 #increase number for the base at the mm pos
                         except (KeyError):
-                            sys.stderr.write("unknown Base %s" % mmReadBase)
+                            sys.stderr.write("unknown Base %s \n" % mmReadBase)
                             
                     readPos += 1
                     startPos += 1
