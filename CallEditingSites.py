@@ -44,7 +44,7 @@ class CallEditingSites(object):
                  aluRegions, gtfFile, outfilePrefix="default",
                  sourceDir="/usr/local/bin/", threads=multiprocessing.cpu_count()-1,standCall=0,
                  standEmit=0, edgeDistance=6, keepTemp=False, 
-                 overwrite=False):
+                 overwrite=False,runNumber=0):
         '''
         Constructor
         set all the class Arguments
@@ -70,6 +70,7 @@ class CallEditingSites(object):
         self.edgeDistance=edgeDistance
         self.keepTemp=keepTemp
         self.overwrite=overwrite
+        self.runNumber=runNumber
         
         #self.features = Helper.readGeneFeatures(self.genome)
         
@@ -93,7 +94,7 @@ class CallEditingSites(object):
         counter=0    
         
         num_lines = len(variants.variantDict)
-        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)),self.logFile)
+        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)),self.logFile,self.runNumber)
         
         for varKey in variants.variantDict.keys():
             variant = variants.variantDict[varKey]
@@ -143,7 +144,7 @@ class CallEditingSites(object):
                 del variants.variantDict[varKey]    
             counter+=1
             if counter % 10000 == 0: #print out current status
-                Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished",self.logFile)
+                Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished",self.logFile,self.runNumber)
         
     
     def removeIntronicSpliceJunctions(self,variants,genome,distance=4): 
@@ -153,7 +154,7 @@ class CallEditingSites(object):
         :param genome: object of the class Genome
         '''
         startTime=Helper.getTime()
-        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.logFile)
+        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.logFile,self.runNumber)
         #TODO Finish this fucking fuction
         
         geneDict = genome.getGenesByChromosome()
@@ -170,12 +171,12 @@ class CallEditingSites(object):
             if delVar:
                 del variants.variantDict[key]
                             
-        Helper.printTimeDiff(startTime,self.logFile)
+        Helper.printTimeDiff(startTime,self.logFile,self.runNumber)
         
     '''remove missmatches from homopolymers'''
     def removeHomopolymers(self,variants,outFile,distance):
         startTime=Helper.getTime()
-        Helper.info(" [%s] remove Missmatches from homopolymers " % (startTime.strftime("%c")),self.logFile)
+        Helper.info(" [%s] remove Missmatches from homopolymers " % (startTime.strftime("%c")),self.logFile,self.runNumber)
         
         tempBedFile = open(outFile+"_tmp.bed","w+")
         tempSeqFile = outFile + "_tmp.tsv"
@@ -192,7 +193,7 @@ class CallEditingSites(object):
         tempBedFile.close()
         #run fastaFromBed
         cmd=[self.sourceDir+"bedtools/fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
-        Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile, self.logFile, self.overwrite,self.runNumber)
         
         mmNumberTotal = len(variants.variantDict)
         
@@ -222,8 +223,8 @@ class CallEditingSites(object):
                     pass
                 
         #output statistics
-        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal),self.logFile)
-        Helper.printTimeDiff(startTime,self.logFile)
+        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal),self.logFile,self.runNumber)
+        Helper.printTimeDiff(startTime,self.logFile,self.runNumber)
         
         tempSeqFile.close()
         
@@ -234,7 +235,7 @@ class CallEditingSites(object):
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,variants, outFile, minBaseQual, minMissmatch):
         startTime=Helper.getTime()
-        Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")),self.logFile)
+        Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")),self.logFile,self.runNumber)
         
         counter=0
         geneHash = {}
@@ -283,8 +284,8 @@ class CallEditingSites(object):
                     sys.stdout.write("\r" + str(counter) + " of " + str(mmNumberTotal) + " variants done")
                     sys.stdout.flush()
         
-            Helper.info("\n created fasta file " + tempFasta,self.logFile)
-            Helper.printTimeDiff(startTime,self.logFile)
+            Helper.info("\n created fasta file " + tempFasta,self.logFile,self.runNumber)
+            Helper.printTimeDiff(startTime,self.logFile,self.runNumber)
             tempFastaFile.close()
                 
         
@@ -293,9 +294,9 @@ class CallEditingSites(object):
         if not os.path.isfile(pslFile) or not os.path.getsize(pslFile) > 0:
             cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta, pslFile]
             #print cmd
-            Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite)
+            Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.logFile, self.overwrite,self.runNumber)
         
-        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")),self.logFile)    
+        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")),self.logFile,self.runNumber)    
         
         if not os.path.isfile(outFile):
             #open psl file
@@ -387,9 +388,9 @@ class CallEditingSites(object):
             #output statisticsttkkg
             mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
             
-            Helper.info("\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal),self.logFile)
-            Helper.info("\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch),self.logFile)
-            Helper.info("\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads),self.logFile)
+            Helper.info("\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal),self.logFile,self.runNumber)
+            Helper.info("\t\t %d Missmatches had fewer than %d missmatching-Reads." % (mmNumberTooSmall, minMissmatch),self.logFile,self.runNumber)
+            Helper.info("\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads),self.logFile,self.runNumber)
             
         Helper.printTimeDiff(startTime,self.logFile)
 
@@ -408,7 +409,7 @@ class CallEditingSites(object):
             
     def deleteNonEditingBases(self,variants):
         startTime=Helper.getTime()
-        Helper.info("Delete non Editing Bases (keep only T->C and A->G)",self.logFile)
+        Helper.info("Delete non Editing Bases (keep only T->C and A->G)",self.logFile,self.runNumber)
         
         for varTuple in variants.variantDict.keys():
             chr,pos,ref,alt = varTuple
@@ -425,7 +426,7 @@ class CallEditingSites(object):
                "-D", self.dbsnp, "-o", vcfFile, "-metrics", self.outfilePrefix+".snp.metrics", "-nt", self.threads, "-l","ERROR",
                "-stand_call_conf", self.standCall, "-stand_emit_conf", self.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
         #print cmd
-        Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.logFile, self.overwrite,self.runNumber)
         
         #read in initial SNPs
         variants = VariantSet(vcfFile)

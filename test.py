@@ -10,6 +10,13 @@ import numpy as np
 from sklearn import metrics
 from numpy.ma.core import mean, std
 
+from Helper import Parameters
+
+Parameters.readDefaults()
+
+print Parameters.aluRegions
+ 
+"""
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
 Yclust = dbCluster()
 
@@ -45,7 +52,7 @@ for eps in range(211,211):
         #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
         #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
 
-"""Yclust.dbscan(varPosList, eps=2, min_samples=5)
+Yclust.dbscan(varPosList, eps=2, min_samples=5)
 
 print "%d number of variants" % len(varPosList)
 

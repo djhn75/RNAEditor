@@ -17,7 +17,7 @@ class MapFastq(object):
     
     def __init__(self,fastqFiles,refGenome,dbsnp,outfilePrefix="default",sourceDir="bin/",
                  threads=multiprocessing.cpu_count()-1,maxDiff=0.04,seedDiff=2,
-                 paired=False,keepTemp=False,overwrite=False):
+                 paired=False,keepTemp=False,overwrite=False,runNumber=0):
         '''
         Constructor
         '''
@@ -26,7 +26,7 @@ class MapFastq(object):
         self.refGenome=refGenome
         self.dbsnp=dbsnp
         if outfilePrefix=="default":
-            self.outfilePrefix=self.fastqFile[0:self.fastqFile.rfind(".")]
+            self.outfilePrefix=fastqFiles[0][0:fastqFiles[0].rfind(".")]
         else:
             self.outfilePrefix=outfilePrefix
         self.sourceDir=sourceDir
@@ -36,6 +36,7 @@ class MapFastq(object):
         self.paired=paired
         self.keepTemp=keepTemp
         self.overwrite=overwrite
+        self.runNumber = runNumber
         
         self.logFile=open(self.outfilePrefix + ".log","w+")
         
@@ -61,31 +62,31 @@ class MapFastq(object):
     
     def printAttributes(self):
         print
-        print "*** MAP READS WITH FOLLOWING ATTRIBUTES ***"
+        Helper.info("*** MAP READS WITH FOLLOWING ATTRIBUTES ***", self.logFile,self.runNumber) 
         if self.paired:
-            print "\t FastQ-File_1: " + self.fastqFile1
-            print "\t FastQ-File_2: " + self.fastqFile2
+            Helper.info("\t FastQ-File_1: " + self.fastqFile1,self.logFile,self.runNumber)
+            Helper.info("\t FastQ-File_2: " + self.fastqFile2,self.logFile,self.runNumber)
         else:
-            print "\t FastQ-File: " + self.fastqFile
-        print "\t outfilePrefix:" + self.outfilePrefix
-        print "\t refGenome:" + self.refGenome
-        print "\t dbsnp:" + self.dbsnp
-        print "\t sourceDir:" + self.sourceDir
-        print "\t threads:" + self.threads
-        print "\t maxDiff:" + self.maxDiff
-        print "\t seedDiff:" + self.seedDiff
-        print "\t paired:" + str(self.paired)
-        print "\t keepTemp:" + str(self.keepTemp)
-        print "\t overwrite:" + str(self.overwrite)
-        print
+            Helper.info("\t FastQ-File: " + self.fastqFile,self.logFile,self.runNumber)
+        Helper.info("\t outfilePrefix:" + self.outfilePrefix,self.logFile,self.runNumber)
+        Helper.info("\t refGenome:" + self.refGenome,self.logFile,self.runNumber)
+        Helper.info("\t dbsnp:" + self.dbsnp,self.logFile,self.runNumber)
+        Helper.info("\t sourceDir:" + self.sourceDir,self.logFile,self.runNumber)
+        Helper.info("\t threads:" + self.threads,self.logFile,self.runNumber)
+        Helper.info("\t maxDiff:" + self.maxDiff,self.logFile,self.runNumber)
+        Helper.info("\t seedDiff:" + self.seedDiff,self.logFile,self.runNumber)
+        Helper.info("\t paired:" + str(self.paired),self.logFile,self.runNumber)
+        Helper.info("\t keepTemp:" + str(self.keepTemp),self.logFile,self.runNumber)
+        Helper.info("\t overwrite:" + str(self.overwrite),self.logFile,self.runNumber)
+        Helper.info("",self.logFile,self.runNumber)
     
         
     def start(self):   
         recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
         if os.path.isfile(recaledBamFile):
-            print >> self.logFile, "* * * [Skipping] Mapping result File already exists * * *"
+            Helper.info("* * * [Skipping] Mapping result File already exists * * *",self.logFile,self.runNumber)
             self.logFile.flush()
-            print "* * * [Skipping] Mapping result File already exists * * *"
+            Helper.info("* * * [Skipping] Mapping result File already exists * * *",self.logFile,self.runNumber)
             return recaledBamFile
         
         
@@ -93,12 +94,12 @@ class MapFastq(object):
             #Align first Fastq Reads to the Genome
             saiFile1=self.outfilePrefix+"_1.sai"
             cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile1]
-            Helper.proceedCommand("Align first Reads with BWA", cmd, self.fastqFile1, saiFile1, self.logFile, self.overwrite)
+            Helper.proceedCommand("Align first Reads with BWA", cmd, self.fastqFile1, saiFile1, self.logFile, self.overwrite,self.runNumber)
             
             #Align second Fastq Reads to the Genome
             saiFile2=self.outfilePrefix+"_2.sai"
             cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile2]
-            Helper.proceedCommand("Align second Reads with BWA", cmd, self.fastqFile2, saiFile2, self.logFile, self.overwrite)
+            Helper.proceedCommand("Align second Reads with BWA", cmd, self.fastqFile2, saiFile2, self.logFile, self.overwrite,self.runNumber)
         
             #convert sai to sam
             samFile=self.outfilePrefix+".sam"
@@ -108,18 +109,18 @@ class MapFastq(object):
             #Align Fastq Reads to the Genome
             saiFile=self.outfilePrefix+".sai"
             cmd = [self.sourceDir+"bwa", "aln" , "-t",self.threads, "-n", self.maxDiff , "-k", self.seedDiff, self.refGenome, self.fastqFile]
-            Helper.proceedCommand("Align Reads with BWA", cmd, self.fastqFile, saiFile, self.logFile, self.overwrite)
+            Helper.proceedCommand("Align Reads with BWA", cmd, self.fastqFile, saiFile, self.logFile, self.overwrite,self.runNumber)
             
             #convert sai to sam
             samFile=self.outfilePrefix+".sam"
 
             cmd = [self.sourceDir + "bwa", "samse", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.refGenome, saiFile, self.fastqFile]
-            Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.logFile, self.overwrite)
+            Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.logFile, self.overwrite,self.runNumber)
         
         #convert sam to bam
         bamFile=self.outfilePrefix+".bam"
         cmd=["java", "-Xmx4G", "-jar", self.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
-        Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.logFile, self.overwrite,self.runNumber)
         
         #return bamFile
         
@@ -146,27 +147,27 @@ class MapFastq(object):
         #Identify Target Regions for realignment
         intervalFile=self.outfilePrefix+".indels.intervals"
         cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.threads, "-T", "RealignerTargetCreator", "-R", self.refGenome, "-I", bamFile, "-o", intervalFile,"-l", "ERROR"]
-        Helper.proceedCommand("Identify Target Regions for realignment", cmd, bamFile, intervalFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("Identify Target Regions for realignment", cmd, bamFile, intervalFile, self.logFile, self.overwrite,self.runNumber)
         
         #Proceed Realignement
         realignedFile=self.outfilePrefix+".realigned.bam"
         cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.refGenome, "-I", bamFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
-        Helper.proceedCommand("Proceed Realignement", cmd, intervalFile, realignedFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("Proceed Realignement", cmd, intervalFile, realignedFile, self.logFile, self.overwrite,self.runNumber)
         
         #mark PCR duplicates
         markedFile=self.outfilePrefix+".realigned.marked.bam"
         cmd=["java","-Xmx16G","-jar",self.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.outfilePrefix+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
-        Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.logFile, self.overwrite,self.runNumber)
         
         #Find Quality Score recalibration spots
         recalFile=self.outfilePrefix+".recalSpots.grp"
         cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "BaseRecalibrator", "-l", "ERROR", "-R", self.refGenome, "-knownSites", self.dbsnp, "-I", markedFile, "-cov", "CycleCovariate", "-cov", "ContextCovariate", "-o", recalFile]
-        Helper.proceedCommand("Find Quality Score recalibration spots", cmd, markedFile, recalFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("Find Quality Score recalibration spots", cmd, markedFile, recalFile, self.logFile, self.overwrite,self.runNumber)
         
         #proceed Quality Score recalibration
         #recaledBamFile=self.outfilePrefix+".realigned.marked.recalibrated.bam"
         cmd=["java","-Xmx16G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.refGenome, "-I", markedFile, "-BQSR", recalFile, "-o",recaledBamFile]
-        Helper.proceedCommand("Proceed Quality Score recalibration", cmd, recalFile, recaledBamFile, self.logFile, self.overwrite)
+        Helper.proceedCommand("Proceed Quality Score recalibration", cmd, recalFile, recaledBamFile, self.logFile, self.overwrite,self.runNumber)
         
         return recaledBamFile
         

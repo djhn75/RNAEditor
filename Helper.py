@@ -9,8 +9,88 @@ import argparse, sys, os, subprocess, errno
 from collections import defaultdict
 
 
-
-
+class Parameters():
+    '''
+    Reads and saves the default values from the configuration File 'configurtion.txt'
+    '''
+    refGenome=""
+    dbSNP=""
+    hapmap=""
+    omni=""
+    esp=""
+    aluRegions=""
+    gtfFile = ""
+    output = ""
+    binary = ""
+    maxDiff = 0.04
+    seedDiff = 2
+    paired = False
+    standCall = 0
+    standEmit = 0
+    edgeDistance = 3
+    keepTemp = False
+    overwrite = False
+    threads = 5
+    
+    
+    @staticmethod
+    def readDefaults(file="configuration.txt"):
+        confFile = open(file)
+        for line in confFile:
+            
+            if line.startswith("#"):
+                continue
+            if line == "\n":
+                continue
+            
+            line=line.rstrip()
+            id, value = line.split("=")
+            id=id.strip()
+            value=value.strip()
+            
+            if id=="refGenome":
+                Parameters.refGenome=value
+            elif id=="dbSNP":
+                Parameters.dbSNP=value
+            elif id=="hapmap":
+                Parameters.hapmap=value
+            elif id=="omni":
+                Parameters.omni=value
+            elif id=="esp":
+                Parameters.esp=value
+            elif id == "aluRegions":
+                Parameters.aluRegions=value
+            elif id == "gtfFile":
+                Parameters.gtfFile=value
+            elif id == "output":
+                Parameters.output=value
+            elif id == "binary":
+                Parameters.binary=value
+            elif id == "maxDiff":
+                Parameters.maxDiff=float(value)
+            elif id == "seedDiff":
+                Parameters.seedDiff=int(value)
+            elif id == "paired":
+                #Parameters.paired=float(value)
+                if str(value).lower() in ("yes", "y", "true",  "t", "1"): Parameters.paired = True
+                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): Parameters.paired=False
+            elif id == "standCall":
+                Parameters.standCall=int(value)
+            elif id == "standEmit":
+                Parameters.standEmit=int(value)    
+            elif id == "edgeDistance":
+                Parameters.edgeDistance=int(value)
+            elif id == "threads":
+                Parameters.threads=int(value)
+            elif id == "keepTemp":
+                #Parameters.paired=float(value)
+                if str(value).lower() in ("yes", "y", "true",  "t", "1"): Parameters.keepTemp = True
+                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): Parameters.keepTemp=False
+            elif id == "overwrite":
+                #Parameters.paired=float(value)
+                if str(value).lower() in ("yes", "y", "true",  "t", "1"): Parameters.overwrite = True
+                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): Parameters.overwrite=False
+           
 class Helper():
     '''
     Helpfunctions
@@ -22,6 +102,9 @@ class Helper():
     
     prefix = "*** "
     praefix = " ***"
+    runningAssays={}
+    runningAssaysTabs={}
+    
     
     @staticmethod
     def readable_dir(prospective_dir):
@@ -45,16 +128,13 @@ class Helper():
     converts the inputFile to phred33 Quality and writes it into the ourdir
     """
     @staticmethod
-    def convertPhred64toPhred33(self,fastqFile,outFile,logFile):
+    def convertPhred64toPhred33(self,fastqFile,outFile,logFile,runNumber):
         startTime=Helper.getTime()
-        logFile.write("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *")
-        logFile.flush()
-        print "[" + startTime.strftime("%c") + "] * * * convert Quality encoding for " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *"
+        Helper.info("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *",logFile,runNumber)
+        
         
         if os.path.exists(outFile):
-            print >> self.logFile, "* * * [Skipping] Result File already exists * * *"
-            self.logFile.flush()
-            print "* * * [Skipping] Result File already exists * * *"
+            Helper.info("* * * [Skipping] Result File already exists * * *",logFile,runNumber)
             return outFile
         
         outFile = open(outFile,"w")
@@ -100,15 +180,14 @@ class Helper():
     run a specific NGS-processing-step on the system
     '''
     @staticmethod
-    def proceedCommand(description,cmd,infile,outfile,logFile,overwrite=False):
+    def proceedCommand(description,cmd,infile,outfile,logFile,overwrite=False,runNumber=0):
         startTime=Helper.getTime()
         Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile)
         
         
         #check if infile exists
         if not os.path.isfile(infile):
-            
-            print infile + "does not exist, Error in previous Step"
+            Helper.error(infile + "does not exist, Error in previous Step",logFile,runNumber)
             #Exception(infile + "does not exist, Error in previous Step")
             exit(1)
         
@@ -126,27 +205,25 @@ class Helper():
                 
                 retcode = subprocess.call(cmd, stdout=resultFile, stderr=logFile)
                 if retcode != 0:
-                    print >> sys.stderr, "Error: " + description + " failed"
+                    Helper.error(description,logFile,runNumber)
+                    
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     exit(1)
             except OSError, o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
-                    print >> sys.stderr, "Error: " + cmd[0] + " Command not found on this system"
+                    Helper.error(cmd[0] + " Command not found on this system",logFile,runNumber)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     exit(1)
                 else:
-                    print >> sys.stderr, "Error: " + cmd[0] + o.strerror
+                    Helper.error(cmd[0] + o.strerror,logFile,runNumber)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     exit(1)
-            duration=Helper.getTime()-startTime
-            print >> logFile, "\t[DONE]" + " Duration [" + str(duration) + "]"
-            logFile.flush()
-            print "\t[DONE]" + " Duration [" + str(duration) + "]"
+            Helper.printTimeDiff(startTime, logFile, runNumber)
         else:
-            print "\t [SKIP] File already exist"
+            print "\t [SKIP] File already exist",logFile,runNumber
 
     """
     return a dictionary whith chromosome as keys and a set of variants as values
@@ -208,40 +285,60 @@ class Helper():
     
     
     @staticmethod
-    def printTimeDiff(startTime,logFile=None):
+    def printTimeDiff(startTime,logFile=None,runNumber=0):
         duration = Helper.getTime() - startTime
         if logFile!=None:
             logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         
         sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
-    def newline (quantity=1,logFile=None):
+    def newline (quantity=1,logFile=None,runNumber=0):
         if logFile!=None:
             logFile.write("\n"*quantity)
         sys.stderr.write("\n"*quantity)
     @staticmethod
-    def info (message,logFile=None):
+    def info (message,logFile=None,runNumber=0):
+        if runNumber!=0:
+            #currentAssay = Helper.runningAssays[runNumber] 
+            currentTab = Helper.runningAssaysTabs[runNumber]
+            currentTab.commandBox.append(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
         sys.stderr.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
     @staticmethod
-    def warning (message,logFile=None):
+    def warning (message,logFile=None,runNumber=0):
+        if runNumber!=0:
+            #currentAssay = Helper.runningAssays[runNumber] 
+            currentTab = Helper.runningAssaysTabs[runNumber]
+            currentTab.commandBox.append("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "WARNING:    "  + message + Helper.praefix + "\n")
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def error (message,logFile=None):
+    def error (message,logFile=None,runNumber=0):
+        if runNumber!=0:
+            #currentAssay = Helper.runningAssays[runNumber] 
+            currentTab = Helper.runningAssaysTabs[runNumber]
+            currentTab.commandBox.append(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
         #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
         raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def debug (message,logFile=None):
+    def debug (message,logFile=None,runNumber=0):
+        if runNumber!=0:
+            #currentAssay = Helper.runningAssays[runNumber] 
+            currentTab = Helper.runningAssaysTabs[runNumber]
+            currentTab.commandBox.append(Helper.prefix + "DEBUG:    "  + message + Helper.praefix + "\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "DEBUG:    "  + message + Helper.praefix + "\n")
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
     @staticmethod
-    def status(message,logFile=None):
+    def status(message,logFile=None,runNumber=0):
+        if runNumber!=0:
+            #currentAssay = Helper.runningAssays[runNumber] 
+            currentTab = Helper.runningAssaysTabs[runNumber]
+            currentTab.commandBox.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
         sys.stdout.write("\r" + Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
