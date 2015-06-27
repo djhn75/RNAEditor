@@ -87,7 +87,7 @@ class DropListWidget(QtGui.QListWidget):
     
     def dropLastItems(self,n):
         if self.count() > 0:
-            return self.takeItem(count()-1)
+            return self.takeItem(self.count()-1)
 
 class InputTab(QtGui.QWidget):
     

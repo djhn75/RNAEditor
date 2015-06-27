@@ -10,6 +10,7 @@ from Helper import Helper, Parameters
 from MapFastq import MapFastq
 from CallEditingSites import CallEditingSites
 import multiprocessing, argparse, os
+import traceback
 
 
 class RnaEdit(object):
@@ -20,8 +21,10 @@ class RnaEdit(object):
                  sourceDir="/usr/local/bin", threads=multiprocessing.cpu_count()-1,maxDiff=0.04, 
                  seedDiff=2, paired=False, standCall=0, 
                  standEmit=0, edgeDistance=3, keepTemp=False, 
-                 overwrite=False,runNumber=0):
+                 overwrite=False,textField=0, runNumber=0):
         
+        self.textField=textField
+        self.runNumber=runNumber
         
         #check if the input Files are there
         self.checkDependencies(fastqFiles, refGenome, dbsnp, 
@@ -32,33 +35,43 @@ class RnaEdit(object):
                  standEmit, edgeDistance, keepTemp, 
                  overwrite)
         
+        
+    def start(self):
         """
         START MAPPING
         """
-        self.mapFastQ=MapFastq(fastqFiles, refGenome, dbsnp, outfilePrefix, sourceDir, threads, maxDiff, seedDiff, paired, keepTemp, overwrite,runNumber)
-        mapResultFile=self.mapFastQ.start()
-        
+        self.mapFastQ=MapFastq(self.fastqFiles, self.refGenome, self.dbsnp, self.outfilePrefix, 
+                               self.sourceDir, self.threads, self.maxDiff, self.seedDiff, self.paired, 
+                               self.keepTemp, self.overwrite,self.textField)
+        self.mapResultFile=self.mapFastQ.start()
+        #mapResultFile = False
         #print mapResultFile + " was created \t Mapping Process finished"
-        del self.mapFastQ
+        
         
         """
         START CALLING EDITING SITES
         """
-        self.callEditSites=CallEditingSites(mapResultFile, refGenome, dbsnp, 
-                                            hapmap, omni, esp, 
-                                            aluRegions, geneAnnotation, outfilePrefix, 
-                                            sourceDir, threads, standCall,
-                                            standEmit, edgeDistance, keepTemp, 
-                                            overwrite,runNumber)
+        self.callEditSites=CallEditingSites(self.mapResultFile, self.refGenome, self.dbsnp, 
+                                            self.hapmap, self.omni, self.esp, 
+                                            self.aluRegions, self.geneAnnotation, self.outfilePrefix, 
+                                            self.sourceDir, self.threads, self.standCall,
+                                            self.standEmit, self.edgeDistance, self.keepTemp, 
+                                            self.overwrite,self.textField)
         
-        #self.callEditSites.start()
-        del self.callEditSites
+        self.callEditSites.start()
         
-        Helper.status("rnaEditor Finished with %s" % outfilePrefix)
+        
+        Helper.status("rnaEditor Finished with %s" % self.outfilePrefix)
      
     def __del__(self):
-        #del self.mapFastQ
-        pass
+        try:
+            del self.mapFastQ
+        except AttributeError:
+            pass
+        try:
+            del self.callEditSites
+        except AttributeError:
+            pass
         
 
     def checkDependencies(self,fastqFiles, refGenome, dbsnp, 
@@ -68,75 +81,121 @@ class RnaEdit(object):
                  seedDiff, paired, standCall, 
                  standEmit, edgeDistance, keepTemp, 
                  overwrite):
+        
+        
+        if outfilePrefix=="default":
+            self.outfilePrefix=fastqFiles[0][0:fastqFiles[0].rfind(".")]
+        else:
+            self.outfilePrefix=outfilePrefix
+        
+        try:
+            self.logFile=open(self.outfilePrefix + ".log","w+")
+        except IOError:
+            Helper.error(traceback.format_exc(), runNumber=self.textField)
+        self.threads=threads
+        self.maxDiff=maxDiff
+        self.seedDiff=seedDiff
+        self.paired=paired
+        self.standCall=standCall
+        self.standEmit=standEmit
+        self.edgeDistance=edgeDistance
+        self.keepTemp=keepTemp
+        self.overwrite=overwrite
+        
+        if type(fastqFiles) == str:
+            self.fastqFiles=[fastqFiles]
+        elif type(fastqFiles) == list:
+            self.fastqFiles=fastqFiles
+        else:
+            Helper.error("FastQ File has wrong variable type",self.logFile,self.textField)
+        
+        for file in self.fastqFiles:
+            if not os.path.isfile(file):
+                Helper.error("Could not find: %s" %file,self.logFile,self.textField)
+            
+        
+        
         '''
         Checks the existence of the necessary packages and tools
         :param sourceDir: folder which contains all the software
         '''
         Helper.newline(1)
-        Helper.info("CHECK DEPENDENCIES")
+        Helper.info("CHECK DEPENDENCIES",self.logFile,self.textField)
         
         #check if all tools are there
         if not os.path.isfile(sourceDir+"bwa"):
-            Helper.error("BWA not found in %s" % sourceDir)
+            Helper.error("BWA not found in %s" % sourceDir,self.logFile,self.textField)
         if not os.path.isfile(sourceDir+"picard-tools/SortSam.jar"):
-            Helper.error("SortSam.jar not found in %s" % sourceDir+"picard-tools")
+            Helper.error("SortSam.jar not found in %s" % sourceDir+"picard-tools",self.logFile,self.textField)
         if not os.path.isfile(sourceDir+"picard-tools/MarkDuplicates.jar"):
-            Helper.error("MarkDuplicates.jar not found in %s" % sourceDir+"picard-tools")
+            Helper.error("MarkDuplicates.jar not found in %s" % sourceDir+"picard-tools",self.logFile,self.textField)
         if not os.path.isfile(sourceDir+"GATK/GenomeAnalysisTK.jar"):
-            Helper.error("GenomeAnalysisTK.jar not found in %s" % sourceDir+"GATK/")
+            Helper.error("GenomeAnalysisTK.jar not found in %s" % sourceDir+"GATK/",self.logFile,self.textField)
         if not os.path.isfile(sourceDir+"bedtools/fastaFromBed"):
-            Helper.error("fastaFromBed not found in %s" % sourceDir+"bedtools/")
+            Helper.error("fastaFromBed not found in %s" % sourceDir+"bedtools/",self.logFile,self.textField)
         if not os.path.isfile(sourceDir+"blat"):
-            Helper.error("blat not found in %s" % sourceDir)
+            Helper.error("blat not found in %s" % sourceDir,self.logFile,self.textField)
         if not os.path.isfile(sourceDir+"samtools"):
-            Helper.error("samtools not found in %s" % sourceDir)
+            Helper.error("samtools not found in %s" % sourceDir,self.logFile,self.textField)
         if not os.system("java -version")==0:
-            Helper.error("Java could not be found, Please install java")
+            Helper.error("Java could not be found, Please install java",self.logFile,self.textField)
+        self.sourceDir=sourceDir
+        
         
         #check if all files are there
         if not os.path.isfile(refGenome):
-            Helper.error("Could not find Reference Genome in %s: " % refGenome)
+            Helper.error("Could not find Reference Genome in %s: " % refGenome,self.logFile,self.textField)
+        
         # Files for BWA
         if not os.path.isfile(refGenome+".amb"):
-            Helper.error("Could not find %s.amb" % refGenome)
-            Helper.error("run: 'bwa index %s' to create it" % refGenome)
+            Helper.error("Could not find %s.amb" % refGenome,self.logFile,self.textField)
+            Helper.error("run: 'bwa index %s' to create it" % refGenome,self.logFile,self.textField)
         if not os.path.isfile(refGenome+".ann"):
-            Helper.error("Could not find %s.ann" % refGenome)
-            Helper.error("run: 'bwa index %s' to create it" % refGenome)
+            Helper.error("Could not find %s.ann" % refGenome,self.logFile,self.textField)
+            Helper.error("run: 'bwa index %s' to create it" % refGenome,self.logFile,self.textField)
         if not os.path.isfile(refGenome+".bwt"):
-            Helper.error("Could not find %s.bwt" % refGenome)
-            Helper.error("run: 'bwa index %s' to create it" % refGenome)
+            Helper.error("Could not find %s.bwt" % refGenome,self.logFile,self.textField)
+            Helper.error("run: 'bwa index %s' to create it" % refGenome,self.logFile,self.textField)
         if not os.path.isfile(refGenome+".pac"):
-            Helper.error("Could not find %s.pac" % refGenome)
-            Helper.error("run: 'bwa index %s' to create it" % refGenome)
+            Helper.error("Could not find %s.pac" % refGenome,self.logFile,self.textField)
+            Helper.error("run: 'bwa index %s' to create it" % refGenome,self.logFile,self.textField)
         if not os.path.isfile(refGenome+".sa"):
-            Helper.error("Could not find %s.sa" % refGenome)
-            Helper.error("run: 'bwa index %s' to create it" % refGenome)
+            Helper.error("Could not find %s.sa" % refGenome,self.logFile,self.textField)
+            Helper.error("run: 'bwa index %s' to create it" % refGenome,self.logFile,self.textField)
+        self.refGenome=refGenome
         
         #Files for GATK
         
         if not os.path.isfile(refGenome.replace(".fastq",".dict")):
-            Helper.error("Could not find %s" % refGenome.replace(".fastq",".dict"))
-            Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (sourceDir,refGenome,refGenome))
+            Helper.error("Could not find %s" % refGenome.replace(".fastq",".dict"),self.logFile,self.textField)
+            Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (sourceDir,refGenome,refGenome),self.logFile,self.textField)
         if not os.path.isfile(refGenome+".fai"):
-            Helper.error("Could not find %s.sai" % refGenome)
-            Helper.error("run: 'samtools faidx %s' to create it" % refGenome)
+            Helper.error("Could not find %s.sai" % refGenome,self.logFile,self.textField)
+            Helper.error("run: 'samtools faidx %s' to create it" % refGenome,self.logFile,self.textField)
     
         #SNP databases
         if not os.path.isfile(dbsnp):
-            Helper.error("Could not find %s: " % dbsnp)
+            Helper.error("Could not find %s: " % dbsnp,self.logFile,self.textField)
+        self.dbsnp=dbsnp
         if not os.path.isfile(hapmap):
-            Helper.error("Could not find %s: " % hapmap)
+            Helper.error("Could not find %s: " % hapmap,self.logFile,self.textField)
+        self.hapmap=hapmap
         if not os.path.isfile(omni):
-            Helper.error("Could not find %s: " % omni)
+            Helper.error("Could not find %s: " % omni,self.logFile,self.textField)
+        self.omni=omni
         if not os.path.isfile(esp):
-            Helper.error("Could not find %s: " % esp)
+            Helper.error("Could not find %s: " % esp,self.logFile,self.textField)
+        self.esp=esp    
         
         #region Files
         if not os.path.isfile(aluRegions):
-            Helper.error("Could not find %s: " % aluRegions)
+            Helper.error("Could not find %s: " % aluRegions,self.logFile,self.textField)
+            self.aluRegions=aluRegions
         if not os.path.isfile(geneAnnotation):
-            Helper.error("Could not find %s: " % geneAnnotation)
+            Helper.error("Could not find %s: " % geneAnnotation,self.logFile,self.textField)
+        self.geneAnnotation=geneAnnotation
+        
+        Helper.info("Dependencies satisfied", self.logFile, self.textField)
 
 if __name__ == '__main__':
     Parameters.readDefaults()

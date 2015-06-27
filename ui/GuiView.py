@@ -108,9 +108,7 @@ class GuiView(QtGui.QMainWindow):
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
         
-        """self.runTab = RunTab(self.control)
-        self.tabMainWindow.addTab(self.runTab,self.tr("Tab2"))"""
-        
+
     def createConnects(self):
         self.tabMainWindow.tabCloseRequested.connect(self.control.closeTab)
     
