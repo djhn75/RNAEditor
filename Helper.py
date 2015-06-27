@@ -15,6 +15,7 @@ class Parameters():
     '''
     Reads and saves the default values from the configuration File 'configurtion.txt'
     '''
+    
     refGenome=""
     dbSNP=""
     hapmap=""
