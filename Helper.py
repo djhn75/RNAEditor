@@ -9,6 +9,9 @@ import argparse, sys, os, subprocess, errno
 from collections import defaultdict
 from multiprocessing import Queue
 from time import sleep
+import traceback
+import ui
+
 
 
 class Parameters():
@@ -16,31 +19,49 @@ class Parameters():
     Reads and saves the default values from the configuration File 'configurtion.txt'
     '''
     
-    refGenome=""
-    dbSNP=""
-    hapmap=""
-    omni=""
-    esp=""
-    aluRegions=""
-    gtfFile = ""
-    output = ""
-    binary = ""
-    maxDiff = 0.04
-    seedDiff = 2
-    paired = False
-    standCall = 0
-    standEmit = 0
-    edgeDistance = 3
-    keepTemp = False
-    overwrite = False
-    threads = 5
+    def __init__(self,source="configuration.txt"):
+        '''
+        creates an parameter object which contains all the parameters for RnaEditor
+        :param source: either a QWidget or a textFile from where the parameters are read from
+        '''
+        if type(source)==str:
+            self.readDefaultsFromFile(source)
+        elif isinstance(source, ui.InputTab.InputTab):
+            self.getParametersFromInputTab(source)
+        else:
+            Helper.error("Parameter source has wrong Type [str or QWidget]")
     
     
-    @staticmethod
-    def readDefaults(file="configuration.txt"):
-        confFile = open(file)
-        for line in confFile:
+    def getParametersFromInputTab(self,inputTab):
+        '''
+        get the Parameters and update the default Parameters from the Default class 
+        '''
+        self.refGenome = str(inputTab.refGenomeTextBox.text())
+        self.geneAnnotation = str(inputTab.gtfFileTextBox.text())
+        self.dbsnp = str(inputTab.dbsnpTextBox.text())
+        self.hapmap = str(inputTab.hapmapTextBox.text())
+        self.omni = str(inputTab.omniTextBox.text())
+        self.esp = str(inputTab.espTextBox.text())
+        self.aluRegions = str(inputTab.aluRegionsTextBox.text())
+        self.output = str(inputTab.outputTextBox.text())
+        self.sourceDir = str(inputTab.sourceDirTextBox.text())
+        
+        self.threads = str(inputTab.threadsSpinBox.value())
+        self.maxDiff = str(inputTab.maxDiffSpinBox.value())
+        self.seedDiff = str(inputTab.seedSpinBox.value())
+        self.standCall = str(inputTab.standCallSpinBox.value())
+        self.standEmit = str(inputTab.standEmitSpinBox.value())
+        self.paired = inputTab.pairedCheckBox.isChecked()
+        self.overwrite = inputTab.overwriteCheckBox.isChecked()
+        self.keepTemp = inputTab.keepTempCheckBox.isChecked()
+        
             
+    def readDefaultsFromFile(self,file):
+        try:
+            confFile = open(file)
+        except IOError:
+            Helper.error("Unable to open configuration file")
+        for line in confFile:
             if line.startswith("#"):
                 continue
             if line == "\n":
@@ -52,47 +73,49 @@ class Parameters():
             value=value.strip()
 
             if id=="refGenome":
-                Parameters.refGenome=value
+                self.refGenome=value
             elif id=="dbSNP":
-                Parameters.dbSNP=value
+                self.dbsnp=value
             elif id=="hapmap":
-                Parameters.hapmap=value
+                self.hapmap=value
             elif id=="omni":
-                Parameters.omni=value
+                self.omni=value
             elif id=="esp":
-                Parameters.esp=value
+                self.esp=value
             elif id == "aluRegions":
-                Parameters.aluRegions=value
+                self.aluRegions=value
             elif id == "gtfFile":
-                Parameters.gtfFile=value
+                self.geneAnnotation=value
             elif id == "output":
-                Parameters.output=value
-            elif id == "binary":
-                Parameters.binary=value
+                self.output=value
+            elif id == "sourceDir":
+                self.sourceDir=value
             elif id == "maxDiff":
-                Parameters.maxDiff=float(value)
+                self.maxDiff=float(value)
             elif id == "seedDiff":
-                Parameters.seedDiff=int(value)
+                self.seedDiff=int(value)
             elif id == "paired":
                 #Parameters.paired=float(value)
-                if str(value).lower() in ("yes", "y", "true",  "t", "1"): Parameters.paired = True
-                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): Parameters.paired=False
+                if str(value).lower() in ("yes", "y", "true",  "t", "1"): self.paired = True
+                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): self.paired=False
             elif id == "standCall":
-                Parameters.standCall=int(value)
+                self.standCall=int(value)
             elif id == "standEmit":
-                Parameters.standEmit=int(value)    
+                self.standEmit=int(value)    
             elif id == "edgeDistance":
-                Parameters.edgeDistance=int(value)
+                self.edgeDistance=int(value)
             elif id == "threads":
-                Parameters.threads=int(value)
+                self.threads=int(value)
             elif id == "keepTemp":
                 #Parameters.paired=float(value)
-                if str(value).lower() in ("yes", "y", "true",  "t", "1"): Parameters.keepTemp = True
-                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): Parameters.keepTemp=False
+                if str(value).lower() in ("yes", "y", "true",  "t", "1"): self.keepTemp = True
+                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): self.keepTemp=False
             elif id == "overwrite":
                 #Parameters.paired=float(value)
-                if str(value).lower() in ("yes", "y", "true",  "t", "1"): Parameters.overwrite = True
-                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): Parameters.overwrite=False
+                if str(value).lower() in ("yes", "y", "true",  "t", "1"): self.overwrite = True
+                if str(value).lower() in ("no",  "n", "false", "f", "0", "0.0", "", "none", "[]", "{}"): self.overwrite=False
+                
+
            
 class Helper():
     '''
@@ -108,14 +131,9 @@ class Helper():
     
     #dummy element is added to the array to avoid 0/1 problem from the Tab array and these arrays
     #otherwise i had to add -1 every time i want to access the following arrays
-    runningAssaysThreads=["dummy"]
-    assays=["dummy"] #RNAeditor objects
+    runningThreads=["dummy"]
+
     
-    assayIsRunning=['dummy'] #stores TRUE if the assay at that position was started successfully
-    runningAssaysTabs=["dummy"] #tabs from the user interface
-    runningCommand=["dummy"] #saves subprocess.POPEN objects to kill them later of False if no process is running
-    index=0
-    assayCount=0
     
     @staticmethod
     def getSampleName(fq):
@@ -207,14 +225,18 @@ class Helper():
     run a specific NGS-processing-step on the system
     '''
     @staticmethod
-    def proceedCommand(description,cmd,infile,outfile,logFile,overwrite=False,runNumber=0):
+    def proceedCommand(description,cmd,infile,outfile,rnaEdit):
+        logFile=rnaEdit.logFile
+        textField=rnaEdit.textField
+        overwrite=rnaEdit.params.overwrite
+        
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile,runNumber)
+        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile,textField)
         
         
         #check if infile exists
         if not os.path.isfile(infile):
-            Helper.error(infile + "does not exist, Error in previous Step",logFile,runNumber)
+            Helper.error(infile + "does not exist, Error in previous Step",logFile,textField)
             #Exception(infile + "does not exist, Error in previous Step")
             #exit(1)
         
@@ -230,8 +252,8 @@ class Helper():
                 #print " ".join(cmd),resultFile,logFile
                 
                 #retcode = subprocess.call(cmd, stdout=resultFile, stderr=logFile)
-                Helper.runningCommand[runNumber] = subprocess.Popen(cmd, stdout=resultFile, stderr=logFile)
-                retcode=Helper.runningCommand[runNumber].wait()
+                rnaEdit.runningCommand = subprocess.Popen(cmd, stdout=resultFile, stderr=logFile)
+                retcode = rnaEdit.runningCommand.wait()
                 """while retcode==None:
                     #print "check if process is still running"
                     sleep(10)
@@ -240,30 +262,30 @@ class Helper():
                 print retcode
                 
                 #del Helper.runningCommand[runNumber]
-                Helper.runningCommand[runNumber]=False
+                rnaEdit.runningCommand=False
                 if retcode != 0:
                     if retcode == -9:
-                        Helper.error(description+ " canceled by User!!!",logFile,runNumber)
+                        Helper.error(description+ " canceled by User!!!",logFile,textField)
                     else:
-                        Helper.error(description+ " failed!!!",logFile,runNumber)
+                        Helper.error(description+ " failed!!!",logFile,textField)
                     
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
             except OSError, o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
-                    Helper.error(cmd[0] + " Command not found on this system",logFile,runNumber)
+                    Helper.error(cmd[0] + " Command not found on this system",logFile,textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
                 else:
-                    Helper.error(cmd[0] + o.strerror,logFile,runNumber)
+                    Helper.error(cmd[0] + o.strerror,logFile,textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
-            Helper.printTimeDiff(startTime, logFile, runNumber)
+            Helper.printTimeDiff(startTime, logFile, textField)
         else:
-            print "\t [SKIP] File already exist",logFile,runNumber
+            print "\t [SKIP] File already exist",logFile,textField
 
     """
     return a dictionary whith chromosome as keys and a set of variants as values
@@ -363,6 +385,7 @@ class Helper():
             textField.append("\n\n" + Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
+        print(traceback.format_exc())
         #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
         raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
     @staticmethod

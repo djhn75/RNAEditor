@@ -4,12 +4,9 @@ Created on May 23, 2013
 @author: david
 '''
 
-import argparse, multiprocessing, os, sys, re
+import os, sys, re
 from Helper import Helper
-from genericpath import exists
-
 from VariantSet import VariantSet
-
 from Genome import Genome
 from copy import copy
 
@@ -39,12 +36,7 @@ class CallEditingSites(object):
         print "\t overwrite:" + str(self.overwrite)
         print
 
-    def __init__(self, bamFile, refGenome, dbsnp,
-                 hapmap, omni, esp, 
-                 aluRegions, gtfFile, outfilePrefix="default",
-                 sourceDir="/usr/local/bin/", threads=multiprocessing.cpu_count()-1,standCall=0,
-                 standEmit=0, edgeDistance=6, keepTemp=False, 
-                 overwrite=False,textField=0):
+    def __init__(self, bamFile, rnaEdit):
         '''
         Constructor
         set all the class Arguments
@@ -52,35 +44,11 @@ class CallEditingSites(object):
         self.debug=True
         
         self.bamFile=bamFile
-        self.refGenome=refGenome
-        self.dbsnp=dbsnp
-        self.hapmap=hapmap
-        self.omni=omni
-        self.esp=esp
-        self.aluRegions=aluRegions
-        self.genome = gtfFile
-        if outfilePrefix=="default":
-            self.outfilePrefix=self.bamFile[0:self.bamFile.rfind(".realigned")]
-        else:
-            self.outfilePrefix=outfilePrefix
-        self.sourceDir=sourceDir
-        self.threads=str(threads)
-        self.standCall=str(standCall)
-        self.standEmit=str(standEmit)
-        self.edgeDistance=edgeDistance
-        self.keepTemp=keepTemp
-        self.overwrite=overwrite
-        self.textField=textField
+        self.rnaEdit=rnaEdit
         
-        #self.features = Helper.readGeneFeatures(self.genome)
-        
-        
-        self.logFile=open(self.outfilePrefix + ".log","a")
-        if self.debug==True:
-            self.printAttributes()
         
         #create transcriptome from GTF-File
-        self.genome = Genome(gtfFile)
+        self.genome = Genome(self.rnaEdit.params.gtfFile)
           
     '''delete variants from Bam file which appear near read edges'''
     def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
@@ -420,13 +388,13 @@ class CallEditingSites(object):
     
     def start(self):
         #Rough variant calling with GATK
-        vcfFile=self.outfilePrefix+".vcf"
-        cmd = ["java","-Xmx6G","-jar",self.sourceDir + "GATK/GenomeAnalysisTK.jar", 
-               "-T","UnifiedGenotyper","-R", self.refGenome, "-glm", "SNP","-I", self.bamFile, 
-               "-D", self.dbsnp, "-o", vcfFile, "-metrics", self.outfilePrefix+".snp.metrics", "-nt", self.threads, "-l","ERROR",
-               "-stand_call_conf", self.standCall, "-stand_emit_conf", self.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
+        vcfFile=self.rnaEdit.params.output+".vcf"
+        cmd = ["java","-Xmx6G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", 
+               "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.rnaEdit.params.bamFile, 
+               "-D", self.rnaEdit.params.dbsnp, "-o", vcfFile, "-metrics", self.rnaEdit.params.output+".snp.metrics", "-nt", self.rnaEdit.params.threads, "-l","ERROR",
+               "-stand_call_conf", self.rnaEdit.params.standCall, "-stand_emit_conf", self.rnaEdit.params.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
         #print cmd
-        Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.logFile, self.overwrite,self.textField)
+        Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.rnaEdit.logFile, self.rnaEdit.params.overwrite,self.rnaEdit.textField)
         
         #read in initial SNPs
         variants = VariantSet(vcfFile)
@@ -436,51 +404,51 @@ class CallEditingSites(object):
         #print len(rawSnps)
         
         #delete SNPs from dbSNP
-        variants.deleteOverlappsFromVcf(self.dbsnp)
+        variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
         #print len(noDbsnp)
        
         #delete variants from 1000 Genome Project
-        variants.deleteOverlappsFromVcf(self.omni)
+        variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
         #print len(noOmni)
         
         #delete variants from UW exome calls
-        variants.deleteOverlappsFromVcf(self.esp)
+        variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
         #print len(noEsp)
         
         #erase artificial missmatches at read-edges from variants
-        self.removeEdgeMissmatches(variants, self.bamFile, self.edgeDistance, 25)
+        self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
 
         nonAluVariants=copy(variants)
-        nonAluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=True)
+        nonAluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=True)
         
         aluVariants=copy(variants)
-        aluVariants.variantDict=variants.getOverlappsFromBed(self.aluRegions,getNonOverlapps=False)
+        aluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=False)
         
         #print out variants from Alu regions
-        aluVariants.printVariantDict(self.outfilePrefix+".alu.vcf")
-        aluVariants.printGeneList(self.genome,self.outfilePrefix+".alu.gvf", printSummary=True)
+        aluVariants.printVariantDict(self.rnaEdit.params.output+".alu.vcf")
+        aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".alu.gvf", printSummary=True)
         
         #proceed with non-Alu reads only!!!
         #erase variants from intronic splice junctions
         self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
         
         #erase variants from homopolymer runs
-        self.removeHomopolymers(nonAluVariants,self.outfilePrefix, 4)
+        self.removeHomopolymers(nonAluVariants,self.rnaEdit.params.output, 4)
         
         #do blat search
         blatOutfile = self.outfilePrefix + "_blat"
         self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
         
         #print nonAlu variants
-        nonAluVariants.printVariantDict(self.outfilePrefix+".nonAlu.vcf")
-        nonAluVariants.printGeneList(self.genome,self.outfilePrefix+".nonAlu.gvf", printSummary=True)
+        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".nonAlu.vcf")
+        nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
         
         variants=aluVariants+nonAluVariants
         self.deleteNonEditingBases(variants)
         
         
-        variants.printVariantDict(self.outfilePrefix+".editingSites.vcf")
-        variants.printGeneList(self.genome,self.outfilePrefix+".editingSites.gvf", printSummary=True)
+        variants.printVariantDict(self.rnaEdit.params.output+".editingSites.vcf")
+        variants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.gvf", printSummary=True)
         #combine alu and non Alu sites
 
 
@@ -532,31 +500,3 @@ def checkDependencies(args):
     if not os.path.isfile(args.geneAnnotation):
         Helper.error("Could not find %s: " % args.geneAnnotation)        
         
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='output vatiants from a given .bam file.')
-    parser.add_argument('-i', '--input', metavar='bam-File', type=argparse.FileType('r'), help='Input bam file from which variants should be called', required=True)
-    parser.add_argument("-r", "--RefGenome", metavar='Fasta-File', help="File that contains the reference sequences", type=argparse.FileType('r'), default='/media/media/databases/human/human_g1k_v37.fa')
-    parser.add_argument('-s', '--dbsnp', help='SNP database (dbSNP) in VCF format (downloaded from the GATK homepage)', type=argparse.FileType('r'), default='/media/media/databases/human/dbsnp_135.b37.vcf')
-    parser.add_argument('-m', '--hapmap', help='hapmap database in vcf format (see GATK homepage)', type=argparse.FileType('r'), default='/media/media/databases/human/hapmap_3.3.b37.sites.vcf')
-    parser.add_argument('-g', '--omni', help='1000 Genome variants in vcf format (see GATK homepage)', type=argparse.FileType('r'), default='/media/media/databases/human/1000G_omni2.5.b37.sites.vcf')
-    parser.add_argument('-e', '--esp', help='Exome Sequencing Project variants', type=argparse.FileType('r'), default='/media/media/media/databases/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf')
-    parser.add_argument('-a', '--aluRegions', help='Alu-Regions downloaded fron the UCSC table browser', type=argparse.FileType('r'), default='/media/media/media/databases/human/hg19/rna-editing/Alu_repeats_noChr.bed')
-    parser.add_argument('-gtf', '--gtfFile', help='Gene annotation File in GTF format', type=argparse.FileType('r'))
-    parser.add_argument('-o', '--output', metavar='output-prefix', type=str,help='prefix that is written in front of the output files', default="default")
-    parser.add_argument('-d', '--sourceDir', help='- Directory to all the tools [default: bin/]', default='bin/', type=Helper.readable_dir)
-    parser.add_argument('-t', '--threads', help='number of threads', type=int, default=multiprocessing.cpu_count()-1)
-    parser.add_argument('-sc', '--standCall', help='-The minimum phred-scaled confidence threshold at which variants should be considered as true (int) [0]', type=int, default=0)
-    parser.add_argument('-se', '--standEmit', help=' The minimum phred-scaled confidence threshold at which variants should be emitted (int)[0]', type=int, default=0)
-    parser.add_argument('-ed', '--edgeDistance', help='The minimum edge distance of the SNPs', type=int, default=6)
-    parser.add_argument('--keepTemp', help='keep the intermediate Files [False]', action='store_true', default=False)
-    parser.add_argument('--overwrite', help='overwrite existing Files [False]', action='store_true', default=False)
-    
-    args = parser.parse_args()
-    checkDependencies(args)
-    
-    call=CallEditingSites(args.input.name, args.RefGenome.name, args.dbsnp.name, 
-                          args.hapmap.name, args.omni.name, args.esp, 
-                          args.aluRegions, args.gtfFile, args.output, 
-                          args.sourceDir, args.threads, args.standCall, 
-                          args.standEmit, args.edgeDistance, args.keepTemp, 
-                          args.overwrite)

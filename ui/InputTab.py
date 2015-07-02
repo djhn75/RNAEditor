@@ -10,7 +10,6 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.Qt import QSizePolicy
 from PyQt4.QtGui import QGridLayout, QVBoxLayout
-import os
 from Helper import Parameters
 
 
@@ -92,6 +91,7 @@ class DropListWidget(QtGui.QListWidget):
 class InputTab(QtGui.QWidget):
     
     def __init__(self,control):
+        
         self.control=control
         super(InputTab,self).__init__()
         
@@ -328,25 +328,26 @@ class InputTab(QtGui.QWidget):
         self.connect(self.dropList, QtCore.SIGNAL("dropped"), self.control.fileDropped)
         
     def createDefaults(self):
-        Parameters.readDefaults()
+        p=Parameters()
         
-        self.gtfFileTextBox.setText(Parameters.gtfFile)
-        self.refGenomeTextBox.setText(Parameters.refGenome)   
-        self.dbsnpTextBox.setText(Parameters.dbSNP)
-        self.hapmapTextBox.setText(Parameters.hapmap)
-        self.omniTextBox.setText(Parameters.omni)
-        self.espTextBox.setText(Parameters.esp)
-        self.aluRegionsTextBox.setText(Parameters.aluRegions)
-        self.outputTextBox.setText(Parameters.output)
-        self.sourceDirTextBox.setText(Parameters.binary)
+        self.gtfFileTextBox.setText(p.geneAnnotation)
+        self.refGenomeTextBox.setText(p.refGenome)   
+        self.dbsnpTextBox.setText(p.dbsnp)
+        self.hapmapTextBox.setText(p.hapmap)
+        self.omniTextBox.setText(p.omni)
+        self.espTextBox.setText(p.esp)
+        self.aluRegionsTextBox.setText(p.aluRegions)
+        self.outputTextBox.setText(p.output)
+        self.sourceDirTextBox.setText(p.sourceDir)
         
-        self.maxDiffSpinBox.setValue(Parameters.maxDiff)
-        self.seedSpinBox.setValue(Parameters.seedDiff)
-        self.standCallSpinBox.setValue(Parameters.standCall)
-        self.standEmitSpinBox.setValue(Parameters.standEmit)
-        self.pairedCheckBox.setChecked(Parameters.paired)
-        self.keepTempCheckBox.setChecked(Parameters.keepTemp)
-        self.overwriteCheckBox.setChecked(Parameters.overwrite)
+        self.threadsSpinBox.setValue(p.threads)
+        self.maxDiffSpinBox.setValue(p.maxDiff)
+        self.seedSpinBox.setValue(p.seedDiff)
+        self.standCallSpinBox.setValue(p.standCall)
+        self.standEmitSpinBox.setValue(p.standEmit)
+        self.pairedCheckBox.setChecked(p.paired)
+        self.keepTempCheckBox.setChecked(p.keepTemp)
+        self.overwriteCheckBox.setChecked(p.overwrite)
             
             
 if __name__ == '__main__':
