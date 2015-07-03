@@ -1,0 +1,21 @@
+#This file is used to configure the default behaviour of RNAeditor
+
+#Standard input files
+refGenome = /media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta
+dbSNP = /media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37.vcf
+hapmap = /media/Storage/databases/rnaEditor_annotations/human/hapmap_3.3.b37.sites.vcf
+omni = /media/Storage/databases/rnaEditor_annotations/human/1000G_omni2.5.b37.sites.vcf
+esp = /media/Storage/databases/rnaEditor_annotations/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf
+aluRegions = /media/Storage/databases/rnaEditor_annotations/human/Alu_repeats_noCHR.bed
+gtfFile = /media/Storage/databases/rnaEditor_annotations/human/genes.gtf
+output = default
+sourceDir = /usr/local/bin/
+maxDiff = 0.04
+seedDiff = 2
+paired = False
+standCall = 0
+standEmit = 0
+edgeDistance = 3
+keepTemp = False
+overwrite = True
+threads = 5
