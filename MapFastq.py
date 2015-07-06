@@ -67,7 +67,6 @@ class MapFastq(object):
         if os.path.isfile(recaledBamFile):
             Helper.info("* * * [Skipping] Mapping result File already exists * * *",self.rnaEdit.logFile,self.rnaEdit.textField)
             self.rnaEdit.logFile.flush()
-            Helper.info("* * * [Skipping] Mapping result File already exists * * *",self.rnaEdit.logFile,self.rnaEdit.textField)
             return recaledBamFile
         
         

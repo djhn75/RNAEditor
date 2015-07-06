@@ -21,19 +21,19 @@ class CallEditingSites(object):
         print
         print "*** CALL VARIANTS WITH FOLLOWING ATTRIBUTES ***"
         print "\t Bam-File: " + self.bamFile
-        print "\t outfilePrefix:" + self.outfilePrefix
-        print "\t refGenome:" + self.refGenome
-        print "\t dbsnp:" + self.dbsnp
-        print "\t HapMap:" + self.hapmap
-        print "\t 1000G Omni:" + self.omni
-        print "\t Alu-Regions:" + self.aluRegions
+        print "\t outfilePrefix:" + self.rnaEdit.params.output
+        print "\t refGenome:" + self.rnaEdit.params.refGenome
+        print "\t dbsnp:" + self.rnaEdit.params.dbsnp
+        print "\t HapMap:" + self.rnaEdit.params.hapmap
+        print "\t 1000G Omni:" + self.rnaEdit.params.omni
+        print "\t Alu-Regions:" + self.rnaEdit.params.aluRegions
         
-        print "\t sourceDir:" + self.sourceDir
-        print "\t threads:" + self.threads
-        print "\t StandCall:" + self.standCall
-        print "\t standEmit:" + self.standEmit
-        print "\t keepTemp:" + str(self.keepTemp)
-        print "\t overwrite:" + str(self.overwrite)
+        print "\t sourceDir:" + self.rnaEdit.params.sourceDir
+        print "\t threads:" + self.rnaEdit.params.threads
+        print "\t StandCall:" + self.rnaEdit.params.standCall
+        print "\t standEmit:" + self.rnaEdit.params.standEmit
+        print "\t keepTemp:" + str(self.rnaEdit.params.keepTemp)
+        print "\t overwrite:" + str(self.rnaEdit.params.overwrite)
         print
 
     def __init__(self, bamFile, rnaEdit):
@@ -48,7 +48,10 @@ class CallEditingSites(object):
         
         
         #create transcriptome from GTF-File
-        self.genome = Genome(self.rnaEdit.params.gtfFile)
+        startTime = Helper.getTime()
+        Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),self.rnaEdit.params.geneAnnotations))
+        self.genome = Genome(self.rnaEdit.params.geneAnnotation)
+        Helper.info(" Finished parsing in %s" % (str(duration)))
           
     '''delete variants from Bam file which appear near read edges'''
     def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
@@ -388,6 +391,7 @@ class CallEditingSites(object):
     
     def start(self):
         #Rough variant calling with GATK
+        self.printAttributes()
         vcfFile=self.rnaEdit.params.output+".vcf"
         cmd = ["java","-Xmx6G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", 
                "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.rnaEdit.params.bamFile, 

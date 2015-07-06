@@ -30,7 +30,7 @@ class RnaEdit(object):
         self.fastqFiles=fastqFiles
         
         #hold the running Popen object
-        runningCommand=False
+        self.runningCommand=False
         
         #check if the input Files are there
         self.checkDependencies()
@@ -59,7 +59,6 @@ class RnaEdit(object):
         START CALLING EDITING SITES
         """
         self.callEditSites=CallEditingSites(mapResultFile,self)
-        
         self.callEditSites.start()
         
         
