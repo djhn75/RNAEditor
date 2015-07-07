@@ -274,27 +274,24 @@ class InputTab(QtGui.QWidget):
         self.settingsLayout = QGridLayout()
         self.settingsLayout.addWidget(self.threadsLabel,1,1)
         self.settingsLayout.addWidget(self.threadsSpinBox,1,2)
-        
         self.settingsLayout.addWidget(self.maxDiffLabel,2,1)
         self.settingsLayout.addWidget(self.maxDiffSpinBox,2,2)
-        
         self.settingsLayout.addWidget(self.seedLabel,3,1)
         self.settingsLayout.addWidget(self.seedSpinBox,3,2)
         
-        self.settingsLayout.addWidget(self.standCallLabel,4,1)
-        self.settingsLayout.addWidget(self.standCallSpinBox,4,2)
+        self.settingsLayout.addWidget(self.standCallLabel,1,3)
+        self.settingsLayout.addWidget(self.standCallSpinBox,1,4)
+        self.settingsLayout.addWidget(self.standEmitLabel,2,3)
+        self.settingsLayout.addWidget(self.standEmitSpinBox,2,4)
+        self.settingsLayout.addWidget(self.edgeDistanceLabel,3,3)
+        self.settingsLayout.addWidget(self.edgeDistanceSpinBox,3,4)
         
-        self.settingsLayout.addWidget(self.standEmitLabel,5,1)
-        self.settingsLayout.addWidget(self.standEmitSpinBox,5,2)
-        
-        self.settingsLayout.addWidget(self.edgeDistanceLabel,1,3)
-        self.settingsLayout.addWidget(self.edgeDistanceSpinBox,1,4)
-        self.settingsLayout.addWidget(self.pairedCheckBox,2,3)
-        self.settingsLayout.addWidget(self.keepTempCheckBox,3,3)
-        self.settingsLayout.addWidget(self.overwriteCheckBox,4,3)
+        self.settingsLayout.addWidget(self.pairedCheckBox,1,5)
+        self.settingsLayout.addWidget(self.keepTempCheckBox,2,5)
+        self.settingsLayout.addWidget(self.overwriteCheckBox,3,5)
         
         self.settingsLayout.setColumnStretch(2,1)
-        self.settingsLayout.setColumnStretch(4,5)
+        self.settingsLayout.setColumnStretch(6,5)
         
         
         self.settingsWidget = QtGui.QWidget()

@@ -27,12 +27,7 @@ class CallEditingSites(object):
         self.rnaEdit=rnaEdit
         
         
-        #create transcriptome from GTF-File
-        startTime = Helper.getTime()
-        Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),self.rnaEdit.params.gtfFile),self.rnaEdit.logFile,self.rnaEdit.textField)
-        self.genome = Genome(self.rnaEdit.params.gtfFile)
-        duration = Helper.getTime() -startTime
-        Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
+
     def printAttributes(self):
         
         Helper.info("*** CALL VARIANTS WITH FOLLOWING ATTRIBUTES ***", self.rnaEdit.logFile, self.rnaEdit.textField) 
@@ -127,7 +122,8 @@ class CallEditingSites(object):
         :param genome: object of the class Genome
         '''
         startTime=Helper.getTime()
-        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.logFile,self.textField)
+        
+        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.textField)
         #TODO Finish this fucking fuction
         
         geneDict = genome.getGenesByChromosome()
@@ -394,6 +390,15 @@ class CallEditingSites(object):
     def start(self):
         #Rough variant calling with GATK
         self.printAttributes()
+        
+        #create transcriptome from GTF-File
+        startTime = Helper.getTime()
+        Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),self.rnaEdit.params.gtfFile),self.rnaEdit.logFile,self.rnaEdit.textField)
+        self.genome = Genome(self.rnaEdit.params.gtfFile)
+        duration = Helper.getTime() -startTime
+        Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
+    
+        
         vcfFile=self.rnaEdit.params.output+".vcf"
         cmd = ["java","-Xmx6G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", 
                "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.bamFile, 
