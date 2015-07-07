@@ -33,7 +33,9 @@ class VariantSet(object):
     '''
     handles a vcfFile and stores the results internally as a Dictionary with Tuple of (chromosome,pos,ref,alt) as keys and a the VariantObject as value
     '''
-    def __init__(self,vcfFile):
+    def __init__(self,vcfFile,logFile=None,textField=0):
+        self.logFile=logFile
+        self.textField=textField
         self.variantDict = self.parseVcf(vcfFile)
         #return self.parseVcfFile_variantSetByChromosome(vcfFile)
     
@@ -137,7 +139,7 @@ class VariantSet(object):
         
         '''
         startTime = Helper.getTime()
-        Helper.info(" [%s] Parsing Variant Data from %s" % (startTime.strftime("%c"),vcfFile))
+        Helper.info(" [%s] Parsing Variant Data from %s" % (startTime.strftime("%c"),vcfFile),self.logFile,self.textField)
         
         #check correct Type
         if type(vcfFile) == str:
@@ -152,7 +154,7 @@ class VariantSet(object):
             variantDict[(v.chromosome,v.position,v.ref,v.alt)]=v
             #variantDict[(v.chromosome,v.position)]=v
         
-        Helper.printTimeDiff(startTime)
+        Helper.printTimeDiff(startTime,self.logFile,self.textField)
         return variantDict
     
     def printVariantDict(self,outfile):
@@ -163,12 +165,12 @@ class VariantSet(object):
             try:
                 outfile=open(outfile,"w")
             except IOError:
-                Helper.warning("Could not open %s to write Variant" % outfile )
+                Helper.warning("Could not open %s to write Variant" % outfile ,self.logFile,self.textField)
         if type(outfile) != file:   
             raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
         
         startTime=Helper.getTime()
-        Helper.info("[%s] Print Variants to %s" %  (startTime.strftime("%c"),outfile.name))
+        Helper.info("[%s] Print Variants to %s" %  (startTime.strftime("%c"),outfile.name),self.logFile,self.textField)
             
         outfile.write("\t".join(["#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "\n"]))
         for v in self.variantDict.values():
@@ -212,12 +214,12 @@ class VariantSet(object):
                 outfile=open(outfile,"w")
                 
             except IOError:
-                Helper.warning("Could not open %s to write Variant" % outfile )
+                Helper.warning("Could not open %s to write Variant" % outfile ,self.logFile,self.textField)
         if type(outfile) != file:   
             raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outfile))
         
         startTime=Helper.getTime()
-        Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outfile.name))
+        Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outfile.name),self.logFile,self.textField)
         
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
         outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_ID","VAR_POS","REF","ALT","QUAL","#A","#C","#G","T","\n"]))
@@ -316,7 +318,7 @@ class VariantSet(object):
         
         #get Start time
         startTime = Helper.getTime()
-        Helper.info(" [%s] Delete overlapps from %s" % (startTime.strftime("%c"),variantsB.name))
+        Helper.info(" [%s] Delete overlapps from %s" % (startTime.strftime("%c"),variantsB.name),self.logFile,self.textField)
 
         for line in variantsB:
             if line.startswith("#"):
@@ -328,7 +330,7 @@ class VariantSet(object):
                     del self.variantDict[varTuple]
         
         #calculate duration 
-        Helper.printTimeDiff(startTime)
+        Helper.printTimeDiff(startTime,self.logFile,self.textField)
     
     def getOverlappsFromBed(self,bedFile,getNonOverlapps=False):
         startTime=Helper.getTime()
@@ -340,7 +342,7 @@ class VariantSet(object):
             raise TypeError("bedFile has wrong type, need str or file, %s found" % type(bedFile))
         
         startTime=Helper.getTime()
-        Helper.info("[%s] Delete overlaps from %s" %  (startTime.strftime("%c"),bedFile.name))
+        Helper.info("[%s] Delete overlaps from %s" %  (startTime.strftime("%c"),bedFile.name) ,self.logFile,self.textField)
         
         variantsByChromosome = self.getVariantSetByChromosome() 
         overlapps = set()
@@ -365,7 +367,7 @@ class VariantSet(object):
             #del self.variantDict[variantTuple]
             newSet[variantTuple]=self.variantDict[variantTuple]
         
-        Helper.printTimeDiff(startTime)
+        Helper.printTimeDiff(startTime, self.logFile,self.textField)
         return newSet
 
     def sortVariantDict(self,variantDict):
@@ -384,7 +386,7 @@ class VariantSet(object):
         :param genome: Genome
         '''
         startTime = Helper.getTime()
-        Helper.info(" [%s] Annotating Variants" % (startTime.strftime("%c")))
+        Helper.info(" [%s] Annotating Variants" % (startTime.strftime("%c")),self.logFile,self.textField)
         for v in self.variantDict.values():
             anno = genome.annotatePosition(v.chromosome,v.position) #[(gene1,segment1;segment2;..)..]
             GI=[]
@@ -392,5 +394,5 @@ class VariantSet(object):
                 GI.append(a)
             v.attributes["GI"]=GI
         
-        Helper.printTimeDiff(startTime)
+        Helper.printTimeDiff(startTime,self.logFile,self.textField)
             

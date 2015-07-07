@@ -59,12 +59,14 @@ class RnaEdit(object):
         START CALLING EDITING SITES
         """
         self.callEditSites=CallEditingSites(mapResultFile,self)
+        
         self.callEditSites.start()
         
         
         Helper.status("rnaEditor Finished with %s" % self.outfilePrefix,self.logFile,self.textField)
      
     def __del__(self):
+        print "deleteAssay " + str(self)
         if self.runningCommand != False:
             self.runningCommand.kill()
         
@@ -72,11 +74,11 @@ class RnaEdit(object):
         try:
             del self.mapFastQ
         except AttributeError:
-            pass
+            Helper.error("could not delete MapFastQ instance", self.logFile, self.textField)
         try:
             del self.callEditSites
         except AttributeError:
-            pass
+            Helper.error("could not delete RnaEdit instance", self.logFile, self.textField)
         
 
     def checkDependencies(self):
@@ -172,8 +174,8 @@ class RnaEdit(object):
         if not os.path.isfile(self.params.aluRegions):
             Helper.error("Could not find %s: " % self.params.aluRegions,self.logFile,self.textField)
             
-        if not os.path.isfile(self.params.geneAnnotation):
-            Helper.error("Could not find %s: " % self.params.geneAnnotation,self.logFile,self.textField)
+        if not os.path.isfile(self.params.gtfFile):
+            Helper.error("Could not find %s: " % self.params.gtfFile,self.logFile,self.textField)
 
         
         Helper.info("Dependencies satisfied", self.logFile, self.textField)

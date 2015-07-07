@@ -330,7 +330,7 @@ class InputTab(QtGui.QWidget):
     def createDefaults(self):
         p=Parameters()
         
-        self.gtfFileTextBox.setText(p.geneAnnotation)
+        self.gtfFileTextBox.setText(p.gtfFile)
         self.refGenomeTextBox.setText(p.refGenome)   
         self.dbsnpTextBox.setText(p.dbsnp)
         self.hapmapTextBox.setText(p.hapmap)

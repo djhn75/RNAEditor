@@ -37,7 +37,7 @@ class Parameters():
         get the Parameters and update the default Parameters from the Default class 
         '''
         self.refGenome = str(inputTab.refGenomeTextBox.text())
-        self.geneAnnotation = str(inputTab.gtfFileTextBox.text())
+        self.gtfFile = str(inputTab.gtfFileTextBox.text())
         self.dbsnp = str(inputTab.dbsnpTextBox.text())
         self.hapmap = str(inputTab.hapmapTextBox.text())
         self.omni = str(inputTab.omniTextBox.text())
@@ -85,7 +85,7 @@ class Parameters():
             elif id == "aluRegions":
                 self.aluRegions=value
             elif id == "gtfFile":
-                self.geneAnnotation=value
+                self.gtfFile=value
             elif id == "output":
                 self.output=value
             elif id == "sourceDir":
@@ -126,8 +126,8 @@ class Helper():
     check if given directory is a readable directory and give the right data type 
     '''
     
-    prefix = "*** "
-    praefix = " ***"
+    prefix = ""
+    praefix = ""
     
     #dummy element is added to the array to avoid 0/1 problem from the Tab array and these arrays
     #otherwise i had to add -1 every time i want to access the following arrays
@@ -227,16 +227,16 @@ class Helper():
     @staticmethod
     def proceedCommand(description,cmd,infile,outfile,rnaEdit):
         logFile=rnaEdit.logFile
-        textField=rnaEdit.textField
+       
         overwrite=rnaEdit.params.overwrite
         
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile,textField)
+        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",rnaEdit.logFile,rnaEdit.textField)
         
         
         #check if infile exists
         if not os.path.isfile(infile):
-            Helper.error(infile + "does not exist, Error in previous Step",logFile,textField)
+            Helper.error(infile + "does not exist, Error in previous Step",rnaEdit.logFile,rnaEdit.textField)
             #Exception(infile + "does not exist, Error in previous Step")
             #exit(1)
         
@@ -249,53 +249,53 @@ class Helper():
                 resultFile=open(outfile,"w+")
             try:    
                 
-                #print " ".join(cmd),resultFile,logFile
+                #print " ".join(cmd),resultFile,rnaEdit.logFile
                 
-                #retcode = subprocess.call(cmd, stdout=resultFile, stderr=logFile)
-                rnaEdit.runningCommand = subprocess.Popen(cmd, stdout=resultFile, stderr=logFile)
+                #retcode = subprocess.call(cmd, stdout=resultFile, stderr=rnaEdit.logFile)
+                rnaEdit.runningCommand = subprocess.Popen(cmd, stdout=resultFile, stderr=rnaEdit.logFile)
                 retcode = rnaEdit.runningCommand.wait()
                 """while retcode==None:
                     #print "check if process is still running"
                     sleep(10)
                     retcode=Helper.runningCommand[runNumber].wait()
                 """
-                print retcode
+                #print retcode
                 
                 #del Helper.runningCommand[runNumber]
                 rnaEdit.runningCommand=False
                 if retcode != 0:
                     if retcode == -9:
-                        Helper.error(description+ " canceled by User!!!",logFile,textField)
+                        Helper.error(description+ " canceled by User!!!",rnaEdit.logFile,rnaEdit.textField)
                     else:
-                        Helper.error(description+ " failed!!!",logFile,textField)
+                        Helper.error(description+ " failed!!!",rnaEdit.logFile,rnaEdit.textField)
                     
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
             except OSError, o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
-                    Helper.error(cmd[0] + " Command not found on this system",logFile,textField)
+                    Helper.error(cmd[0] + " Command not found on this system",rnaEdit.logFile,rnaEdit.textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
                 else:
-                    Helper.error(cmd[0] + o.strerror,logFile,textField)
+                    Helper.error(cmd[0] + o.strerror,logFile,rnaEdit.textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
-            Helper.printTimeDiff(startTime, logFile, textField)
+            Helper.printTimeDiff(startTime, rnaEdit.logFile, rnaEdit.textField)
         else:
-            print "\t [SKIP] File already exist",logFile,textField
+            print "\t [SKIP] File already exist",rnaEdit.logFile,rnaEdit.textField
 
     """
     return a dictionary whith chromosome as keys and a set of variants as values
     variantDict={chromosome:(variantPos1,variantPos2,....)}
     """
     @staticmethod
-    def getPositionDictFromVcfFile(vcfFile,runNumber):
+    def getPositionDictFromVcfFile(vcfFile,rnaEdit):
         variantFile=open(vcfFile)
         variantDict=defaultdict(set)
-        Helper.info("reading Variants from %s" % vcfFile,runNumber)
+        Helper.info("reading Variants from %s" % vcfFile,rnaEdit.logFile,rnaEdit.textField)
         for line in variantFile:
             #skip comments
             if line.startswith("#"): continue
@@ -351,11 +351,11 @@ class Helper():
         duration = Helper.getTime() - startTime
         if textField!=0:
             #currentAssay = Helper.runningAssays[textField] 
-            textField.append("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix)
+            textField.append(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix)
         if logFile!=None:
-            logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
+            logFile.write(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         
-        sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
+        sys.stderr.write(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
     def newline (quantity=1,logFile=None,textField=0):
         if textField!=0:

@@ -26,11 +26,7 @@ class WorkThread(QtCore.QThread):
             
             Helper.error("creating rnaEditor Object Failed!" ,textField=textField)
             #print "rnaEditor Failed!"
-            
-        
-    def __del__(self):
-        self.wait()
-    
+
     def run(self):
         #print "Start Thread" + str(self.fastqFiles)
 
@@ -77,8 +73,11 @@ class GuiControll(object):
         if sampleName == None:
             QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo valid Sequencing File!!!\n\nDrop FASTQ-Files to the drop area!")
             return
+        
 
-        fastqFiles = [str(fastq.text())]        
+        fastqFiles = [str(fastq.text())]
+
+        
         
         runTab = RunTab(self)
         currentIndex =  self.view.tabMainWindow.count()
@@ -86,12 +85,15 @@ class GuiControll(object):
         #self.view.tabMainWindow.addTab(self.runTab, "Analysis"+ str(Helper.assayCount))
         self.view.tabMainWindow.addTab(runTab, sampleName + " "+ str(currentIndex))
         
+        
         #initialize new Thread with new assay
         try:
             workThread=WorkThread(fastqFiles,parameters,runTab.commandBox)
         except:
             return
+        
         Helper.runningThreads.append(workThread)
+        
         workThread.start()
         
         
@@ -141,7 +143,8 @@ class GuiControll(object):
                     
             else:
                 self.deleteAssay(currentThreat.assay)
-                currentThreat.wait()
+                currentThreat.quit()
+                #currentThreat.wait()
                 self.view.tabMainWindow.removeTab(currentIndex)
                 currentQWidget.deleteLater()
                 del Helper.runningThreads[currentIndex]

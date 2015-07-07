@@ -173,7 +173,6 @@ class MapFastq(object):
             if os.path.isfile(self.rnaEdit.params.output+".recalSpots.grp"):
                 os.remove(self.rnaEdit.params.output+".recalSpots.grp")
             #os.remove(self.outfilePrefix+".realigned.marked.recalibrated.bam")
-            self.logFile.close()
     
 
 

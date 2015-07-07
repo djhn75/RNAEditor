@@ -163,8 +163,8 @@ class Genome(object):
         Returns a list with all the genes for each chromosome in a dictionary
         return: genesByChromosome
         """
-        startTime = Helper.getTime()
-        Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
+        #startTime = Helper.getTime()
+        #Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
         
         #check fileType of Genome File
         if gtfFilePath.endswith(".gz"):
@@ -176,8 +176,8 @@ class Genome(object):
         self.parseGtf(gtfFile)
         self.assembleTranscriptome()
         
-        duration = Helper.getTime() -startTime
-        Helper.info(" Finished parsing in %s" % (str(duration)))
+        #duration = Helper.getTime() -startTime
+        #Helper.info(" Finished parsing in %s" % (str(duration)))
         
         del self.featureTypes
         del self.geneTypes
