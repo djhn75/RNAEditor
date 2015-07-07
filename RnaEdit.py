@@ -87,7 +87,7 @@ class RnaEdit(object):
         try:
             self.logFile=open(self.params.output + ".log","w+")
         except IOError:
-            Helper.error("Cannot open Log File", runNumber=self.textField)
+            Helper.error("Cannot open Log File", textField=self.textField)
 
         if type(self.fastqFiles) == list:
             self.fastqFiles=self.fastqFiles

@@ -123,7 +123,7 @@ class CallEditingSites(object):
         '''
         startTime=Helper.getTime()
         
-        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.textField)
+        Helper.info(" [%s] remove Missmatches from the intronic splice junctions " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
         #TODO Finish this fucking fuction
         
         geneDict = genome.getGenesByChromosome()
