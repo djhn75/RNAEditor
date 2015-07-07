@@ -33,14 +33,14 @@ class RnaEdit(object):
         self.runningCommand=False
         
         #check if the input Files are there
-        self.checkDependencies()
+        
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
             self.params.output=fastqFiles[0][0:fastqFiles[0].rfind(".")]
         
         
-        
+        self.checkDependencies()
         
         #check if the input Files are there
         self.printParameters()

@@ -71,7 +71,7 @@ class CallEditingSites(object):
             #line[1]+"-"+line[1]
             keepSNP=False
             
-            command = [self.sourceDir+"samtools", "view", bamFile, position] 
+            command = [self.rnaEdit.params.sourceDir+"samtools", "view", bamFile, position] 
             samout = Helper.getCommandOutput(command).splitlines() #get the reads wich are overlapping the snp region
             for samLine in samout: #loop over reads
                 samfields=samLine.split()
@@ -161,7 +161,7 @@ class CallEditingSites(object):
         
         tempBedFile.close()
         #run fastaFromBed
-        cmd=[self.sourceDir+"bedtools/fastaFromBed", "-name", "-tab", "-fi", self.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
+        cmd=[self.rnaEdit.params.sourceDir+"bedtools/fastaFromBed", "-name", "-tab", "-fi", self.rnaEdit.params.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
         Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile,self.rnaEdit)
         
         mmNumberTotal = len(variants.variantDict)
@@ -197,7 +197,7 @@ class CallEditingSites(object):
         
         tempSeqFile.close()
         
-        if self.keepTemp == False:
+        if self.rnaEdit.params.keepTemp == False:
             os.remove(tempBedFile.name)
             os.remove(tempSeqFile.name)   
                 
@@ -219,7 +219,7 @@ class CallEditingSites(object):
                 samPos=chromosome+":"+ str(position)+"-"+str(position)
                 missmatchReadCount=1
     
-                samout = Helper.getCommandOutput([self.sourceDir+"samtools", "view", "-F", "1024", self.bamFile, samPos]).splitlines() #-F 1024 to filter out duplicate reads
+                samout = Helper.getCommandOutput([self.rnaEdit.params.sourceDir+"samtools", "view", "-F", "1024", self.bamFile, samPos]).splitlines() #-F 1024 to filter out duplicate reads
                 for samLine in samout:
                     samfields=samLine.split()
                     flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
@@ -261,7 +261,7 @@ class CallEditingSites(object):
         #do blat search
         pslFile=outFile+".psl"
         if not os.path.isfile(pslFile) or not os.path.getsize(pslFile) > 0:
-            cmd = [self.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.refGenome, tempFasta, pslFile]
+            cmd = [self.rnaEdit.params.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.rnaEdit.params.refGenome, tempFasta, pslFile]
             #print cmd
             Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.rnaEdit)
         
@@ -350,7 +350,7 @@ class CallEditingSites(object):
                     mmReadsSmallerDiscardReads+=1    
                 mmNumberTotal+=1
             
-            if self.keepTemp == False:
+            if self.rnaEdit.params.keepTemp == False:
                 os.remove(tempFasta)
                 os.remove(pslFile.name)
             
@@ -365,7 +365,7 @@ class CallEditingSites(object):
 
             
     def __del__(self):
-        if self.keepTemp==False:
+        if self.self.rnaEdit.params.keepTemp==False:
             #pass
             #os.remove(self.outfilePrefix+".vcf")
             #os.remove(self.outfilePrefix+".no_dbsnp.vcf")
@@ -374,7 +374,7 @@ class CallEditingSites(object):
             #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
             #os.remove(self.outfilePrefix+".nonAlu.vcf")
             #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
-            os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.noHomo.vcf")
+            os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf")
             
     def deleteNonEditingBases(self,variants):
         startTime=Helper.getTime()
