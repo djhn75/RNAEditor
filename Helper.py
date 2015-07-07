@@ -51,6 +51,7 @@ class Parameters():
         self.seedDiff = str(inputTab.seedSpinBox.value())
         self.standCall = str(inputTab.standCallSpinBox.value())
         self.standEmit = str(inputTab.standEmitSpinBox.value())
+        self.edgeDistance=str(inputTab.edgeDistanceSpinBox.value())
         self.paired = inputTab.pairedCheckBox.isChecked()
         self.overwrite = inputTab.overwriteCheckBox.isChecked()
         self.keepTemp = inputTab.keepTempCheckBox.isChecked()

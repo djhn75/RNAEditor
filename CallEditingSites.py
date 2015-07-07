@@ -62,6 +62,7 @@ class CallEditingSites(object):
                 #discard variants wich appear ONLY near edges
                 #write the rest to the output file
         startTime=Helper.getTime()
+        minDistance=int(minDistance)
         
         counter=0    
         
@@ -402,7 +403,7 @@ class CallEditingSites(object):
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.rnaEdit)
         
         #read in initial SNPs
-        variants = VariantSet(vcfFile.self.rnaEdit.logFile,self.rnaEdit.textField)
+        variants = VariantSet(vcfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
         
         #annotate all Variants
         variants.annotateVariantDict(self.genome)

@@ -200,6 +200,13 @@ class InputTab(QtGui.QWidget):
         self.standEmitSpinBox.setRange(1,30)
         self.standEmitSpinBox.setValue(2)
         
+        self.edgeDistanceLabel = QtGui.QLabel("min edge distance:")
+        self.edgeDistanceLabel.setToolTip("The minimum distance of the editing site from the read edge")
+        self.edgeDistanceSpinBox = QtGui.QSpinBox()
+        self.edgeDistanceSpinBox.setToolTip("The minimum distance of the editing site from the read edge")
+        self.edgeDistanceSpinBox.setRange(0,15)
+        self.edgeDistanceSpinBox.setValue(3)
+        
         self.pairedCheckBox = QtGui.QCheckBox("paired-end Sequencing")
         self.overwriteCheckBox = QtGui.QCheckBox("Overwrite existing Files")
         self.overwriteCheckBox.setChecked(True)
@@ -280,9 +287,11 @@ class InputTab(QtGui.QWidget):
         self.settingsLayout.addWidget(self.standEmitLabel,5,1)
         self.settingsLayout.addWidget(self.standEmitSpinBox,5,2)
         
-        self.settingsLayout.addWidget(self.pairedCheckBox,1,3)
-        self.settingsLayout.addWidget(self.keepTempCheckBox,2,3)
-        self.settingsLayout.addWidget(self.overwriteCheckBox,3,3)
+        self.settingsLayout.addWidget(self.edgeDistanceLabel,1,3)
+        self.settingsLayout.addWidget(self.edgeDistanceSpinBox,1,4)
+        self.settingsLayout.addWidget(self.pairedCheckBox,2,3)
+        self.settingsLayout.addWidget(self.keepTempCheckBox,3,3)
+        self.settingsLayout.addWidget(self.overwriteCheckBox,4,3)
         
         self.settingsLayout.setColumnStretch(2,1)
         self.settingsLayout.setColumnStretch(4,5)
