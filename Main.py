@@ -17,8 +17,10 @@ class RnaEditor(GuiView):
     def __init__(self):
         self.control = GuiControll(self) #create controller class
         super(RnaEditor, self).__init__(self.control)
-
-
+        
+        #set window title
+        self.setWindowTitle("RnaEditor")
+        
         #set default Values
         self.inputTab.createDefaults()
 if __name__ == "__main__":

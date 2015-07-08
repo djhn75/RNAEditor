@@ -37,7 +37,11 @@ class RnaEdit(object):
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
-            self.params.output=fastqFiles[0][0:fastqFiles[0].rfind(".")]
+            outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]
+            sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
+            self.params.output=outdir+sampleName+"/"+sampleName
+            if not os.path.exists(outdir+sampleName):
+                os.makedirs(outdir+sampleName)
         
         
         self.checkDependencies()
