@@ -51,7 +51,6 @@ class Parameters():
         self.seedDiff = str(inputTab.seedSpinBox.value())
         self.standCall = str(inputTab.standCallSpinBox.value())
         self.standEmit = str(inputTab.standEmitSpinBox.value())
-        self.edgeDistance=str(inputTab.edgeDistanceSpinBox.value())
         self.paired = inputTab.pairedCheckBox.isChecked()
         self.overwrite = inputTab.overwriteCheckBox.isChecked()
         self.keepTemp = inputTab.keepTempCheckBox.isChecked()
@@ -92,9 +91,9 @@ class Parameters():
             elif id == "sourceDir":
                 self.sourceDir=value
             elif id == "maxDiff":
-                self.maxDiff=float(value)
+                self.maxDiff=str(value)
             elif id == "seedDiff":
-                self.seedDiff=int(value)
+                self.seedDiff=str(value)
             elif id == "paired":
                 #Parameters.paired=float(value)
                 if str(value).lower() in ("yes", "y", "true",  "t", "1"): self.paired = True
@@ -102,11 +101,11 @@ class Parameters():
             elif id == "standCall":
                 self.standCall=int(value)
             elif id == "standEmit":
-                self.standEmit=int(value)    
+                self.standEmit=str(value)    
             elif id == "edgeDistance":
-                self.edgeDistance=int(value)
+                self.edgeDistance=str(value)
             elif id == "threads":
-                self.threads=int(value)
+                self.threads=str(value)
             elif id == "keepTemp":
                 #Parameters.paired=float(value)
                 if str(value).lower() in ("yes", "y", "true",  "t", "1"): self.keepTemp = True
@@ -127,8 +126,8 @@ class Helper():
     check if given directory is a readable directory and give the right data type 
     '''
     
-    prefix = ""
-    praefix = ""
+    prefix = "*** "
+    praefix = " ***"
     
     #dummy element is added to the array to avoid 0/1 problem from the Tab array and these arrays
     #otherwise i had to add -1 every time i want to access the following arrays
@@ -228,16 +227,16 @@ class Helper():
     @staticmethod
     def proceedCommand(description,cmd,infile,outfile,rnaEdit):
         logFile=rnaEdit.logFile
-       
+        textField=rnaEdit.textField
         overwrite=rnaEdit.params.overwrite
         
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",rnaEdit.logFile,rnaEdit.textField)
+        Helper.info("[" + startTime.strftime("%c") + "] * * * " + description + " * * *",logFile,textField)
         
         
         #check if infile exists
         if not os.path.isfile(infile):
-            Helper.error(infile + "does not exist, Error in previous Step",rnaEdit.logFile,rnaEdit.textField)
+            Helper.error(infile + "does not exist, Error in previous Step",logFile,textField)
             #Exception(infile + "does not exist, Error in previous Step")
             #exit(1)
         
@@ -250,53 +249,53 @@ class Helper():
                 resultFile=open(outfile,"w+")
             try:    
                 
-                #print " ".join(cmd),resultFile,rnaEdit.logFile
+                #print " ".join(cmd),resultFile,logFile
                 
-                #retcode = subprocess.call(cmd, stdout=resultFile, stderr=rnaEdit.logFile)
-                rnaEdit.runningCommand = subprocess.Popen(cmd, stdout=resultFile, stderr=rnaEdit.logFile)
+                #retcode = subprocess.call(cmd, stdout=resultFile, stderr=logFile)
+                rnaEdit.runningCommand = subprocess.Popen(cmd, stdout=resultFile, stderr=logFile)
                 retcode = rnaEdit.runningCommand.wait()
                 """while retcode==None:
                     #print "check if process is still running"
                     sleep(10)
                     retcode=Helper.runningCommand[runNumber].wait()
                 """
-                #print retcode
+                print retcode
                 
                 #del Helper.runningCommand[runNumber]
                 rnaEdit.runningCommand=False
                 if retcode != 0:
                     if retcode == -9:
-                        Helper.error(description+ " canceled by User!!!",rnaEdit.logFile,rnaEdit.textField)
+                        Helper.error(description+ " canceled by User!!!",logFile,textField)
                     else:
-                        Helper.error(description+ " failed!!!",rnaEdit.logFile,rnaEdit.textField)
+                        Helper.error(description+ " failed!!!",logFile,textField)
                     
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
             except OSError, o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
-                    Helper.error(cmd[0] + " Command not found on this system",rnaEdit.logFile,rnaEdit.textField)
+                    Helper.error(cmd[0] + " Command not found on this system",logFile,textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
                 else:
-                    Helper.error(cmd[0] + o.strerror,logFile,rnaEdit.textField)
+                    Helper.error(cmd[0] + o.strerror,logFile,textField)
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
-            Helper.printTimeDiff(startTime, rnaEdit.logFile, rnaEdit.textField)
+            Helper.printTimeDiff(startTime, logFile, textField)
         else:
-            print "\t [SKIP] File already exist",rnaEdit.logFile,rnaEdit.textField
+            print "\t [SKIP] File already exist",logFile,textField
 
     """
     return a dictionary whith chromosome as keys and a set of variants as values
     variantDict={chromosome:(variantPos1,variantPos2,....)}
     """
     @staticmethod
-    def getPositionDictFromVcfFile(vcfFile,rnaEdit):
+    def getPositionDictFromVcfFile(vcfFile,runNumber):
         variantFile=open(vcfFile)
         variantDict=defaultdict(set)
-        Helper.info("reading Variants from %s" % vcfFile,rnaEdit.logFile,rnaEdit.textField)
+        Helper.info("reading Variants from %s" % vcfFile,runNumber)
         for line in variantFile:
             #skip comments
             if line.startswith("#"): continue
@@ -352,11 +351,11 @@ class Helper():
         duration = Helper.getTime() - startTime
         if textField!=0:
             #currentAssay = Helper.runningAssays[textField] 
-            textField.append(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix)
+            textField.append("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix)
         if logFile!=None:
-            logFile.write(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
+            logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         
-        sys.stderr.write(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
+        sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
     def newline (quantity=1,logFile=None,textField=0):
         if textField!=0:

@@ -21,10 +21,10 @@ class RnaEdit(object):
             self.params = params
         else:
             Helper.error("Params has to be Instance of Parameters")
-        if isinstance(textField, QtGui.QTextEdit):
+        if isinstance(textField, QtGui.QTextEdit) or textField==0:
             self.textField=textField
         else:
-            Helper.error("textField has to be Instance of QtGui.QTextEdit")
+            Helper.error("textField has to be Instance of QtGui.QTextEdit or 0")
         
 
         self.fastqFiles=fastqFiles
@@ -37,7 +37,7 @@ class RnaEdit(object):
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
-            outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]
+            outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]+"rnaEditor/"
             sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
             self.params.output=outdir+sampleName+"/"+sampleName
             if not os.path.exists(outdir+sampleName):
@@ -216,8 +216,10 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     
-    edit=RnaEdit(args.input,parameters)
+    edit=RnaEdit(args.input,parameters,0)
     
+    
+    edit.start()
     del edit
     
     

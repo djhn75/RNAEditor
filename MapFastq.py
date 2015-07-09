@@ -45,8 +45,8 @@ class MapFastq(object):
         print
         Helper.info("*** MAP READS WITH FOLLOWING ATTRIBUTES ***", self.rnaEdit.logFile,self.rnaEdit.textField) 
         if self.rnaEdit.params.paired:
-            Helper.info("\t FastQ-File_1: " + self.fastqFile1,self.logFile,self.textField)
-            Helper.info("\t FastQ-File_2: " + self.fastqFile2,self.logFile,self.textField)
+            Helper.info("\t FastQ-File_1: " + self.fastqFile1,self.rnaEdit.logFile,self.rnaEdit.textField)
+            Helper.info("\t FastQ-File_2: " + self.fastqFile2,self.rnaEdit.logFile,self.rnaEdit.textField)
         else:
             Helper.info("\t FastQ-File: " + self.fastqFile,self.rnaEdit.logFile,self.rnaEdit.textField)
         Helper.info("\t outfilePrefix:" + self.rnaEdit.params.output,self.rnaEdit.logFile,self.rnaEdit.textField)

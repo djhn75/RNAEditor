@@ -367,13 +367,13 @@ class CallEditingSites(object):
     def __del__(self):
         if self.self.rnaEdit.params.keepTemp==False:
             #pass
-            #os.remove(self.outfilePrefix+".vcf")
-            #os.remove(self.outfilePrefix+".no_dbsnp.vcf")
-            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.vcf")
-            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.vcf")
-            #os.remove(self.outfilePrefix+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
-            #os.remove(self.outfilePrefix+".nonAlu.vcf")
-            #os.remove(self.outfilePrefix+".nonAlu.noSpliceSites.vcf")
+            #os.remove(self.rnaEdit.params.output+".vcf")
+            #os.remove(self.rnaEdit.params.output+".no_dbsnp.vcf")
+            #os.remove(self.rnaEdit.params.output+".no_dbsnp.no_1000genome.vcf")
+            #os.remove(self.rnaEdit.params.output+".no_dbsnp.no_1000genome.no_esp.vcf")
+            #os.remove(self.rnaEdit.params.output+".no_dbsnp.no_1000genome.no_esp.noStartMM.vcf")
+            #os.remove(self.rnaEdit.params.output+".nonAlu.vcf")
+            #os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.vcf")
             os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf")
             
     def deleteNonEditingBases(self,variants):
@@ -447,7 +447,7 @@ class CallEditingSites(object):
         self.removeHomopolymers(nonAluVariants,self.rnaEdit.params.output, 4)
         
         #do blat search
-        blatOutfile = self.outfilePrefix + "_blat"
+        blatOutfile = self.rnaEdit.params.output + "_blat"
         self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
         
         #print nonAlu variants
