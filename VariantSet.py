@@ -222,16 +222,31 @@ class VariantSet(object):
         Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outfile.name),self.logFile,self.textField)
         
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
-        outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_ID","VAR_POS","REF","ALT","QUAL","#A","#C","#G","T","\n"]))
+        outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_ID","VAR_POS",
+                                 "REF","ALT","QUAL","#A","#C","#G","T","Reads Total","Edited Reads","Editing Ration","\n"]))
         
         for v in self.variantDict.values():
             anno = v.attributes["GI"]
             for a in anno:
                 gene,segments = a
-                if gene == "-":
-                    outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),"\n"]))
+                totalReads=sum(v.attributes["BaseCounts"])
+                if v.ref =="A" and v.alt == "G":
+                    editedReads=v.attributes["BaseCounts"][2]
+                    ratio=str(round(float(editedReads)/float(totalReads),2))
+                elif (v.ref=="T" and v.alt=="C"):
+                    editedReads=v.attributes["BaseCounts"][1]
+                    ratio=str(round(float(editedReads)/float(totalReads),2))
                 else:
-                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),"\n"]))
+                    editedReads="0"
+                    ratio="0"
+                    
+                
+                if gene == "-":
+                    outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),
+                                             v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]))
+                else:
+                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),
+                                             v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]))
                 
                 #count variations per gene
                 if gene not in sumDict:
