@@ -59,23 +59,24 @@ class GuiControll(object):
         parameters=Parameters(inputTab)
         if parameters.paired==True:
             #TODO: add support for paired-end
-            pass
+            fastqs=inputTab.dropList.dropFirstTwoItems()
         else:
-            fastq = inputTab.dropList.dropFirstItem()        
+            fastqs = inputTab.dropList.dropFirstItem()        
         
         """
         check if droplist returned a value
         """
-        if fastq == None:
+        if fastqs == None:
             QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo Sequencing Files found!!!\n\nDrop FASTQ-Files to the drop area!")
             return
-        sampleName = Helper.getSampleName(str(fastq.text()))
+        sampleName = Helper.getSampleName(str(fastqs[0].text()))
         if sampleName == None:
             QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo valid Sequencing File!!!\n\nDrop FASTQ-Files to the drop area!")
             return
         
-
-        fastqFiles = [str(fastq.text())]
+        fastqFiles=[]
+        for fastq in fastqs:
+            fastqFiles.append(str(fastq.text()))
 
         
         

@@ -66,7 +66,10 @@ class GuiView(QtGui.QMainWindow):
 
     def createConnects(self):
         self.tabMainWindow.tabCloseRequested.connect(self.control.closeTab)
-    
+        closeTabAction = QtGui.QAction(self.tabMainWindow)
+        closeTabAction.setShortcut('Ctrl+W')
+        self.connect(closeTabAction,QtCore.SIGNAL('triggered()'),self.tabMainWindow,QtCore.SLOT('close()'))
+        
     def createLayout(self):
         #self.resize(679, 417)
         

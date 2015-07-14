@@ -82,7 +82,15 @@ class DropListWidget(QtGui.QListWidget):
             
     def dropFirstItem(self):
         if self.count() > 0:
-            return self.takeItem(0)
+            return [self.takeItem(0)]
+        else:
+            return None
+        
+    def dropFirstTwoItems(self):
+        if self.count() > 1:
+            item1=self.takeItem(0)
+            item2=self.takeItem(0)
+            return [item1,item2]
         else:
             return None
     
