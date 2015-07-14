@@ -32,16 +32,24 @@ class RunTab(QtGui.QWidget):
     
     def createComponents(self):
 
-        self.centralLayout = QtGui.QVBoxLayout()
+       
         self.commandBox = QtGui.QTextEdit()
+        self.stopButton = QtGui.QPushButton("Cancel Analysis!!!")
         self.processBar = QtGui.QProgressBar()
 
     def createLayout(self):
+        self.centralLayout = QGridLayout()
+        
+        self.centralLayout.addWidget(self.commandBox,1,1,1,3)
+        #self.centralLayout.addWidget(self.processBar,2)
+        self.centralLayout.addWidget(self.stopButton,2,3)
         
         self.commandBox.setReadOnly(True)
+        self.stopButton.setStyleSheet("background-color: red;")
+        #self.stopButton.setMaximumSize(50, 25)
         
-        self.centralLayout.addWidget(self.commandBox,1)
-        self.centralLayout.addWidget(self.processBar,2)
+        
+       
         self.setLayout(self.centralLayout)
     
     def createConnects(self):
