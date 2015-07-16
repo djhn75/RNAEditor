@@ -62,7 +62,7 @@ class MapFastq(object):
         Helper.info("",self.rnaEdit.logFile,self.rnaEdit.textField)
     
         
-    def start(self):   
+    def startAnalysis(self):   
         recaledBamFile=self.rnaEdit.params.output+".realigned.marked.recalibrated.bam"
         if os.path.isfile(recaledBamFile):
             Helper.info("* * * [Skipping] Mapping result File already exists * * *",self.rnaEdit.logFile,self.rnaEdit.textField)
@@ -255,5 +255,5 @@ if __name__ == '__main__':
     checkDependencies(args)
     
     mapFastQ=MapFastq(args.input, args.RefGenome.name, args.dbsnp.name,args.output, args.sourceDir, args.threads, args.maxDiff, args.seedDiff, args.paired, args.keepTemp, args.overwrite)
-    mapFastQ.start()
+    mapFastQ.startAnalysis()
     del mapFastQ

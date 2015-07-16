@@ -11,12 +11,13 @@ from MapFastq import MapFastq
 from CallEditingSites import CallEditingSites
 import multiprocessing, argparse, os
 import traceback
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 
-class RnaEdit(object):
+class RnaEdit(QtCore.QThread):
 
     def __init__(self, fastqFiles, params, textField):
+        QtCore.QThread.__init__(self)
         if isinstance(params, Parameters):
             self.params = params
         else:
@@ -49,12 +50,19 @@ class RnaEdit(object):
         #check if the input Files are there
         self.printParameters()
         
-    def start(self):
+    def run(self):
+        #print "Start Thread" + str(self.fastqFiles)
+        try:
+            self.startAnalysis()
+        except Exception:
+            Helper.error("RnaEditor Failed")
+        
+    def startAnalysis(self):
         """
         START MAPPING
         """
         self.mapFastQ=MapFastq(self)
-        mapResultFile=self.mapFastQ.start()
+        mapResultFile=self.mapFastQ.startAnalysis()
         #mapResultFile = False
         #print mapResultFile + " was created \t Mapping Process finished"
         
@@ -64,7 +72,7 @@ class RnaEdit(object):
         """
         self.callEditSites=CallEditingSites(mapResultFile,self)
         
-        self.callEditSites.start()
+        self.callEditSites.startAnalysis()
         
         
         Helper.status("rnaEditor Finished with %s" % self.outfilePrefix,self.logFile,self.textField)
@@ -219,7 +227,7 @@ if __name__ == '__main__':
     edit=RnaEdit(args.input,parameters,0)
     
     
-    edit.start()
+    edit.startAnalysis()
     del edit
     
     

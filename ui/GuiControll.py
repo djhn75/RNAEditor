@@ -15,7 +15,7 @@ import traceback
 
 
 
-
+"""
 class WorkThread(QtCore.QThread):
     def __init__(self,fastqFiles,parameters,textField):
         QtCore.QThread.__init__(self)
@@ -30,10 +30,10 @@ class WorkThread(QtCore.QThread):
     def run(self):
         #print "Start Thread" + str(self.fastqFiles)
         try:
-            self.assay.start()
+            self.assay.startAnalysis()
         except Exception:
             Helper.error("RnaEditor Failed")
-
+"""
 class GuiControll(object):
     '''
     classdocs
@@ -47,7 +47,7 @@ class GuiControll(object):
         
 
     @QtCore.pyqtSlot()
-    def newAssay(self,):
+    def newAssay(self):
         '''
         Function wich starts a new analysis
         '''
@@ -87,13 +87,14 @@ class GuiControll(object):
         
         #initialize new Thread with new assay
         try:
-            workThread=WorkThread(fastqFiles,parameters,runTab.commandBox)
-        except:
-            return
+            assay = RnaEdit(fastqFiles, parameters,runTab.commandBox)
+        except Exception:
+            Helper.error("creating rnaEditor Object Failed!" ,textField=runTab.commandBox)
         
-        Helper.runningThreads.append(workThread)
         
-        workThread.start()
+        Helper.runningThreads.append(assay)
+        
+        assay.start()
         
         
     @QtCore.pyqtSlot()
@@ -119,7 +120,7 @@ class GuiControll(object):
                 item.setStatusTip(url)     
                 
     @QtCore.pyqtSlot()            
-    def closeTab (self, currentIndex):
+    def closeTab(self, currentIndex):
         
         
         print "tab close %i" % currentIndex
@@ -127,21 +128,21 @@ class GuiControll(object):
             currentThread=Helper.runningThreads[currentIndex]
             currentQWidget=self.view.tabMainWindow.widget(currentIndex)
             #check if rnaEditor is still running
-            if currentThread.assay.runningCommand != False:
+            if currentThread.runningCommand != False:
                 
                 
                 quitMessage = "Are you sure you want to quit the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))
                 reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
     
                 if reply == QtGui.QMessageBox.Yes:
-                    self.deleteAssay(currentThread.assay)
+                    self.deleteAssay(currentThread)
                     currentThread.wait()
                     self.view.tabMainWindow.removeTab(currentIndex)
                     currentQWidget.deleteLater()
                     del Helper.runningThreads[currentIndex]
                     
             else:
-                self.deleteAssay(currentThread.assay)
+                self.deleteAssay(currentThread)
                 currentThread.quit()
                 
                 self.view.tabMainWindow.removeTab(currentIndex)
@@ -153,12 +154,12 @@ class GuiControll(object):
         if index != 0:
             
             currentThreat=Helper.runningThreads[index]
-            if currentThreat.assay.runningCommand != False:
-                currentThreat.assay.runningCommand.kill()
+            if currentThreat.runningCommand != False:
+                currentThreat.runningCommand.kill()
             else:
-                Helper.info("stop Assay "+str(index),currentThreat.assay.logFile, currentThreat.assay.textField)
+                Helper.info("stop Assay "+str(index),currentThreat.logFile, currentThreat.textField)
                 currentThreat.quit()
-            Helper.error("Analysis canceled by User!!!", currentThreat.assay.logFile, currentThreat.assay.textField)
+            Helper.error("Analysis canceled by User!!!", currentThreat.logFile, currentThreat.textField)
             
             #self.deleteAssay(currentThreat.assay)
             #

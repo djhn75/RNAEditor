@@ -7,7 +7,7 @@ from ui.GuiControll import GuiControll
 
 def main(argv):
     app = QtGui.QApplication(argv) 
-    mainWindow = RnaEditor()
+    mainWindow = GuiView()
     
     app.setApplicationName("RNAEditor")
     app.setApplicationVersion("0.1")
@@ -26,19 +26,14 @@ def main(argv):
      
     mainWindow.show() 
     sys.exit(app.exec_())
-
+    
+"""
 class RnaEditor(GuiView): 
-    assayList=[]
     
     def __init__(self):
         self.control = GuiControll(self) #create controller class
         super(RnaEditor, self).__init__(self.control)
+"""       
         
-        #set window title
-        self.setWindowTitle("RnaEditor")
-        
-
-        #set default Values
-        self.inputTab.createDefaults()
 if __name__ == "__main__":
     main(sys.argv)

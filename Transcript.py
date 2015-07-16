@@ -11,7 +11,7 @@ class Transcript(object):
 
     def __init__(self, gene, transcriptId, names, protId, exonIndices, codingExonIndices,
                     codingFrames, startCodons, stopCodons,
-                    start = None, stop = None, codingStart = None, codingStop = None):
+                    startAnalysis = None, stop = None, codingStart = None, codingStop = None):
 
 
         self.gene = gene
@@ -23,7 +23,7 @@ class Transcript(object):
         self.codingFrames          = codingFrames
         self.startCodons           = startCodons
         self.stopCodons            = stopCodons
-        self.start                    = min(self.gene.exons[e][0] for e in self.exonIndices) if start == None else start
+        self.startAnalysis                    = min(self.gene.exons[e][0] for e in self.exonIndices) if startAnalysis == None else startAnalysis
         self.stop                    = max(self.gene.exons[e][1] for e in self.exonIndices) if stop == None else stop
         if codingStart != None:
             self.codingStart = codingStart
@@ -36,7 +36,7 @@ class Transcript(object):
     
     
        
-        __slots__ = ["gene","transcriptId","protId", "start","stop","codingStart",
+        __slots__ = ["gene","transcriptId","protId", "startAnalysis","stop","codingStart",
              "codingStop","names","exonIndices","codingExonIndices",
              "codingFrames","virtualExonIndices","virtualCodingExonIndices",
              "startCodons","stopCodons"]

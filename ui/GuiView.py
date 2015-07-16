@@ -12,18 +12,20 @@ from ui.InputTab import InputTab
 from ui.RunTab import RunTab
 from PyQt4.QtGui import QSizePolicy
 from PyQt4.Qt import QMenu, QString
-
+from ui.GuiControll import GuiControll
 
 class GuiView(QtGui.QMainWindow):
-    def __init__(self,control):
-        self.control = control
+    def __init__(self):
+        self.control = GuiControll(self)
         super(GuiView, self).__init__()
-        self.createMenu()
+        
         self.createComponents()
         self.createLayout()
+        self.createMenu()        
         self.createConnects()
         
         
+        self.setWindowTitle("RnaEditor")
         self.setGeometry(0, 0, 400, 400)
         
         self.tabMainWindow.setCurrentIndex(0)
@@ -32,15 +34,15 @@ class GuiView(QtGui.QMainWindow):
     def createMenu(self):
 
         
-        exitAction = QtGui.QAction(self)        
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(QtGui.qApp.quit)
-        exitAction.setText("Exit")
+        
+        self.exitAction.setShortcut('Ctrl+Q')
+        self.exitAction.setStatusTip('Exit application')
+        self.exitAction.triggered.connect(QtGui.qApp.quit)
+        self.exitAction.setText("Exit")
         
         self.menubar = self.menuBar()
         fileMenu = self.menubar.addMenu('File') 
-        fileMenu.addAction(exitAction)
+        fileMenu.addAction(self.exitAction)
         """"
         fileMenu.addAction('Open File')
 
@@ -51,10 +53,11 @@ class GuiView(QtGui.QMainWindow):
         
     def createComponents(self):
         self.centralWidget = QtGui.QWidget()
-
         self.gridLayout = QtGui.QGridLayout()
-        
         self.tabMainWindow = QtGui.QTabWidget()
+        self.exitAction = QtGui.QAction(self)        
+        
+        
         self.tabMainWindow.setEnabled(True)
         self.tabMainWindow.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
         #self.tabMainWindow.setMinimumSize(900, 600)
@@ -62,6 +65,7 @@ class GuiView(QtGui.QMainWindow):
         self.inputTab = InputTab(self.control)
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
+        self.inputTab.createDefaults()
         
 
     def createConnects(self):

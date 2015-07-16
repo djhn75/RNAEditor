@@ -4,11 +4,9 @@ Created on May 22, 2013
 @author: david
 '''
 
-from datetime import datetime, date, time
+from datetime import datetime
 import argparse, sys, os, subprocess, errno
 from collections import defaultdict
-from multiprocessing import Queue
-from time import sleep
 import traceback
 import ui
 
@@ -167,17 +165,18 @@ class Helper():
         #return "["+curr_time.strftime("%c")+"]"
         return curr_time
     
-    """
-    converts the inputFile to phred33 Quality and writes it into the ourdir
-    """
+    
     @staticmethod
-    def convertPhred64toPhred33(self,fastqFile,outFile,logFile,runNumber):
+    def convertPhred64toPhred33(fastqFile,outFile,logFile,textField):
+        """
+        converts the inputFile to phred33 Quality and writes it into the ourdir
+        """
         startTime=Helper.getTime()
-        Helper.info("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *",logFile,runNumber)
+        Helper.info("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *",logFile,textField)
         
         
         if os.path.exists(outFile):
-            Helper.info("* * * [Skipping] Result File already exists * * *",logFile,runNumber)
+            Helper.info("* * * [Skipping] Result File already exists * * *",logFile,textField)
             return outFile
         
         outFile = open(outFile,"w")
@@ -198,11 +197,12 @@ class Helper():
         outFile.close()
         return outFile.name
     
-    """
-    chech in the first lines if the quality encoding is phred33
-    """
+   
     @staticmethod
     def isPhred33Encoding(inFastqFile,lines,logFile, runNumber):
+        """
+        check in the first lines if the quality encoding is phred33
+        """
         fastqFile=open(inFastqFile,"r")
         lineNumber=0
         lines=lines*4
@@ -222,11 +222,12 @@ class Helper():
             
         Helper.error("%s has less than %i Sequences. \n These are not enough reads for editing detection!!" % (fastqFile.name,lines),logFile, runNumber)
     
-    '''
-    run a specific NGS-processing-step on the system
-    '''
+    
     @staticmethod
     def proceedCommand(description,cmd,infile,outfile,rnaEdit):
+        '''
+        run a specific NGS-processing-step on the system
+        '''
         logFile=rnaEdit.logFile
         textField=rnaEdit.textField
         overwrite=rnaEdit.params.overwrite
@@ -288,12 +289,13 @@ class Helper():
         else:
             print "\t [SKIP] File already exist",logFile,textField
 
-    """
-    return a dictionary whith chromosome as keys and a set of variants as values
-    variantDict={chromosome:(variantPos1,variantPos2,....)}
-    """
+
     @staticmethod
     def getPositionDictFromVcfFile(vcfFile,runNumber):
+        """
+        return a dictionary whith chromosome as keys and a set of variants as values
+        variantDict={chromosome:(variantPos1,variantPos2,....)}
+        """
         variantFile=open(vcfFile)
         variantDict=defaultdict(set)
         Helper.info("reading Variants from %s" % vcfFile,runNumber)

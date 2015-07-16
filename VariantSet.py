@@ -245,7 +245,7 @@ class VariantSet(object):
                     outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),
                                              v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]))
                 else:
-                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),
+                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.startAnalysis),str(gene.end),v.id,str(v.position),
                                              v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]))
                 
                 #count variations per gene
@@ -365,13 +365,13 @@ class VariantSet(object):
             try:
                 sl = line.split("\t") 
                 #if "\t" in line else line.split(" ")
-                chromosome,start,stop = sl[:3]
-                start,stop=(int(start),int(stop))
+                chromosome,startAnalysis,stop = sl[:3]
+                startAnalysis,stop=(int(startAnalysis),int(stop))
             except ValueError:
                 raise ValueError("Error in line '%s'" % line)
             
             for v in variantsByChromosome[chromosome]:
-                if start < v.position < stop:
+                if startAnalysis < v.position < stop:
                     overlapps.add((v.chromosome,v.position,v.ref,v.alt))
                      
         if getNonOverlapps:

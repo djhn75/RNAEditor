@@ -132,7 +132,7 @@ class CallEditingSites(object):
             delVar=False
             chromosome,position,ref,alt = key
             for gene in geneDict[chromosome]:
-                if gene.start < position < gene.end:#check if is inside of gene location
+                if gene.startAnalysis < position < gene.end:#check if is inside of gene location
                     for exon in gene.codingExons:
                         if (exon[0]-distance < position < exon[0]) or (exon[1] < position < exon[1]+distance):
                             #print(key)
@@ -387,7 +387,7 @@ class CallEditingSites(object):
             else:
                 del variants.variantDict[varTuple]
     
-    def start(self):
+    def startAnalysis(self):
         #Rough variant calling with GATK
         self.printAttributes()
         
