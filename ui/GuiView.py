@@ -39,7 +39,7 @@ class GuiView(QtGui.QMainWindow):
         exitAction.setText("Exit")
         
         self.menubar = self.menuBar()
-        fileMenu = self.menubar.addMenu('File')
+        fileMenu = self.menubar.addMenu('File') 
         fileMenu.addAction(exitAction)
         """"
         fileMenu.addAction('Open File')

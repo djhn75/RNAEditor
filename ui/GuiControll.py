@@ -29,12 +29,10 @@ class WorkThread(QtCore.QThread):
 
     def run(self):
         #print "Start Thread" + str(self.fastqFiles)
-
         try:
             self.assay.start()
         except Exception:
             Helper.error("RnaEditor Failed")
-
 
 class GuiControll(object):
     '''
@@ -126,29 +124,45 @@ class GuiControll(object):
         
         print "tab close %i" % currentIndex
         if currentIndex != 0:
-            currentThreat=Helper.runningThreads[currentIndex]
+            currentThread=Helper.runningThreads[currentIndex]
             currentQWidget=self.view.tabMainWindow.widget(currentIndex)
             #check if rnaEditor is still running
-            if currentThreat.assay.runningCommand != False:
+            if currentThread.assay.runningCommand != False:
                 
                 
                 quitMessage = "Are you sure you want to quit the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))
                 reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
     
                 if reply == QtGui.QMessageBox.Yes:
-                    self.deleteAssay(currentThreat.assay)
-                    currentThreat.wait()
+                    self.deleteAssay(currentThread.assay)
+                    currentThread.wait()
                     self.view.tabMainWindow.removeTab(currentIndex)
                     currentQWidget.deleteLater()
                     del Helper.runningThreads[currentIndex]
                     
             else:
-                self.deleteAssay(currentThreat.assay)
-                currentThreat.quit()
-                #currentThreat.wait()
+                self.deleteAssay(currentThread.assay)
+                currentThread.quit()
+                
                 self.view.tabMainWindow.removeTab(currentIndex)
                 currentQWidget.deleteLater()
                 del Helper.runningThreads[currentIndex]
+    
+    def stopAssay(self):
+        index = self.view.tabMainWindow.currentIndex()
+        if index != 0:
+            
+            currentThreat=Helper.runningThreads[index]
+            if currentThreat.assay.runningCommand != False:
+                currentThreat.assay.runningCommand.kill()
+            else:
+                Helper.info("stop Assay "+str(index),currentThreat.assay.logFile, currentThreat.assay.textField)
+                currentThreat.quit()
+            Helper.error("Analysis canceled by User!!!", currentThreat.assay.logFile, currentThreat.assay.textField)
+            
+            #self.deleteAssay(currentThreat.assay)
+            #
+    
     def deleteAssay(self,assay):
         '''
         Finally removes an Tab and deletes the assay from all global Arrays
@@ -159,5 +173,4 @@ class GuiControll(object):
         if assay.runningCommand != False:
             print "kill:" + str(assay.runningCommand)
             assay.runningCommand.kill()
-        
         del assay

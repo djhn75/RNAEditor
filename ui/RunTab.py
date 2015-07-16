@@ -19,7 +19,7 @@ class RunTab(QtGui.QWidget):
     def __init__(self,control):
         super(RunTab,self).__init__()
         
-        self.connrol = control
+        self.control = control
         
         self.createMenu()
         self.createComponents()
@@ -53,7 +53,7 @@ class RunTab(QtGui.QWidget):
         self.setLayout(self.centralLayout)
     
     def createConnects(self):
-        pass
+        self.stopButton.clicked.connect(self.control.stopAssay)
           
 if __name__ == '__main__':
     import sys, os

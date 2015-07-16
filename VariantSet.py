@@ -229,12 +229,12 @@ class VariantSet(object):
             anno = v.attributes["GI"]
             for a in anno:
                 gene,segments = a
-                totalReads=sum(v.attributes["BaseCounts"])
+                totalReads=sum(map(int,v.attributes["BaseCounts"]))
                 if v.ref =="A" and v.alt == "G":
-                    editedReads=v.attributes["BaseCounts"][2]
+                    editedReads=str(v.attributes["BaseCounts"][2])
                     ratio=str(round(float(editedReads)/float(totalReads),2))
                 elif (v.ref=="T" and v.alt=="C"):
-                    editedReads=v.attributes["BaseCounts"][1]
+                    editedReads=str(v.attributes["BaseCounts"][1])
                     ratio=str(round(float(editedReads)/float(totalReads),2))
                 else:
                     editedReads="0"
