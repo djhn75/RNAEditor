@@ -17,5 +17,5 @@ standEmit = 0
 edgeDistance = 3
 paired = True
 keepTemp = False
-overwrite = True
+overwrite = False
 threads = 5
