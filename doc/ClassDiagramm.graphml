@@ -347,22 +347,22 @@ ref : String</y:AttributeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="193.69911524675672" width="696.9065238756798" x="-1008.4532619378399" y="-1378.5105941137106"/>
+          <y:Geometry height="218.45289777608332" width="696.9065238756798" x="-1008.4532619378399" y="-1378.5105941137106"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="76.236328125" x="310.3350978753399" y="3.0">RnaEditor<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="76.236328125" x="310.3350978753399" y="25.96875">RnaEditor<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
               <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
             </y:ModelParameter>
           </y:NodeLabel>
-          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
+          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="QtCore.QThread" use3DEffect="true">
             <y:AttributeLabel>params: Parameters
 fastqFiles: List[Str]
 textField: QTextEdit
 runningCommand: Popen
-</y:AttributeLabel>
+stop: Boolean</y:AttributeLabel>
             <y:MethodLabel>__init__(self,fastqFiles,params, textField)
 start(self)
 __del(self)
@@ -377,7 +377,7 @@ printParameters(self)</y:MethodLabel>
       <data key="d5"><![CDATA[Static Class]]></data>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="359.2540367994759" width="392.83649414853176" x="190.7760058514683" y="-1083.84165758328"/>
+          <y:Geometry height="359.2540367994759" width="392.83649414853176" x="152.09822064939578" y="-1904.0327370799287"/>
           <y:Fill color="#FF9900" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="52.6865234375" x="170.07498535551588" y="25.96875">Helper<y:LabelModel>
@@ -460,14 +460,14 @@ readDefaultsFromFile(self,file)</y:MethodLabel>
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="572.8126639460932" width="850.1395968818968" x="-828.9488621607416" y="-1949.619268491831"/>
+              <y:Geometry height="572.8126639460929" width="850.1395968818968" x="-820.108225543125" y="-2117.591364226546"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
               <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="850.1395968818968" x="0.0" y="0.0">User interface</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-              <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="72" rightF="71.92910534664293" top="71" topF="70.72509294093311"/>
+              <y:BorderInsets bottom="0" bottomF="0.0" left="0" leftF="0.0" right="72" rightF="71.92910534664293" top="71" topF="70.72509294093288"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="393.04570389912544" y="-1624.1319208712694"/>
@@ -488,7 +488,7 @@ readDefaultsFromFile(self,file)</y:MethodLabel>
           <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
-              <y:Geometry height="214.00699443465305" width="159.40907807038343" x="-683.9488621607416" y="-1842.433238050898"/>
+              <y:Geometry height="214.00699443465305" width="159.40907807038343" x="-675.108225543125" y="-2010.405333785613"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="63.72509765625" x="47.841990207066715" y="25.96875">GuiView<y:LabelModel>
@@ -519,7 +519,7 @@ self.createConnects()</y:MethodLabel>
           <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
-              <y:Geometry height="189.9604628347356" width="194.7716245408497" x="-467.79373539796416" y="-1581.7670673804735"/>
+              <y:Geometry height="189.9604628347356" width="194.7716245408497" x="-458.95309878034755" y="-1749.7391631151886"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="82.12060546875" x="56.32550953604985" y="3.0">GuiControl<y:LabelModel>
@@ -531,14 +531,15 @@ self.createConnects()</y:MethodLabel>
               </y:NodeLabel>
               <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
                 <y:AttributeLabel>view: GuiView
-stopAssay(self)
-deleteAssay(self,assay)</y:AttributeLabel>
+</y:AttributeLabel>
                 <y:MethodLabel> __init__(self, v)
 newAssay(self)
 openFileDialog(self,textBox)
 openFolderDialog(self,textBox)
 fileDropped(self, l)
-closeTab(self, currentIndex)</y:MethodLabel>
+closeTab(self, currentIndex)
+stopAssay(self)
+deleteAssay(self,assay)</y:MethodLabel>
               </y:UML>
             </y:UMLClassNode>
           </data>
@@ -548,7 +549,7 @@ closeTab(self, currentIndex)</y:MethodLabel>
           <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
-              <y:Geometry height="160.255923799544" width="159.40907807038343" x="-450.11246216273105" y="-1842.433238050898"/>
+              <y:Geometry height="160.255923799544" width="159.40907807038343" x="-441.27182554511444" y="-2010.405333785613"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="69.8125" x="44.798289035191715" y="25.96875">InputTab<y:LabelModel>
@@ -575,7 +576,7 @@ createDefaults(self)</y:MethodLabel>
           <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
-              <y:Geometry height="197.032972128829" width="159.40907807038343" x="-225.14744869587116" y="-1842.433238050898"/>
+              <y:Geometry height="197.032972128829" width="159.40907807038343" x="-216.30681207825455" y="-2010.405333785613"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="59.4658203125" x="49.971628878941715" y="25.96875">RunTab<y:LabelModel>
@@ -604,7 +605,7 @@ self.createConnects()</y:MethodLabel>
           <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
-              <y:Geometry height="28.0" width="100.0" x="-813.9488621607416" y="-1842.4332380508977"/>
+              <y:Geometry height="28.0" width="100.0" x="-805.108225543125" y="-2010.4053337856128"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="39.419921875" x="30.2900390625" y="3.0">Main<y:LabelModel>
@@ -721,7 +722,7 @@ self.createConnects()</y:MethodLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="96.85401892744045" tx="354.50642903645826" ty="-126.5459843750001">
+          <y:Path sx="0.0" sy="109.2314803245507" tx="354.50642903645826" ty="-126.5459843750001">
             <y:Point x="-660.0" y="-1050.0"/>
             <y:Point x="-660.0" y="-1020.0"/>
             <y:Point x="-660.0" y="-990.0"/>

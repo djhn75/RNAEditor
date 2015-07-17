@@ -94,7 +94,7 @@ class RnaEdit(QtCore.QThread):
         
 
     def checkDependencies(self):
-        """chdecks if all files are there
+        """checks if all files are there
         if all programs are installed properly and if the output directory is writable"""
         try:
             self.logFile=open(self.params.output + ".log","w+")
