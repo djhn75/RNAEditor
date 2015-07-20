@@ -26,7 +26,7 @@ class CallEditingSites(object):
         self.bamFile=bamFile
         self.rnaEdit=rnaEdit
         
-        
+
 
     def printAttributes(self):
         
@@ -49,8 +49,9 @@ class CallEditingSites(object):
 
 
           
-    '''delete variants from Bam file which appear near read edges'''
+    
     def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
+        '''delete variants from Bam file which appear near read edges'''
         #Loop through vcf-File
             #call overlapping reads with samtools view
             #loop over reads
@@ -113,8 +114,7 @@ class CallEditingSites(object):
             counter+=1
             if counter % 10000 == 0: #print out current status
                 Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished",self.rnaEdit.logFile,self.rnaEdit.textField)
-        
-    
+          
     def removeIntronicSpliceJunctions(self,variants,genome,distance=4): 
         '''
         remove variant near splice junctions and returns the other variants
@@ -388,6 +388,11 @@ class CallEditingSites(object):
                 del variants.variantDict[varTuple]
     
     def startAnalysis(self):
+        '''Proceeds all the steps to detect editing Sites from a bam File
+        
+        @return: 0 on success and 1 if analysis was canceled by user
+        '''
+        
         #Rough variant calling with GATK
         self.printAttributes()
         
@@ -398,7 +403,8 @@ class CallEditingSites(object):
         duration = Helper.getTime() -startTime
         Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
     
-        
+        if self.rnaEdit.stopAssay == True: return -1
+                
         vcfFile=self.rnaEdit.params.output+".vcf"
         cmd = ["java","-Xmx6G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", 
                "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.bamFile, 
@@ -410,57 +416,86 @@ class CallEditingSites(object):
         #read in initial SNPs
         variants = VariantSet(vcfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
         
-        #annotate all Variants
+        
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        '''annotate all Variants'''
         variants.annotateVariantDict(self.genome)
-        #print len(rawSnps)
-        
-        #delete SNPs from dbSNP
-        variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
-        #print len(noDbsnp)
-       
-        #delete variants from 1000 Genome Project
-        variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
-        #print len(noOmni)
-        
-        #delete variants from UW exome calls
-        variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
-        #print len(noEsp)
-        
-        #erase artificial missmatches at read-edges from variants
-        self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
 
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        '''delete SNPs from dbSNP'''
+        variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
+        
+        if self.rnaEdit.stopAssay == True: return -1
+       
+        '''delete variants from 1000 Genome Project'''
+        variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
+        
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        '''delete variants from UW exome calls'''
+        variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
+        
+        
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        '''erase artificial missmatches at read-edges from variants'''
+        self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
+        
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        '''get non-Alu Variants'''
         nonAluVariants=copy(variants)
         nonAluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=True)
         
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        '''get Alu Variants'''
         aluVariants=copy(variants)
         aluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=False)
+        
+        if self.rnaEdit.stopAssay == True: return -1
         
         #print out variants from Alu regions
         aluVariants.printVariantDict(self.rnaEdit.params.output+".alu.vcf")
         aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".alu.gvf", printSummary=True)
         
-        #proceed with non-Alu reads only!!!
+        if self.rnaEdit.stopAssay == True: return -1
+        
+        ##############################################
+        ###   proceed with non-Alu reads only!!!    ##
+        ##############################################
+        
         #erase variants from intronic splice junctions
         self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
         
+        if self.rnaEdit.stopAssay == True: return -1
+        
         #erase variants from homopolymer runs
         self.removeHomopolymers(nonAluVariants,self.rnaEdit.params.output, 4)
+        
+        if self.rnaEdit.stopAssay == True: return -1
         
         #do blat search
         blatOutfile = self.rnaEdit.params.output + "_blat"
         self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
         
+        if self.rnaEdit.stopAssay == True: return -1
+        
         #print nonAlu variants
         nonAluVariants.printVariantDict(self.rnaEdit.params.output+".nonAlu.vcf")
         nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
         
+        #combine alu and non Alu sites
         variants=aluVariants+nonAluVariants
         self.deleteNonEditingBases(variants)
         
-        
+        #print Final tables
         variants.printVariantDict(self.rnaEdit.params.output+".editingSites.vcf")
         variants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.gvf",printSummary=True)
-        #combine alu and non Alu sites
+        
+        return 0
 
 
 def checkDependencies(args):

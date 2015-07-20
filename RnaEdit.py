@@ -32,7 +32,7 @@ class RnaEdit(QtCore.QThread):
         
         #hold the running Popen object
         self.runningCommand=False
-        
+        self.stopAssay = False
         #check if the input Files are there
         
         
@@ -72,7 +72,7 @@ class RnaEdit(QtCore.QThread):
         """
         self.callEditSites=CallEditingSites(mapResultFile,self)
         
-        self.callEditSites.startAnalysis()
+        result = self.callEditSites.startAnalysis()
         
         
         Helper.status("rnaEditor Finished with %s" % self.outfilePrefix,self.logFile,self.textField)

@@ -14,31 +14,10 @@ import subprocess
 import traceback
 
 
-
-"""
-class WorkThread(QtCore.QThread):
-    def __init__(self,fastqFiles,parameters,textField):
-        QtCore.QThread.__init__(self)
-
-        try:
-            self.assay = RnaEdit(fastqFiles, parameters,textField)
-        except Exception:
-            
-            Helper.error("creating rnaEditor Object Failed!" ,textField=textField)
-            #print "rnaEditor Failed!"
-
-    def run(self):
-        #print "Start Thread" + str(self.fastqFiles)
-        try:
-            self.assay.startAnalysis()
-        except Exception:
-            Helper.error("RnaEditor Failed")
-"""
 class GuiControll(object):
     '''
     classdocs
     '''
-    
     def __init__(self, v):
         '''
         Constructor
@@ -121,8 +100,6 @@ class GuiControll(object):
                 
     @QtCore.pyqtSlot()            
     def closeTab(self, currentIndex):
-        
-        
         print "tab close %i" % currentIndex
         if currentIndex != 0:
             currentThread=Helper.runningThreads[currentIndex]
@@ -140,7 +117,6 @@ class GuiControll(object):
                     self.view.tabMainWindow.removeTab(currentIndex)
                     currentQWidget.deleteLater()
                     del Helper.runningThreads[currentIndex]
-                    
             else:
                 self.deleteAssay(currentThread)
                 currentThread.quit()
@@ -158,11 +134,8 @@ class GuiControll(object):
                 currentThreat.runningCommand.kill()
             else:
                 Helper.info("stop Assay "+str(index),currentThreat.logFile, currentThreat.textField)
-                currentThreat.quit()
+                currentThreat.stop=True
             Helper.error("Analysis canceled by User!!!", currentThreat.logFile, currentThreat.textField)
-            
-            #self.deleteAssay(currentThreat.assay)
-            #
     
     def deleteAssay(self,assay):
         '''
