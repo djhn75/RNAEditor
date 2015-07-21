@@ -90,13 +90,13 @@ class RnaEdit(QtCore.QThread):
         self.isTerminated=True
         #print [x for x in gc.get_objects()]
         
-        Helper.error("Analysis was terminated by User", self.logFile, self.textField)
+        
         if self.runningCommand != False:
             self.runningCommand.kill()
         else:
             self.terminate()
             self.wait()
-        
+        Helper.error("Analysis was terminated by User", self.logFile, self.textField)
          
     def cleanUp(self):
         print "deleteAssay " + str(self)
