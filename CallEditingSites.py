@@ -9,6 +9,7 @@ from Helper import Helper
 from VariantSet import VariantSet
 from Genome import Genome
 from copy import copy
+import gc
 
 
 
@@ -132,7 +133,7 @@ class CallEditingSites(object):
             delVar=False
             chromosome,position,ref,alt = key
             for gene in geneDict[chromosome]:
-                if gene.startAnalysis < position < gene.end:#check if is inside of gene location
+                if gene.start < position < gene.end:#check if is inside of gene location
                     for exon in gene.codingExons:
                         if (exon[0]-distance < position < exon[0]) or (exon[1] < position < exon[1]+distance):
                             #print(key)
@@ -363,9 +364,16 @@ class CallEditingSites(object):
             
         Helper.printTimeDiff(startTime,self.rnaEdit.logFile,self.rnaEdit.textField)
 
+    
+   
+    
             
-    def __del__(self):
-        if self.self.rnaEdit.params.keepTemp==False:
+    def cleanUp(self):
+        #print [x for x in gc.get_objects()]
+        print str(self) + " cleaned up"
+        self.genome = None
+        
+        """if self.rnaEdit.params.keepTemp==False:
             #pass
             #os.remove(self.rnaEdit.params.output+".vcf")
             #os.remove(self.rnaEdit.params.output+".no_dbsnp.vcf")
@@ -375,6 +383,7 @@ class CallEditingSites(object):
             #os.remove(self.rnaEdit.params.output+".nonAlu.vcf")
             #os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.vcf")
             os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf")
+        """
             
     def deleteNonEditingBases(self,variants):
         startTime=Helper.getTime()
@@ -403,7 +412,6 @@ class CallEditingSites(object):
         duration = Helper.getTime() -startTime
         Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
     
-        if self.rnaEdit.stopAssay == True: return -1
                 
         vcfFile=self.rnaEdit.params.output+".vcf"
         cmd = ["java","-Xmx6G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", 
@@ -417,51 +425,32 @@ class CallEditingSites(object):
         variants = VariantSet(vcfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
         
         
-        if self.rnaEdit.stopAssay == True: return -1
-        
         '''annotate all Variants'''
         variants.annotateVariantDict(self.genome)
 
-        if self.rnaEdit.stopAssay == True: return -1
-        
         '''delete SNPs from dbSNP'''
         variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
         
-        if self.rnaEdit.stopAssay == True: return -1
-       
         '''delete variants from 1000 Genome Project'''
         variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
-        
-        if self.rnaEdit.stopAssay == True: return -1
         
         '''delete variants from UW exome calls'''
         variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
         
-        
-        if self.rnaEdit.stopAssay == True: return -1
-        
         '''erase artificial missmatches at read-edges from variants'''
         self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
-        
-        if self.rnaEdit.stopAssay == True: return -1
         
         '''get non-Alu Variants'''
         nonAluVariants=copy(variants)
         nonAluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=True)
         
-        if self.rnaEdit.stopAssay == True: return -1
-        
         '''get Alu Variants'''
         aluVariants=copy(variants)
         aluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=False)
         
-        if self.rnaEdit.stopAssay == True: return -1
-        
         #print out variants from Alu regions
         aluVariants.printVariantDict(self.rnaEdit.params.output+".alu.vcf")
         aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".alu.gvf", printSummary=True)
-        
-        if self.rnaEdit.stopAssay == True: return -1
         
         ##############################################
         ###   proceed with non-Alu reads only!!!    ##
@@ -470,18 +459,12 @@ class CallEditingSites(object):
         #erase variants from intronic splice junctions
         self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
         
-        if self.rnaEdit.stopAssay == True: return -1
-        
         #erase variants from homopolymer runs
         self.removeHomopolymers(nonAluVariants,self.rnaEdit.params.output, 4)
-        
-        if self.rnaEdit.stopAssay == True: return -1
         
         #do blat search
         blatOutfile = self.rnaEdit.params.output + "_blat"
         self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
-        
-        if self.rnaEdit.stopAssay == True: return -1
         
         #print nonAlu variants
         nonAluVariants.printVariantDict(self.rnaEdit.params.output+".nonAlu.vcf")
@@ -495,7 +478,7 @@ class CallEditingSites(object):
         variants.printVariantDict(self.rnaEdit.params.output+".editingSites.vcf")
         variants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.gvf",printSummary=True)
         
-        return 0
+        return 1
 
 
 def checkDependencies(args):

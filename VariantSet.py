@@ -194,7 +194,7 @@ class VariantSet(object):
         '''
         print List of genes with all the variants
         Gene-Variation-File
-        "Gene_ID","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"
+        "Gene_ID","gene_Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_POS","REF","ALT","QUAL","BaseCount(A,C,T,G)"
         
         Gene Summary File
         "Gene_ID",Gene_Name,#3'UTR,#5'UTR,#EXON,'INTRON,#TOTAL
@@ -243,10 +243,10 @@ class VariantSet(object):
                 
                 if gene == "-":
                     outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),
-                                             v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]))
+                                             v.ref,v.alt,str(v.qual),"\t".join(map(str,v.attributes["BaseCounts"])),totalReads,editedReads,ratio,"\n"]))
                 else:
-                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.startAnalysis),str(gene.end),v.id,str(v.position),
-                                             v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]))
+                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),
+                                             v.ref,v.alt,str(v.qual),"\t".join(map(str,v.attributes["BaseCounts"])),totalReads,editedReads,ratio,"\n"]))
                 
                 #count variations per gene
                 if gene not in sumDict:

@@ -15,7 +15,7 @@ class Feature:
         self.source = "."
         self.featureType = "."
         self.frame = "."
-        self.startAnalysis = 0
+        self.start = 0
         self.end = 0
         self.score = "."
         self.strand = True
@@ -28,7 +28,7 @@ class Feature:
     def readline(self,line):
         '''
         process one line of the gtf file
-        <seqname> <source> <feature> <startAnalysis> <end> <score> <strand> <frame> [attributes] [comments]
+        <seqname> <source> <feature> <start> <end> <score> <strand> <frame> [attributes] [comments]
         :param line: one line of a gtf file
         '''
 
@@ -38,7 +38,7 @@ class Feature:
             self.chr = line[0]
             self.source = line[1]
             self.featureType = line[2]
-            self.startAnalysis = int(line[3])
+            self.start = int(line[3])
             self.end = int(line[4])
             self.score = line[5]
             self.strand = line[6] in ['1','+'] # 
@@ -46,7 +46,7 @@ class Feature:
         except ValueError:
             raise ValueError("Error in line '%s'" % " ".join(line))
         
-        self.startAnalysis=int(self.startAnalysis)
+        self.start=int(self.start)
         self.end=int(self.end)
         
         #parse attributes

@@ -12,9 +12,37 @@ from numpy.ma.core import mean, std
 
 from Helper import Parameters
 
-Parameters.readDefaults()
+import os
+import gc
+import psutil
+from time import sleep
 
-print Parameters.aluRegions
+#proc = psutil.Process(os.getpid())
+gc.collect()
+#mem0 = proc.get_memory_info().rss
+sleep(9)
+# create approx. 10**7 int objects and pointers
+print "using memory"
+foo = ['abc' for x in range(10**8)]
+#mem1 = proc.get_memory_info().rss
+sleep(5)
+# unreference, including x == 9999999
+del foo, x
+#mem2 = proc.get_memory_info().rss
+
+# collect() calls PyInt_ClearFreeList()
+# or use ctypes: pythonapi.PyInt_ClearFreeList()
+print "free memory"
+gc.collect()
+#mem3 = proc.get_memory_info().rss
+
+#pd = lambda x2, x1: 100.0 * (x2 - x1) / mem0
+print "freed and sleep"
+sleep(9)
+#print "Allocation: %0.2f%%" % pd(mem1, mem0)
+#print "Unreference: %0.2f%%" % pd(mem2, mem1)
+#print "Collect: %0.2f%%" % pd(mem3, mem2)
+#print "Overall: %0.2f%%" % pd(mem3, mem0)
  
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")

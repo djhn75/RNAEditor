@@ -13,6 +13,8 @@ import multiprocessing, argparse, os
 import traceback
 from PyQt4 import QtGui, QtCore
 
+import gc
+
 
 class RnaEdit(QtCore.QThread):
 
@@ -32,7 +34,7 @@ class RnaEdit(QtCore.QThread):
         
         #hold the running Popen object
         self.runningCommand=False
-        self.stopAssay = False
+        self.isTerminated = False
         #check if the input Files are there
         
         
@@ -74,10 +76,29 @@ class RnaEdit(QtCore.QThread):
         
         result = self.callEditSites.startAnalysis()
         
+        #finished
+        self.isTerminated=True
         
         Helper.status("rnaEditor Finished with %s" % self.outfilePrefix,self.logFile,self.textField)
-     
-    def __del__(self):
+    
+    def stopSafely(self):
+        self.quit()
+        Helper.error("Analysis was stopped by User", self.logFile, self.textField)
+    
+    def stopImmediately(self):
+        self.callEditSites.cleanUp()
+        self.isTerminated=True
+        #print [x for x in gc.get_objects()]
+        
+        Helper.error("Analysis was terminated by User", self.logFile, self.textField)
+        if self.runningCommand != False:
+            self.runningCommand.kill()
+        else:
+            self.terminate()
+            self.wait()
+        
+         
+    def cleanUp(self):
         print "deleteAssay " + str(self)
         if self.runningCommand != False:
             self.runningCommand.kill()
@@ -211,9 +232,6 @@ class RnaEdit(QtCore.QThread):
         Helper.info("\t keepTemp:" + str(self.params.keepTemp),self.logFile,self.textField)
         Helper.info("\t overwrite:" + str(self.params.overwrite),self.logFile,self.textField)
         Helper.info("",self.logFile,self.textField)
-
-
-
 
 if __name__ == '__main__':
     parameters = Parameters("configuration.txt")

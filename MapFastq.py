@@ -150,7 +150,7 @@ class MapFastq(object):
         
         return recaledBamFile
         
-    def __del__(self):
+    def cleanUp(self):
         if self.rnaEdit.params.keepTemp==False:
             if os.path.isfile(self.rnaEdit.params.output+".sai"):
                 os.remove(self.rnaEdit.params.output+".sai")

@@ -13,7 +13,7 @@ from RnaEdit import RnaEdit
 import subprocess
 import traceback
 
-
+import gc
 class GuiControll(object):
     '''
     classdocs
@@ -30,6 +30,7 @@ class GuiControll(object):
         '''
         Function wich starts a new analysis
         '''
+        
         inputTab = self.view.tabMainWindow.widget(0)
         
         #get Parameters 
@@ -104,47 +105,30 @@ class GuiControll(object):
         if currentIndex != 0:
             currentThread=Helper.runningThreads[currentIndex]
             currentQWidget=self.view.tabMainWindow.widget(currentIndex)
-            #check if rnaEditor is still running
-            if currentThread.runningCommand != False:
-                
-                
-                quitMessage = "Are you sure you want to quit the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))
-                reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-    
-                if reply == QtGui.QMessageBox.Yes:
-                    self.deleteAssay(currentThread)
-                    currentThread.wait()
-                    self.view.tabMainWindow.removeTab(currentIndex)
-                    currentQWidget.deleteLater()
-                    del Helper.runningThreads[currentIndex]
+            #check if rnaEditor is still running or if it is finished it can be deleteted immediately
+            if  currentThread.isTerminated == False:
+                    quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))
+                    reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                    if reply== QtGui.QMessageBox.Yes:
+                        self.view.tabMainWindow.removeTab(currentIndex)
+                        currentQWidget.deleteLater()
+                        del Helper.runningThreads[currentIndex]
+                        currentThread.stopImmediately()
             else:
-                self.deleteAssay(currentThread)
-                currentThread.quit()
-                
                 self.view.tabMainWindow.removeTab(currentIndex)
                 currentQWidget.deleteLater()
                 del Helper.runningThreads[currentIndex]
-    
-    def stopAssay(self):
-        index = self.view.tabMainWindow.currentIndex()
+
+    def stopAssay(self,index=False):
+        if index == False:
+            index = self.view.tabMainWindow.currentIndex()
         if index != 0:
-            
             currentThreat=Helper.runningThreads[index]
-            if currentThreat.runningCommand != False:
-                currentThreat.runningCommand.kill()
-            else:
-                Helper.info("stop Assay "+str(index),currentThreat.logFile, currentThreat.textField)
-                currentThreat.stop=True
-            Helper.error("Analysis canceled by User!!!", currentThreat.logFile, currentThreat.textField)
-    
-    def deleteAssay(self,assay):
-        '''
-        Finally removes an Tab and deletes the assay from all global Arrays
-        :param currentIndex: Index of the Tab and Assay which should be removed
-        '''
-        print "deleteAssay" + str(assay)
-        
-        if assay.runningCommand != False:
-            print "kill:" + str(assay.runningCommand)
-            assay.runningCommand.kill()
-        del assay
+            #check if Thread was already terminated
+            if currentThreat.isTerminated==True:
+                return True
+
+            quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(index))
+            reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+            if reply == QtGui.QMessageBox.Yes:
+                    currentThreat.stopImmediately()

@@ -19,11 +19,11 @@ class Gene(object):
         self.names = names          #list of names
         self.exons = sorted(exons, reverse = not strand) 
         self.codingExons = sorted(codingExons, reverse = not strand)
-        self.startAnalysis = min(e[0] for e in self.exons)
+        self.start = min(e[0] for e in self.exons)
         self.end = max(e[1] for e in self.exons)
         
         self.transcripts = []
-    __slots__ =["geneId","geneType","chromosome","startAnalysis","end","strand","names","exons","codingExons", "transcripts"]
+    __slots__ =["geneId","geneType","chromosome","start","end","strand","names","exons","codingExons", "transcripts"]
     
     
     def addTranscript(self, transcript):
@@ -34,7 +34,7 @@ class Gene(object):
             self.transcripts.append(transcript)
 
     def __str__(self, *args, **kwargs):
-        return "\n".join([self.geneId,str(self.names), "%s:%s:%s" % (str(self.chromosome),str(self.startAnalysis), str(self.end))])
+        return "\n".join([self.geneId,str(self.names), "%s:%s:%s" % (str(self.chromosome),str(self.start), str(self.end))])
     
     def printInfo(self):
         '''
@@ -42,7 +42,7 @@ class Gene(object):
         '''
         print "GeneName: %s" % str(tuple(self.names))
         print "GeneId: %s" % self.geneId
-        print "Position: %s:%s-%s %s" % (str(self.chromosome),str(self.startAnalysis), str(self.end),"+" if self.strand else "-")
+        print "Position: %s:%s-%s %s" % (str(self.chromosome),str(self.start), str(self.end),"+" if self.strand else "-")
         print "CDS: %s" % str(self.codingExons)
         print "Exons: %s" % str(self.exons)
         print "Biotype: %s" % self.geneType

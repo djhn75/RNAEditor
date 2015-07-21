@@ -62,7 +62,7 @@ class Genome(object):
         try:
             for lineNumber, f in enumerate(gtfHandler.iterator(gtfFile)):
                 uniqGene = f.geneId, f.chr, f.strand #(ENSG,chr,strand)
-                interval = (f.startAnalysis, f.end)
+                interval = (f.start, f.end)
                 exonNumber = int(f.attributes["exon_number"]) - 1
                 
                 self.featureTypes.add(f.featureType)
@@ -215,9 +215,9 @@ class Genome(object):
             for gene in self.geneList:
                 genesByChr[gene.chromosome].append(gene)
             
-            #sort genes by by startAnalysis and end
+            #sort genes by by start and end
             for key in genesByChr.keys():
-                genesByChr[key] = sorted(genesByChr[key], key=attrgetter('startAnalysis','end'))
+                genesByChr[key] = sorted(genesByChr[key], key=attrgetter('start','end'))
         
         return genesByChr    
         
@@ -231,7 +231,7 @@ class Genome(object):
             genesByGeneID[gene.geneId]=gene
         return genesByGeneID
     
-    def annotateRegion(self,chromosome,startAnalysis,stop):
+    def annotateRegion(self,chromosome,start,stop):
         """
             returns information for the given region like (3'UTR,Exon,Intron,5'UTR)
         
@@ -249,7 +249,7 @@ class Genome(object):
         for gene in self.genesByChromosome[chromosome]:
             segment=set()
             
-            if startAnalysis < gene.startAnalysis < stop and stop < gene.end:
+            if start < gene.start < stop and stop < gene.end:
                 #case 1
                 pass 
         
@@ -271,7 +271,7 @@ class Genome(object):
             #geneName=None
             segment = set()
             
-            if gene.startAnalysis < position < gene.end:
+            if gene.start < position < gene.end:
                 #geneName=gene.names[0]    
                 
                 if len(gene.codingExons)>0:
