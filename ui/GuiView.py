@@ -1,18 +1,10 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ressources/guiView.ui'
-#
-# Created: Sat Mar 15 22:03:33 2014
-#      by: PyQt4 UI code generator 4.10.3
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt4 import QtCore, QtGui
 from ui.InputTab import InputTab
 from ui.RunTab import RunTab
 from PyQt4.QtGui import QSizePolicy
 from PyQt4.Qt import QMenu, QString
 from ui.GuiControll import GuiControll
+from ui.ResultTab import ResultTab
 
 class GuiView(QtGui.QMainWindow):
     def __init__(self):
@@ -65,6 +57,9 @@ class GuiView(QtGui.QMainWindow):
         self.inputTab = InputTab(self.control)
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
+        site='http://google.de'
+        self.resultTab = ResultTab(self.control,site)
+        self.tabMainWindow.addTab(self.resultTab,self.tr(site))
         self.inputTab.createDefaults()
         
 
@@ -80,8 +75,8 @@ class GuiView(QtGui.QMainWindow):
         
         self.setMinimumSize(QtCore.QSize(900, 600))
         self.setStyleSheet("""
-            .QWidget{border: 1px solid black}
-            .DropListWidget{border: 1px solid black; background-color: white; background-image: url(ui/icons/RNAeditor_small.png); background-repeat: no-repeat; background-position:center; }
+            .QWidget{border: 1px solid grey}
+            .DropListWidget{border: 1px solid black; background-color: #f2f2f2; background-image: url(ui/icons/inputTab_icon.png); background-repeat: no-repeat; background-position:center; background-size:cover;}
             """)
         
         

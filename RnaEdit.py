@@ -53,7 +53,6 @@ class RnaEdit(QtCore.QThread):
         self.printParameters()
         
     def run(self):
-        #print "Start Thread" + str(self.fastqFiles)
         try:
             self.startAnalysis()
         except Exception:
@@ -65,10 +64,7 @@ class RnaEdit(QtCore.QThread):
         """
         self.mapFastQ=MapFastq(self)
         mapResultFile=self.mapFastQ.startAnalysis()
-        #mapResultFile = False
-        #print mapResultFile + " was created \t Mapping Process finished"
-        
-        
+
         """
         START CALLING EDITING SITES
         """
@@ -88,8 +84,6 @@ class RnaEdit(QtCore.QThread):
     def stopImmediately(self):
         self.callEditSites.cleanUp()
         self.isTerminated=True
-        #print [x for x in gc.get_objects()]
-        
         
         if self.runningCommand != False:
             self.runningCommand.kill()
@@ -113,7 +107,6 @@ class RnaEdit(QtCore.QThread):
         except AttributeError:
             Helper.error("could not delete RnaEdit instance", self.logFile, self.textField)
         
-
     def checkDependencies(self):
         """checks if all files are there
         if all programs are installed properly and if the output directory is writable"""
@@ -133,8 +126,6 @@ class RnaEdit(QtCore.QThread):
             if not os.path.isfile(file):
                 Helper.error("Could not find: %s" %file,self.logFile,self.textField)
             
-        
-        
         '''
         Checks the existence of the necessary packages and tools
         :param sourceDir: folder which contains all the software

@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ressources/InputTab.ui'
-#
-# Created: Mon Nov  4 15:28:17 2013
-#      by: PyQt4 UI code generator 4.10.3
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt4 import QtCore, QtGui
 from PyQt4.Qt import QSizePolicy
 from PyQt4.QtGui import QGridLayout, QVBoxLayout
@@ -228,9 +219,7 @@ class InputTab(QtGui.QWidget):
         self.startButton = QtGui.QPushButton(self.tr("Start New Analysis"))
 
     def createLayout(self):
-        #drop Part
-        self.dropList.setStyleSheet("border: 1px solid black")
-        
+        #drop Part        
         
         #create right Side
         self.inputFilesLayout = QGridLayout()
@@ -279,7 +268,6 @@ class InputTab(QtGui.QWidget):
         
         self.inputFilesWidget = QtGui.QWidget()
         self.inputFilesWidget.setLayout(self.inputFilesLayout)
-        self.inputFilesWidget.setStyleSheet(".QWidget{border: 1px solid black}")
 
         
         #create settings layout
