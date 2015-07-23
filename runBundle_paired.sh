@@ -10,6 +10,6 @@ do
   		mkdir $(dirname $i)/rnaEditor
 	fi
 	echo "run RNAEditor on $EXP with $FA1 and $FA2"
-	python RnaEdit.py -i $i $FA2 &
+	python RnaEdit.py -i $i $FA2 -c configuration_paired.txt &
 
 done

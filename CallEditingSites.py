@@ -406,11 +406,11 @@ class CallEditingSites(object):
         self.printAttributes()
         
         #create transcriptome from GTF-File
-        startTime = Helper.getTime()
-        Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),self.rnaEdit.params.gtfFile),self.rnaEdit.logFile,self.rnaEdit.textField)
+        #startTime = Helper.getTime()
+        #Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),self.rnaEdit.params.gtfFile),self.rnaEdit.logFile,self.rnaEdit.textField)
         self.genome = Genome(self.rnaEdit.params.gtfFile)
-        duration = Helper.getTime() -startTime
-        Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
+        #duration = Helper.getTime() -startTime
+        #Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
     
                 
         vcfFile=self.rnaEdit.params.output+".vcf"

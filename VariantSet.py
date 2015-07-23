@@ -209,7 +209,6 @@ class VariantSet(object):
             raise AttributeError("Type of genome is %s, but has to be an object of Genome" % type(genome))
         
         if type(outfile) == str:
-            sumFile=outfile[:outfile.rfind(".")]+".summary"
             try:
                 outfile=open(outfile,"w")
                 
@@ -229,7 +228,7 @@ class VariantSet(object):
             anno = v.attributes["GI"]
             for a in anno:
                 gene,segments = a
-                totalReads=sum(map(int,v.attributes["BaseCounts"]))
+                totalReads=str(int(sum(map(int,v.attributes["BaseCounts"]))))
                 if v.ref =="A" and v.alt == "G":
                     editedReads=str(v.attributes["BaseCounts"][2])
                     ratio=str(round(float(editedReads)/float(totalReads),2))
@@ -242,11 +241,13 @@ class VariantSet(object):
                     
                 
                 if gene == "-":
-                    outfile.write("\t".join(["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),
-                                             v.ref,v.alt,str(v.qual),"\t".join(map(str,v.attributes["BaseCounts"])),totalReads,editedReads,ratio,"\n"]))
+                    out=["-", "-",",".join(segments),v.chromosome,"-","-",v.id,str(v.position),
+                                             v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]
+                    outfile.write("\t".join(out))
                 else:
-                    outfile.write("\t".join([gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),
-                                             v.ref,v.alt,str(v.qual),"\t".join(map(str,v.attributes["BaseCounts"])),totalReads,editedReads,ratio,"\n"]))
+                    out=[gene.geneId, gene.names[0],",".join(segments),v.chromosome,str(gene.start),str(gene.end),v.id,str(v.position),
+                                             v.ref,v.alt,str(v.qual),"\t".join(v.attributes["BaseCounts"]),totalReads,editedReads,ratio,"\n"]
+                    outfile.write("\t".join(out))
                 
                 #count variations per gene
                 if gene not in sumDict:

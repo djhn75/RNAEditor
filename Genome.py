@@ -19,10 +19,17 @@ classdocs
 '''
 class Genome(object):
     
-    def __init__(self,gtfFile):
+    def __init__(self,gtfFile,logFile=None,textField=0):
         '''
         Constructor
         '''
+        
+        self.logFile=logFile
+        self.textField =textField
+        
+        startTime = Helper.getTime()
+        Helper.info(" [%s] Assembling Genome from %s" % (startTime.strftime("%c"),gtfFile),self.logFile,self.textField)
+        
         
         #Dict / List for all Genes
         self.geneList = []
@@ -54,6 +61,7 @@ class Genome(object):
         self.createTranscriptomeFromFile(gtfFile)
         self.genesByChromosome = self.getGenesByChromosome()
         
+        Helper.printTimeDiff(startTime,self.logFile,self.textField)
         
     def parseGtf(self,gtfFile):
         """
