@@ -37,7 +37,7 @@ class MapFastq(object):
             self.fastqFile = self.rnaEdit.fastqFiles[0]
 
 
-        self.printAttributes()
+        #self.printAttributes()
         
         #self.checkDependencies()
     

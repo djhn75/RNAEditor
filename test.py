@@ -14,13 +14,24 @@ from Helper import Parameters
 from Genome import Genome
 
 
-variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
-genome = Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
+colour = ["red", "red", "green", "yellow"]
 
-variants.annotateVariantDict(genome)
+with open('mypage.html', 'w') as myFile:
+    myFile.write('<html>')
+    myFile.write('<body>')
+    myFile.write('<table>')
 
-variants.printGeneList(genome, "dink.gvf", True)
+    s = '1234567890'
+    for i in range(0, len(s), 60):
+        myFile.write('<tr><td>%04d</td>' % (i+1));
+    for j, k in enumerate(s[i:i+60]):
+        myFile.write('<td><font style="background-color:%s;">%s<font></td>' % (colour[j %len(colour)], k));
 
+
+    myFile.write('</tr>')
+    myFile.write('</table>')
+    myFile.write('</body>')
+    myFile.write('</html>')
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
 Yclust = dbCluster()

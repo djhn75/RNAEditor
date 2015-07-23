@@ -72,6 +72,8 @@ class RnaEdit(QtCore.QThread):
         
         result = self.callEditSites.startAnalysis()
         
+        
+        
         #finished
         self.isTerminated=True
         
@@ -79,7 +81,7 @@ class RnaEdit(QtCore.QThread):
     
     def stopSafely(self):
         self.quit()
-        Helper.error("Analysis was stopped by User", self.logFile, self.textField)
+        Helper.info("Analysis was stopped by User", self.logFile, self.textField)
     
     def stopImmediately(self):
         self.callEditSites.cleanUp()
@@ -223,6 +225,15 @@ class RnaEdit(QtCore.QThread):
         Helper.info("\t keepTemp:" + str(self.params.keepTemp),self.logFile,self.textField)
         Helper.info("\t overwrite:" + str(self.params.overwrite),self.logFile,self.textField)
         Helper.info("",self.logFile,self.textField)
+
+    def printResultPage(self):
+        htmlFile = open(self.params.output+".html","w+")
+        
+        htmlFile.write("<html>")
+        
+        
+        
+        htmlFile.write("</html>")
 
 if __name__ == '__main__':
     
