@@ -4,34 +4,55 @@ Created on 05.06.2014
 @author: david
 '''
 
-from VariantSet import VariantSet
-from dbCluster import dbCluster
+#!/usr/bin/env python
+# a bar plot with errorbars
 import numpy as np
-from sklearn import metrics
-from numpy.ma.core import mean, std
-
-from Helper import Parameters
-from Genome import Genome
-
-
-colour = ["red", "red", "green", "yellow"]
-
-with open('mypage.html', 'w') as myFile:
-    myFile.write('<html>')
-    myFile.write('<body>')
-    myFile.write('<table>')
-
-    s = '1234567890'
-    for i in range(0, len(s), 60):
-        myFile.write('<tr><td>%04d</td>' % (i+1));
-    for j, k in enumerate(s[i:i+60]):
-        myFile.write('<td><font style="background-color:%s;">%s<font></td>' % (colour[j %len(colour)], k));
+import matplotlib.pyplot as plt
+import os
+from collections import OrderedDict
+from Helper import Helper
 
 
-    myFile.write('</tr>')
-    myFile.write('</table>')
-    myFile.write('</body>')
-    myFile.write('</html>')
+
+
+
+N = 12
+ind = np.arange(N)  # the x locations for the groups
+width = 0.25       # the width of the bars
+fig, ax = plt.subplots()
+
+aluBaseCounts=Helper.getMMBaseCounts("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
+aluMeans = aluBaseCounts.values()
+rects1 = ax.bar(ind, aluMeans, width, color='r', )
+
+nonAluBaseCounts=Helper.getMMBaseCounts("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.nonAlu.vcf")
+nonAluMeans = nonAluBaseCounts.values()
+rects2 = ax.bar(ind+width, nonAluMeans, width, color='b', )
+
+# add some text for labels, title and axes ticks
+ax.set_ylabel('Number')
+ax.set_title('Variants per Base')
+ax.set_xticks(ind+width)
+ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
+
+ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
+
+def autolabel(rects):
+    # attach some text labels
+    for rect in rects:
+        height = rect.get_height()
+        ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
+                ha='center', va='bottom')
+
+autolabel(rects1)
+autolabel(rects2)
+
+#fig.show()
+
+fig.savefig("/media/Storage/bio-data/David/mmBarplot.pdf")
+
+
+
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
 Yclust = dbCluster()

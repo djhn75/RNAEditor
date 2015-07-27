@@ -6,7 +6,7 @@ Created on May 22, 2013
 
 from datetime import datetime
 import argparse, sys, os, subprocess, errno
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import traceback
 import ui
 
@@ -347,7 +347,39 @@ class Helper():
         #print os.getcwd()
         return subprocess.check_output(command)
     
-    
+    @staticmethod
+    def getMMBaseCounts(inFile):
+        '''
+        Count the number of base mismatches and return the Dictionary with the numbers
+        :param vcf File:
+        '''
+        if type(inFile) == str:
+            if os.path.getsize(inFile) == 0: #getsize raises OSError if file is not existing
+                raise IOError("%s File is empty" % inFile)
+            inFile = open(inFile,"r")
+        elif type(inFile) != file:
+            raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(inFile)) 
+        
+        mmBaseCounts=OrderedDict([("A->C",0),("A->G",0),("A->T",0),("C->A",0),("C->G",0),("C->T",0),("G->A",0),("G->C",0),("G->T",0),("T->A",0),("T->C",0),("T->G",0)])
+        
+        for line in inFile:
+            if line.startswith('#'): continue
+            line=line.split()
+            if line[3]=="A" and line[4]=="C": mmBaseCounts["A->C"]+=1
+            elif line[3]=="A" and line[4]=="G": mmBaseCounts["A->G"]+=1
+            elif line[3]=="A" and line[4]=="T": mmBaseCounts["A->T"]+=1
+            elif line[3]=="C" and line[4]=="A": mmBaseCounts["C->A"]+=1
+            elif line[3]=="C" and line[4]=="G": mmBaseCounts["C->G"]+=1
+            elif line[3]=="C" and line[4]=="T": mmBaseCounts["C->T"]+=1
+            elif line[3]=="G" and line[4]=="A": mmBaseCounts["G->A"]+=1
+            elif line[3]=="G" and line[4]=="C": mmBaseCounts["G->C"]+=1
+            elif line[3]=="G" and line[4]=="T": mmBaseCounts["G->T"]+=1
+            elif line[3]=="T" and line[4]=="A": mmBaseCounts["T->A"]+=1
+            elif line[3]=="T" and line[4]=="C": mmBaseCounts["T->C"]+=1
+            elif line[3]=="T" and line[4]=="G": mmBaseCounts["T->G"]+=1
+            
+        return mmBaseCounts
+        
     
     @staticmethod
     def printTimeDiff(startTime,logFile=None,textField=0):

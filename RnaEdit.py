@@ -12,6 +12,8 @@ from CallEditingSites import CallEditingSites
 import multiprocessing, argparse, os
 import traceback
 from PyQt4 import QtGui, QtCore
+import numpy as np
+import matplotlib.pyplot as plt
 
 import gc
 
@@ -40,11 +42,20 @@ class RnaEdit(QtCore.QThread):
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
-            outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]+"rnaEditor/"
-            sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
-            self.params.output=outdir+sampleName+"/"+sampleName
-            if not os.path.exists(outdir+sampleName):
-                os.makedirs(outdir+sampleName)
+            
+            
+            self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
+            
+            # outdir = /path/to/output/rnaEditor/samplename/
+            self.outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]+"rnaEditor/"+self.sampleName+"/"
+            #output=/path/to/output/rnaEditor/samplename/samplename
+            self.params.output=self.outdir+self.sampleName
+            if not os.path.exists(self.outdir):
+                os.makedirs(self.outdir)
+            
+            #create folder for html output
+            if not os.path.exists(self.outdir+"/html"):
+                os.makedirs(self.outdir+"/html")
         
         
         self.checkDependencies()
@@ -72,12 +83,11 @@ class RnaEdit(QtCore.QThread):
         
         result = self.callEditSites.startAnalysis()
         
-        
-        
         #finished
         self.isTerminated=True
         
-        Helper.status("rnaEditor Finished with %s" % self.outfilePrefix,self.logFile,self.textField)
+        Helper.status("rnaEditor Finished with %s" % self.params.output, self.logFile, self.textField)
+        self.cleanUp()
     
     def stopSafely(self):
         self.quit()
@@ -101,10 +111,12 @@ class RnaEdit(QtCore.QThread):
         
         
         try:
+            self.mapFastQ.cleanUp()
             del self.mapFastQ
         except AttributeError:
             Helper.error("could not delete MapFastQ instance", self.logFile, self.textField)
         try:
+            self.callEditSites.cleanUp()
             del self.callEditSites
         except AttributeError:
             Helper.error("could not delete RnaEdit instance", self.logFile, self.textField)
@@ -226,7 +238,53 @@ class RnaEdit(QtCore.QThread):
         Helper.info("\t overwrite:" + str(self.params.overwrite),self.logFile,self.textField)
         Helper.info("",self.logFile,self.textField)
 
+        def createDiagrams(self):
+            pass
+
+    
+    def createDiagramms(self):
+        N = 12
+        ind = np.arange(N)  # the x locations for the groups
+        width = 0.25       # the width of the bars
+        fig, ax = plt.subplots()
+        
+        aluBaseCounts=Helper.getMMBaseCounts(self.params.output+".alu.vcf")
+        aluMeans = aluBaseCounts.values()
+        rects1 = ax.bar(ind, aluMeans, width, color='y', )
+        
+        nonAluBaseCounts=Helper.getMMBaseCounts(self.params.output+".nonAlu.vcf")
+        nonAluMeans = nonAluBaseCounts.values()
+        rects2 = ax.bar(ind+width, nonAluMeans, width, color='b', )
+        
+        # add some text for labels, title and axes ticks
+        ax.set_ylabel('Number')
+        ax.set_title('Variants per Base')
+        ax.set_xticks(ind+width)
+        ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
+        
+        ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
+        
+        def autolabel(rects):
+        # attach some text labels
+            for rect in rects:
+                height = rect.get_height()
+                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
+                        ha='center', va='bottom')
+
+        
+        autolabel(rects1)
+        autolabel(rects2)
+    
+        fig.savefig(self.outdir+"html/"+self.sampleName+"baseCounts.png")
+    
+    
+
+    
+    
     def printResultPage(self):
+        
+        
+        
         htmlFile = open(self.params.output+".html","w+")
         
         htmlFile.write("<html>")
