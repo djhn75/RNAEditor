@@ -9,6 +9,8 @@ import argparse, sys, os, subprocess, errno
 from collections import defaultdict, OrderedDict
 import traceback
 import ui
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 
@@ -261,7 +263,7 @@ class Helper():
                     sleep(10)
                     retcode=Helper.runningCommand[runNumber].wait()
                 """
-                print retcode
+                #print retcode
                 
                 #del Helper.runningCommand[runNumber]
                 rnaEdit.runningCommand=False
@@ -346,6 +348,64 @@ class Helper():
         #print os.path.dirname(os.path.abspath(__file__))
         #print os.getcwd()
         return subprocess.check_output(command)
+    
+    
+    @staticmethod    
+    def createDiagramms(output):
+        N = 12
+        ind = np.arange(N)  # the x locations for the groups
+        width = 0.25       # the width of the bars
+        fig, ax = plt.subplots()
+        
+        aluBaseCounts=Helper.getMMBaseCounts(output+".alu.vcf")
+        aluMeans = aluBaseCounts.values()
+        rects1 = ax.bar(ind, aluMeans, width, color='y', )
+        
+        nonAluBaseCounts=Helper.getMMBaseCounts(output+".nonAlu.vcf")
+        nonAluMeans = nonAluBaseCounts.values()
+        rects2 = ax.bar(ind+width, nonAluMeans, width, color='b', )
+        
+        # add some text for labels, title and axes ticks
+        ax.set_ylabel('Number')
+        ax.set_title('Variants per Base')
+        ax.set_xticks(ind+width)
+        ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
+        
+        ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
+        
+        def autolabel(rects):
+        # attach some text labels
+            for rect in rects:
+                height = rect.get_height()
+                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
+                        ha='center', va='bottom')
+
+        
+        autolabel(rects1)
+        autolabel(rects2)
+    
+    
+        outdir = output[0:output.rfind("/")+1]
+        sampleName=output[output.rfind("/"):]
+        fig.savefig(outdir+"html/"+sampleName+"_baseCounts.png")
+    
+    @staticmethod
+    def printResultPage(output):
+        '''
+        print the HTML file wich is shown when rnaEditor is finished
+        :param output: output prefix from rnaEdit object
+        '''
+        
+        
+        
+        
+        htmlFile = open(self.params.output+".html","w+")
+        
+        htmlFile.write("<html>")
+        
+        
+        
+        htmlFile.write("</html>")
     
     @staticmethod
     def getMMBaseCounts(inFile):

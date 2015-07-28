@@ -12,8 +12,7 @@ from CallEditingSites import CallEditingSites
 import multiprocessing, argparse, os
 import traceback
 from PyQt4 import QtGui, QtCore
-import numpy as np
-import matplotlib.pyplot as plt
+
 
 import gc
 
@@ -42,12 +41,14 @@ class RnaEdit(QtCore.QThread):
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
+            if self.fastqFiles[0].endswith("realigned.marked.recalibrated.bam"):
+                self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".realigned.marked.recalibrated.bam")]
+                self.outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]
+            else:
+                self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
+                # outdir = /path/to/output/rnaEditor/samplename/
+                self.outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]+"rnaEditor/"+self.sampleName+"/"
             
-            
-            self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
-            
-            # outdir = /path/to/output/rnaEditor/samplename/
-            self.outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]+"rnaEditor/"+self.sampleName+"/"
             #output=/path/to/output/rnaEditor/samplename/samplename
             self.params.output=self.outdir+self.sampleName
             if not os.path.exists(self.outdir):
@@ -69,22 +70,29 @@ class RnaEdit(QtCore.QThread):
         except Exception:
             Helper.error("RnaEditor Failed")
         
+        
     def startAnalysis(self):
         """
         START MAPPING
         """
-        self.mapFastQ=MapFastq(self)
-        mapResultFile=self.mapFastQ.startAnalysis()
+        if self.fastqFiles[0].endswith(".bam"):
+            Helper.info("Bam File given. Skip mapping", self.logFile, self.textField)
+            self.mapFastQ=None
+            mapResultFile=self.fastqFiles[0]
+        else:
+            self.mapFastQ=MapFastq(self)
+            mapResultFile=self.mapFastQ.startAnalysis()
 
         """
         START CALLING EDITING SITES
         """
         self.callEditSites=CallEditingSites(mapResultFile,self)
-        
         result = self.callEditSites.startAnalysis()
         
         #finished
         self.isTerminated=True
+        
+        self.emit(QtCore.SIGNAL("taskDone"), self.params.output)
         
         Helper.status("rnaEditor Finished with %s" % self.params.output, self.logFile, self.textField)
         self.cleanUp()
@@ -105,13 +113,14 @@ class RnaEdit(QtCore.QThread):
         Helper.error("Analysis was terminated by User", self.logFile, self.textField)
          
     def cleanUp(self):
-        print "deleteAssay " + str(self)
+        #print "deleteAssay " + str(self)
         if self.runningCommand != False:
             self.runningCommand.kill()
         
         
         try:
-            self.mapFastQ.cleanUp()
+            if self.mapFastQ!=None:
+                self.mapFastQ.cleanUp()
             del self.mapFastQ
         except AttributeError:
             Helper.error("could not delete MapFastQ instance", self.logFile, self.textField)
@@ -241,57 +250,7 @@ class RnaEdit(QtCore.QThread):
         def createDiagrams(self):
             pass
 
-    
-    def createDiagramms(self):
-        N = 12
-        ind = np.arange(N)  # the x locations for the groups
-        width = 0.25       # the width of the bars
-        fig, ax = plt.subplots()
-        
-        aluBaseCounts=Helper.getMMBaseCounts(self.params.output+".alu.vcf")
-        aluMeans = aluBaseCounts.values()
-        rects1 = ax.bar(ind, aluMeans, width, color='y', )
-        
-        nonAluBaseCounts=Helper.getMMBaseCounts(self.params.output+".nonAlu.vcf")
-        nonAluMeans = nonAluBaseCounts.values()
-        rects2 = ax.bar(ind+width, nonAluMeans, width, color='b', )
-        
-        # add some text for labels, title and axes ticks
-        ax.set_ylabel('Number')
-        ax.set_title('Variants per Base')
-        ax.set_xticks(ind+width)
-        ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
-        
-        ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
-        
-        def autolabel(rects):
-        # attach some text labels
-            for rect in rects:
-                height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
-                        ha='center', va='bottom')
 
-        
-        autolabel(rects1)
-        autolabel(rects2)
-    
-        fig.savefig(self.outdir+"html/"+self.sampleName+"baseCounts.png")
-    
-    
-
-    
-    
-    def printResultPage(self):
-        
-        
-        
-        htmlFile = open(self.params.output+".html","w+")
-        
-        htmlFile.write("<html>")
-        
-        
-        
-        htmlFile.write("</html>")
 
 if __name__ == '__main__':
     
@@ -308,7 +267,9 @@ if __name__ == '__main__':
     edit=RnaEdit(args.input,parameters,0)
     
     
-    edit.startAnalysis()
+    edit.start()
+    edit.wait()
+    Helper.createDiagramms(edit.params.output)
     del edit
     
     

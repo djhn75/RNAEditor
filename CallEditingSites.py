@@ -370,7 +370,7 @@ class CallEditingSites(object):
             
     def cleanUp(self):
         #print [x for x in gc.get_objects()]
-        print str(self) + " cleaned up"
+        #print str(self) + " cleaned up"
         self.genome = None
         
         if self.rnaEdit.params.keepTemp==False:

@@ -36,8 +36,10 @@ class GuiControll(object):
         #get Parameters 
         parameters=Parameters(inputTab)
         if parameters.paired==True:
-            #TODO: add support for paired-end
-            fastqs=inputTab.dropList.dropFirstTwoItems()
+            #fastqs=inputTab.dropList.dropFirstTwoItems()
+            fastqs = inputTab.dropList.dropFirstItem()
+            if not fastqs[0].endswith(".bam"):
+                fastqs+=inputTab.dropList.dropFirstItem()
         else:
             fastqs = inputTab.dropList.dropFirstItem()        
         
@@ -76,6 +78,7 @@ class GuiControll(object):
         
         assay.start()
         
+        self.view.connect(assay, QtCore.SIGNAL("taskDone"), Helper.createDiagramms)
         
     @QtCore.pyqtSlot()
     def openFileDialog(self,textBox):

@@ -57,11 +57,13 @@ class GuiView(QtGui.QMainWindow):
         self.inputTab = InputTab(self.control)
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
-        site='http://google.de'
+        """site='http://google.de'
         self.resultTab = ResultTab(self.control,site)
         self.tabMainWindow.addTab(self.resultTab,self.tr(site))
-        self.inputTab.createDefaults()
+        """
         
+        self.inputTab.createDefaults()
+    
 
     def createConnects(self):
         self.tabMainWindow.tabCloseRequested.connect(self.control.closeTab)
