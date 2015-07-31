@@ -57,10 +57,10 @@ class GuiView(QtGui.QMainWindow):
         self.inputTab = InputTab(self.control)
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
-        """site='http://google.de'
+        site='scripts/dink.html'
         self.resultTab = ResultTab(self.control,site)
         self.tabMainWindow.addTab(self.resultTab,self.tr(site))
-        """
+        
         
         self.inputTab.createDefaults()
     
