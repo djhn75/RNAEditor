@@ -1,26 +1,3 @@
-<!--
-   resultFile.htmlsh
-   
-   Copyright 2015 David John <david@Radiator2>
-   
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-   
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-   MA 02110-1301, USA.
-   
-   
--->
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -30,31 +7,63 @@
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 	<meta name="RnaEditor" content="Results from RnaEditor" />
 	
-	<link rel="stylesheet" href="load_002.css">
-	
+
 <style type="text/css">
-body{margin: 10px auto;max-width: 60em;background:#eee}
-.page{border:2px solid #a7d7f9; background-color:#fff; font-family:sans-serif}
-
-
-hr{height:1px;color:#aaa;background-color:#aaa;border:0;margin:.2em 0}
-h1,h2,h3,h4,h5,h6{color:black;background:none;font-weight:normal;margin:0;overflow:hidden;padding-top:.5em;padding-bottom:.17em;border-bottom:1px solid #aaa}
-
-p{margin:1.4em 0 .5em 0}
-
-ul{list-style-type:square;margin:.3em 0 0 1.6em;padding:0}
-.toc{border:1px solid #aaa;background-color:#f9f9f9;padding:5px;font-size:95%}
-.toc{display:inline-block;display:table;zoom:1;*display:inline;padding:7px}
-toc #toctitle,.toc #toctitle,#toc .toctitle,.toc .toctitle{text-align:center}
-#toc ul,.toc ul{list-style-type:none;list-style-image:none;margin-left:0;padding:0;text-align:left}
-#toc ul ul,.toc ul ul{margin:0 0 0 2em}
-#toc .toctoggle,.toc .toctoggle{font-size:94%}
+	body {
+    background-color: #F6F6F6;
+	}
+	html, body {
+		height: 100%;
+		margin:0px;
+		padding: 0px;
+		font-family: sans-serif;
+	}
+	h1,h2,h3,h4,h5,h6{margin-top: 1em;
+		margin-bottom: 0.6em;
+	}
+	h2{
+		font-size: 100%;
+		font-weight: bold;
+	}
+	#left{
+		width: 11em;
+		position: absolute;
+	}
+	#toc{
+		margin-top: 40px;
+		margin-left: 5px;
+	}
+	#toc ul{
+		padding-left: 10px;
+		list-style-type:none;
+		list-style-image:none;
+		font-size: 90%;
+		line-height: 1.9;
+	}
+	#page, #header{
+		z-index: 0;
+		position: relative;
+		padding: 0.1em 1.5em;
+		margin-left: 11em;
+		margin-right: 1em;
+		border-width: 1px 1px 1px 1px;
+		border-style: solid;
+		border-color: #A7D7F9;
+		}
+	#page{
+		border-width: 0px 1px 1px 1px;
+		background: #fff;
+	}
+	#header{
+		background-position: left bottom;
+		background-color: #fff;
+		}
 </style>
 
 </head>
 
 <body>
-		
+	<div id="left">
 		<div id="logo" class="logo">
 			<img src="../ui/icons/rnaEditor_512x512.png" height=140 width=140>
 		</div>
@@ -70,16 +79,17 @@ toc #toctitle,.toc #toctitle,#toc .toctitle,.toc .toctitle{text-align:center}
 			<li class="toclevel-1 tocsection-5"><a href="#EditedIslands"><span class="tocnumber">5</span> <span class="toctext">Editing Islands</span></a></li>
 		</ul>
 		</div>
+	</div>	
+	
+	<div id="header">
+		<h1>SampleName Results</h1>
+	</div>
+	
 	
 	<div id="page" class="page">
 
-		<h1>SampleName Results</h1>
-			
-
-	
-	
 		<!-- Content -->
-		<div id="content" class="content"
+		<div id="content" class="content">
 			<h2><span class="mw-headline" id="basicStats">Basic Statistic</span></h2>
 				<p>
 					Stefanie Dimmeler besuchte Schulen in  und Stetten sowie das Gymnasium in on 1993 bis 1995 war Dimmeler wissenschaftliche Assistentin in der 

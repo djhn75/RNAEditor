@@ -57,7 +57,7 @@ class GuiView(QtGui.QMainWindow):
         self.inputTab = InputTab(self.control)
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
-        site='scripts/dink.html'
+        site='scripts/resultFile.html'
         self.resultTab = ResultTab(self.control,site)
         self.tabMainWindow.addTab(self.resultTab,self.tr(site))
         
