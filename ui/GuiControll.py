@@ -101,7 +101,10 @@ class GuiControll(object):
                 item = QtGui.QListWidgetItem(url, self.view.inputTab.dropList)
                 item.setIcon(icon)        
                 item.setStatusTip(url)     
-                
+            
+    def openAnalysis(self):
+        print "open URL"
+            
     @QtCore.pyqtSlot()            
     def closeTab(self, currentIndex):
         print "tab close %i" % currentIndex

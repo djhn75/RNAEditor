@@ -33,14 +33,15 @@ class GuiView(QtGui.QMainWindow):
         self.exitAction.setText("Exit")
         
         self.menubar = self.menuBar()
-        fileMenu = self.menubar.addMenu('File') 
-        fileMenu.addAction(self.exitAction)
-        """"
-        fileMenu.addAction('Open File')
-
+        self.fileMenu = self.menubar.addMenu('File') 
+        self.fileMenu.addAction(self.exitAction)
+        
+        self.openAnalysisAction = QtGui.QAction("Open Analysis",self)
+        self.fileMenu.addAction(self.openAnalysisAction)
+        
 
         self.statusBar()
-        """
+
 
         
     def createComponents(self):
@@ -70,6 +71,7 @@ class GuiView(QtGui.QMainWindow):
         closeTabAction = QtGui.QAction(self.tabMainWindow)
         closeTabAction.setShortcut('Ctrl+W')
         self.connect(closeTabAction,QtCore.SIGNAL('triggered()'),self.tabMainWindow,QtCore.SLOT('close()'))
+        self.connect(self.openAnalysisAction,QtCore.SIGNAL('triggered()'),self.control.openAnalysis)
         
     def createLayout(self):
         #self.resize(679, 417)
