@@ -399,7 +399,7 @@ class Helper():
         
         
         
-        htmlFile = open(self.params.output+".html","w+")
+        htmlFile = open(output+".html","w+")
         
         htmlFile.write("<html>")
         

@@ -38,9 +38,7 @@ class GuiView(QtGui.QMainWindow):
         
 
         self.statusBar()
-
-
-        
+ 
     def createComponents(self):
         self.centralWidget = QtGui.QWidget()
         self.gridLayout = QtGui.QGridLayout()
@@ -56,7 +54,6 @@ class GuiView(QtGui.QMainWindow):
         self.tabMainWindow.addTab(self.inputTab,self.tr("InputTab"))
         
         self.inputTab.createDefaults()
-    
 
     def createConnects(self):
         self.tabMainWindow.tabCloseRequested.connect(self.control.closeTab)
