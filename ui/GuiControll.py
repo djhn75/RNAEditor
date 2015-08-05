@@ -14,6 +14,7 @@ import subprocess
 import traceback
 
 import gc
+from ui.ResultTab import ResultTab
 class GuiControll(object):
     '''
     classdocs
@@ -103,7 +104,11 @@ class GuiControll(object):
                 item.setStatusTip(url)     
             
     def openAnalysis(self):
-        print "open URL"
+        fileName = str(QtGui.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), filter = QtCore.QString("*html")))
+        resultTab = ResultTab(self,fileName)
+        self.view.tabMainWindow.addTab(resultTab,fileName[fileName.rfind("/")+1:fileName.rfind(".html")])
+        Helper.runningThreads.append(resultTab)
+        print fileName
             
     @QtCore.pyqtSlot()            
     def closeTab(self, currentIndex):
@@ -111,8 +116,16 @@ class GuiControll(object):
         if currentIndex != 0:
             currentThread=Helper.runningThreads[currentIndex]
             currentQWidget=self.view.tabMainWindow.widget(currentIndex)
+            
+            #check if Tab is a result Tab
+            if isinstance(currentQWidget, ResultTab):
+                self.view.tabMainWindow.removeTab(currentIndex)
+                currentQWidget.deleteLater()
+                del Helper.runningThreads[currentIndex]
+                return
+            
             #check if rnaEditor is still running or if it is finished it can be deleteted immediately
-            if  currentThread.isTerminated == False:
+            if currentThread.isTerminated == False:
                     quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))
                     reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
                     if reply== QtGui.QMessageBox.Yes:
