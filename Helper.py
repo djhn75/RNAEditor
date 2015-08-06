@@ -158,11 +158,12 @@ class Helper():
         else:
             raise argparse.ArgumentTypeError("readable_dir:{0} is not a readable dir".format(prospective_dir))
     
-    '''
-    return current time
-    '''
+
     @staticmethod
     def getTime():
+        '''
+        return current time
+        '''
         curr_time = datetime.now()
         #return "["+curr_time.strftime("%c")+"]"
         return curr_time
@@ -199,7 +200,6 @@ class Helper():
         outFile.close()
         return outFile.name
     
-   
     @staticmethod
     def isPhred33Encoding(inFastqFile,lines,logFile, runNumber):
         """
@@ -223,7 +223,6 @@ class Helper():
                 return True
             
         Helper.error("%s has less than %i Sequences. \n These are not enough reads for editing detection!!" % (fastqFile.name,lines),logFile, runNumber)
-    
     
     @staticmethod
     def proceedCommand(description,cmd,infile,outfile,rnaEdit):
@@ -291,7 +290,6 @@ class Helper():
         else:
             print "\t [SKIP] File already exist",logFile,textField
 
-
     @staticmethod
     def getPositionDictFromVcfFile(vcfFile,runNumber):
         """
@@ -310,9 +308,7 @@ class Helper():
         return variantDict
     
     @staticmethod
-    def removeVariantsAFromVariantsB(variantsDictA,variantsDictB):
-        
-        
+    def removeVariantsAFromVariantsB(variantsDictA,variantsDictB):        
         if type(variantsDictA) is str:
             variantsDictA = Helper.returnVariantDictFromVcfFile(variantsDictA)
         if type(variantsDictB) is str:
@@ -349,46 +345,97 @@ class Helper():
         #print os.getcwd()
         return subprocess.check_output(command)
     
+    @staticmethod
+    def countOccurrences(inFile,column=0,logFile=None,textField=0):
+        '''
+        Counts how often a value appears in the given column
+        :param file: 
+        :param column: hold the data wich should be counted
+        '''
+        if type(column)!=int:
+            column=int(column)
+        if type(inFile) == str:
+            try:
+                inFile=open(inFile)
+            except IOError:
+                Helper.warning("Could not open %s to write Variant" % file ,logFile,textField)
+        if type(inFile) != file:   
+            raise AttributeError("Invalid file type in 'countOccurrences' (need string or file, %s found)" % type(inFile))
+        
+        keySet=()
+        countDict={}
+        
+        for line in inFile:
+            if line.startswith("#"):
+                continue
+            value=line.split()[column]
+            if value in keySet:
+                countDict[value]+=1
+            else:
+                keySet+=(value,)
+                countDict[value]=1
+        
+        return countDict
     
     @staticmethod    
-    def createDiagramms(output):
-        N = 12
-        ind = np.arange(N)  # the x locations for the groups
+    def createDiagramms(output,logFile=None,textField=0):
+        '''
+        writes all the diagrams wich aree then showd in the resultTab
+        :param output: output variable of Params.putput
+        '''
+        
+        #################################################
+        ####               Basecount Plot            ####
+        #################################################
+        outdir = output[0:output.rfind("/")+1]
+        sampleName=output[output.rfind("/"):]
+        
+        ind = np.arange(12)  # the x locations for the groups
         width = 0.25       # the width of the bars
         fig, ax = plt.subplots()
         
-        aluBaseCounts=Helper.getMMBaseCounts(output+".alu.vcf")
-        aluMeans = aluBaseCounts.values()
-        rects1 = ax.bar(ind, aluMeans, width, color='y', )
+        counts1=Helper.getMMBaseCounts(output+".alu.vcf")
+        rects1 = ax.bar(ind, counts1.values(), width, color='y', )
         
-        nonAluBaseCounts=Helper.getMMBaseCounts(output+".nonAlu.vcf")
-        nonAluMeans = nonAluBaseCounts.values()
-        rects2 = ax.bar(ind+width, nonAluMeans, width, color='b', )
+        counts2=Helper.getMMBaseCounts(output+".nonAlu.vcf") 
+        rects2 = ax.bar(ind+width, counts2.values(), width, color='b', )
         
         # add some text for labels, title and axes ticks
-        ax.set_ylabel('Number')
         ax.set_title('Variants per Base')
+        ax.set_ylabel('Number')
         ax.set_xticks(ind+width)
-        ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
-        
+        ax.set_xticklabels( counts1.keys() )
         ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
         
-        def autolabel(rects):
-        # attach some text labels
+        def autolabel(rects):# attach some text labels
             for rect in rects:
                 height = rect.get_height()
                 ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
                         ha='center', va='bottom')
-
+        autolabel(rects1);autolabel(rects2)
         
-        autolabel(rects1)
-        autolabel(rects2)
-    
-    
-        outdir = output[0:output.rfind("/")+1]
-        sampleName=output[output.rfind("/"):]
         fig.savefig(outdir+"html/"+sampleName+"_baseCounts.png")
     
+        #################################################
+        ####       Editing per Position Plot         ####
+        #################################################
+        ind = np.arange(6)  # the x locations for the groups
+        width = 0.25       # the width of the bars
+        fig, ax = plt.subplots()
+        
+        counts1=Helper.countOccurrences(output+".alu.gvf", 2, logFile, textField)
+        rects1 = ax.bar(ind, counts1.values(), width, color='y', )
+        counts2=Helper.getMMBaseCounts(output+".nonAlu.gvf") 
+        rects2 = ax.bar(ind+width, counts2.values(), width, color='b', )
+        
+        ax.set_title('Editing Sites per position')
+        ax.set_ylabel('Number')
+        ax.set_xticks(ind+width)
+        ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
+        ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
+        autolabel(rects1);autolabel(rects2)
+        fig.savefig(outdir+"html/"+sampleName+"_baseCounts.png")
+        
     @staticmethod
     def printResultPage(output):
         '''

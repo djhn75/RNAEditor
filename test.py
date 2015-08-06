@@ -11,48 +11,36 @@ import matplotlib.pyplot as plt
 import os
 from collections import OrderedDict
 from Helper import Helper
+from VariantSet import VariantSet
+from Genome import Genome
 
 
 
+            
+def deleteNonEditingBases(variants):
+    startTime=Helper.getTime()
+    Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
+    
+    for varTuple in variants.variantDict.keys():
+        chr,pos,ref,alt = varTuple
+        if (ref =="A" and alt == "G") or (ref=="T" and alt=="C"):
+            pass
+        else:
+            del variants.variantDict[varTuple]
 
+nonAluVariants=VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.nonAlu.vcf")
+aluVariants = VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
+output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
+genome=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
 
-N = 12
-ind = np.arange(N)  # the x locations for the groups
-width = 0.25       # the width of the bars
-fig, ax = plt.subplots()
-
-aluBaseCounts=Helper.getMMBaseCounts("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
-aluMeans = aluBaseCounts.values()
-rects1 = ax.bar(ind, aluMeans, width, color='r', )
-
-nonAluBaseCounts=Helper.getMMBaseCounts("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.nonAlu.vcf")
-nonAluMeans = nonAluBaseCounts.values()
-rects2 = ax.bar(ind+width, nonAluMeans, width, color='b', )
-
-# add some text for labels, title and axes ticks
-ax.set_ylabel('Number')
-ax.set_title('Variants per Base')
-ax.set_xticks(ind+width)
-ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
-
-ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
-
-def autolabel(rects):
-    # attach some text labels
-    for rect in rects:
-        height = rect.get_height()
-        ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
-                ha='center', va='bottom')
-
-autolabel(rects1)
-autolabel(rects2)
-
-#fig.show()
-
-fig.savefig("/media/Storage/bio-data/David/mmBarplot.pdf")
-
-
-
+#print nonAlu editing Sites
+deleteNonEditingBases(nonAluVariants)
+nonAluVariants.printVariantDict(output+".editingSites.nonAlu.vcf")
+nonAluVariants.printGeneList(genome,output+".editingSites.nonAlu.gvf",printSummary=True)
+#print Alu editing Sites
+deleteNonEditingBases(aluVariants)
+aluVariants.printVariantDict(output+".editingSites.alu.vcf")
+aluVariants.printGeneList(genome,output+".editingSites.alu.gvf",printSummary=True)
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
 Yclust = dbCluster()

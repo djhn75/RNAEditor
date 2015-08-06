@@ -469,6 +469,15 @@ class CallEditingSites(object):
         nonAluVariants.printVariantDict(self.rnaEdit.params.output+".nonAlu.vcf")
         nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
         
+        #print nonAlu editing Sites
+        self.deleteNonEditingBases(nonAluVariants)
+        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
+        nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
+        #print Alu editing Sites
+        self.deleteNonEditingBases(aluVariants)
+        aluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.alu.vcf")
+        aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.alu.gvf",printSummary=True)
+        
         #combine alu and non Alu sites
         variants=aluVariants+nonAluVariants
         self.deleteNonEditingBases(variants)

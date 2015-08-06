@@ -89,8 +89,11 @@ class VariantSet(object):
                 if name == "GI":
                     a=[]
                     for anno in value.split(","):
+                        #TODO: Delete the next line later, this is because of a tailing comma which was removed
+                        if anno=="": continue
                         gene,segments=anno.split(":")
                         a.append((gene,set(segments.split("|"))))
+                    value=a
                 attributes[name]=value
         
         vcfList[7]=attributes    
@@ -182,10 +185,13 @@ class VariantSet(object):
                         gene,segment = anno
                         if gene == "-":
                             a += gene+":"+"|".join(segment)  
-                        else: 
-                            a+=gene.geneId+":"+"|".join(segment)+","  
+                        else:
+                            if type(gene)==str: #when variantDict was not annotated yet
+                                a+=gene+":"+"|".join(segment)+"," 
+                            else:     
+                                a+=gene.geneId+":"+"|".join(segment)+","  
                             
-                    attributeString+=key+"="+a+";"
+                    attributeString+=key+"="+a[:-1]+";"
                     continue
                 attributeString+= key+"="+str(v.attributes[key])+";"
             outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, attributeString+"\n"]))    
