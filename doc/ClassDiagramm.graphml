@@ -377,10 +377,10 @@ printParameters(self)</y:MethodLabel>
       <data key="d5"><![CDATA[Static Class]]></data>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="359.2540367994759" width="392.83649414853176" x="152.09822064939578" y="-1904.0327370799287"/>
+          <y:Geometry height="378.76414155592306" width="396.55270457833126" x="152.09822064939578" y="-1904.0327370799287"/>
           <y:Fill color="#FF9900" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="52.6865234375" x="170.07498535551588" y="25.96875">Helper<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="52.6865234375" x="171.93309057041563" y="25.96875">Helper<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -401,6 +401,8 @@ getPositionDictFromVcfFile(vcfFile,runNumber)
 removeVariantsAFromVariantsB(variantsDictA,variantsDictB)
 returnVariantDictFromVcfFile(vcfFile)
 getCommandOutput(command)
+createDiagrams(output)
+printResultPage()
 printTimeDiff(startTime,logFile=None,textField=0)
 newline (quantity=1,logFile=None,textField=0)
 info (message,logFile=None,textField=0)
@@ -414,7 +416,6 @@ status (message,logFile=None,textField=0)</y:MethodLabel>
     </node>
     <node id="n6">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="338.4831580106943" width="291.66500186992744" x="-140.28205456231626" y="-1459.8444509957833"/>
@@ -455,7 +456,6 @@ readDefaultsFromFile(self,file)</y:MethodLabel>
     </node>
     <node id="n7" yfiles.foldertype="group">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
@@ -485,7 +485,6 @@ readDefaultsFromFile(self,file)</y:MethodLabel>
       <graph edgedefault="directed" id="n7:">
         <node id="n7::n0">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
               <y:Geometry height="214.00699443465305" width="159.40907807038343" x="-675.108225543125" y="-2010.405333785613"/>
@@ -516,7 +515,6 @@ self.createConnects()</y:MethodLabel>
         </node>
         <node id="n7::n1">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
               <y:Geometry height="189.9604628347356" width="194.7716245408497" x="-458.95309878034755" y="-1749.7391631151886"/>
@@ -546,7 +544,6 @@ deleteAssay(self,assay)</y:MethodLabel>
         </node>
         <node id="n7::n2">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
               <y:Geometry height="160.255923799544" width="159.40907807038343" x="-441.27182554511444" y="-2010.405333785613"/>
@@ -573,7 +570,6 @@ createDefaults(self)</y:MethodLabel>
         </node>
         <node id="n7::n3">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
               <y:Geometry height="197.032972128829" width="159.40907807038343" x="-216.30681207825455" y="-2010.405333785613"/>
@@ -602,7 +598,6 @@ self.createConnects()</y:MethodLabel>
         </node>
         <node id="n7::n4">
           <data key="d4"/>
-          <data key="d5"/>
           <data key="d6">
             <y:UMLClassNode>
               <y:Geometry height="28.0" width="100.0" x="-805.108225543125" y="-2010.4053337856128"/>
@@ -747,7 +742,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="e5" source="n6" target="n4">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -758,7 +752,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="e6" source="n7::n0" target="n7">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-79.30419287163363" ty="-111.92794681925352"/>
@@ -769,7 +762,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="n7::e0" source="n7::n0" target="n7::n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-79.69704728357681" sy="-102.0956985326518" tx="0.0" ty="0.0"/>
@@ -780,7 +772,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="n7::e1" source="n7::n2" target="n7::n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -791,7 +782,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="n7::e2" source="n7::n3" target="n7::n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -802,7 +792,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="n7::e3" source="n7::n0" target="n7::n2">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="57.222198176001825" sy="-83.02778515112459" tx="-57.265607484184784" ty="-56.152249833570295"/>
@@ -813,7 +802,6 @@ self.createConnects()</y:MethodLabel>
       </data>
     </edge>
     <edge id="n7::e4" source="n7::n4" target="n7::n0">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-6.872417301718315" ty="-93.00349721732618"/>

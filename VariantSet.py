@@ -10,6 +10,7 @@ import operator
 from copy import copy
 from exceptions import KeyError
 from Genome import Genome
+import collections
 
 class Variant:
     '''
@@ -85,6 +86,9 @@ class VariantSet(object):
                         pass    
                
                 if name == "BaseCounts":
+                    value=value.replace("'","")
+                    value=value.replace("[","")
+                    value=value.replace("]","")
                     value = value.split(",")
                 if name == "GI":
                     a=[]
@@ -179,7 +183,10 @@ class VariantSet(object):
         for v in self.variantDict.values():
             attributeString=""
             for key in v.attributes.keys():
-                if key =="GI":
+                if key=="BaseCounts":
+                    attributeString+= "BaseCounts=" + ",".join(v.attributes["BaseCounts"]) + ";"
+                    continue                
+                elif key =="GI":
                     a=""
                     for anno in v.attributes["GI"]:
                         gene,segment = anno
@@ -269,7 +276,18 @@ class VariantSet(object):
                     elif seg == "intron":
                         sumDict[gene][3]+=1
                     sumDict[gene][4]+=1
-                         
+        
+        def topGenes(sumDict,number=20,value=4):
+            if number > len(sumDict):
+                Helper.error("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
+            if value > 4:
+                Helper.error("sumDict only hold four values", self.logFile, self.textField)
+            ordDict=collections.OrderedDict()
+            
+            return collections.OrderedDict(sorted(sumDict.items(), key=lambda t: t[1][value],reverse=True)[:number])
+
+
+                     
         #print number of variants per gene
         if printSummary:
             sumDictGeneIds=set()

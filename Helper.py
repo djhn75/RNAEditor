@@ -391,7 +391,7 @@ class Helper():
         sampleName=output[output.rfind("/"):]
         
         ind = np.arange(12)  # the x locations for the groups
-        width = 0.25       # the width of the bars
+        width = 0.35       # the width of the bars
         fig, ax = plt.subplots()
         
         counts1=Helper.getMMBaseCounts(output+".alu.vcf")
@@ -410,8 +410,7 @@ class Helper():
         def autolabel(rects):# attach some text labels
             for rect in rects:
                 height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height),
-                        ha='center', va='bottom')
+                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height), ha='center', va='bottom', fontsize=9)
         autolabel(rects1);autolabel(rects2)
         
         fig.savefig(outdir+"html/"+sampleName+"_baseCounts.png")
@@ -420,21 +419,34 @@ class Helper():
         ####       Editing per Position Plot         ####
         #################################################
         ind = np.arange(6)  # the x locations for the groups
-        width = 0.25       # the width of the bars
+        width = 0.35       # the width of the bars
         fig, ax = plt.subplots()
         
-        counts1=Helper.countOccurrences(output+".alu.gvf", 2, logFile, textField)
-        rects1 = ax.bar(ind, counts1.values(), width, color='y', )
-        counts2=Helper.getMMBaseCounts(output+".nonAlu.gvf") 
-        rects2 = ax.bar(ind+width, counts2.values(), width, color='b', )
+        def getPercentage(list):
+            array=[]
+            summe=float(sum(list))
+            for value in list:
+                array.append(round((float(value)/summe)*100.0,2))
+            print array    
+            return array
+        
+        counts1=Helper.countOccurrences(output+".editingSites.alu.gvf", 2, logFile, textField)
+        rects1 = ax.bar(ind, getPercentage(counts1.values()), width, color='y', )
+        counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
+        rects2 = ax.bar(ind+width, getPercentage(counts2.values()), width, color='b', )
         
         ax.set_title('Editing Sites per position')
-        ax.set_ylabel('Number')
+        ax.set_ylabel('Percentage')
+        ax.set_ylim(0,100)
         ax.set_xticks(ind+width)
-        ax.set_xticklabels( ("A->C","A->G","A->T","C->A","C->G","C->T","G->A","G->C","G->T","T->A","T->C","T->G") )
+        ax.set_xticklabels( (counts1.keys()) )
         ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
-        autolabel(rects1);autolabel(rects2)
-        fig.savefig(outdir+"html/"+sampleName+"_baseCounts.png")
+        def autolabelFloat(rects):# attach some text labels
+            for rect in rects:
+                height = rect.get_height()
+                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%1.1f'%float(height), ha='center', va='bottom', fontsize=9)
+        autolabelFloat(rects1);autolabelFloat(rects2)
+        fig.savefig(outdir+"html/"+sampleName+"_EditingPosition.png")
         
     @staticmethod
     def printResultPage(output):

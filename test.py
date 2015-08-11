@@ -15,8 +15,10 @@ from VariantSet import VariantSet
 from Genome import Genome
 
 
+output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
+Helper.createDiagramms(output)
 
-            
+'''            
 def deleteNonEditingBases(variants):
     startTime=Helper.getTime()
     Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
@@ -34,13 +36,18 @@ output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
 genome=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
 
 #print nonAlu editing Sites
+nonAluVariants.annotateVariantDict(genome)
 deleteNonEditingBases(nonAluVariants)
 nonAluVariants.printVariantDict(output+".editingSites.nonAlu.vcf")
 nonAluVariants.printGeneList(genome,output+".editingSites.nonAlu.gvf",printSummary=True)
 #print Alu editing Sites
+aluVariants.annotateVariantDict(genome)
 deleteNonEditingBases(aluVariants)
 aluVariants.printVariantDict(output+".editingSites.alu.vcf")
 aluVariants.printGeneList(genome,output+".editingSites.alu.gvf",printSummary=True)
+'''
+
+
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
 Yclust = dbCluster()
