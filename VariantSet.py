@@ -11,6 +11,8 @@ from copy import copy
 from exceptions import KeyError
 from Genome import Genome
 import collections
+import numpy as np
+import matplotlib.pyplot as plt
 
 class Variant:
     '''
@@ -203,6 +205,17 @@ class VariantSet(object):
                 attributeString+= key+"="+str(v.attributes[key])+";"
             outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, attributeString+"\n"]))    
 
+    #TODO: Finish this function
+    def topGenes(self,sumDict,number=20,value=4):
+        if number > len(sumDict):
+            Helper.error("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
+        if value > 4:
+            Helper.error("sumDict only hold four values", self.logFile, self.textField)
+        ordDict=collections.OrderedDict()
+        
+        counts=collections.OrderedDict(sorted(sumDict.items(), key=lambda t: t[1][value],reverse=True)[:number])
+        Helper.createBarplot([counts.values()], "dink.png", counts.keys(), ("Genes"))
+
     def printGeneList(self,genome,outfile,printSummary=True):
         '''
         print List of genes with all the variants
@@ -277,15 +290,6 @@ class VariantSet(object):
                         sumDict[gene][3]+=1
                     sumDict[gene][4]+=1
         
-        def topGenes(sumDict,number=20,value=4):
-            if number > len(sumDict):
-                Helper.error("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
-            if value > 4:
-                Helper.error("sumDict only hold four values", self.logFile, self.textField)
-            ordDict=collections.OrderedDict()
-            
-            return collections.OrderedDict(sorted(sumDict.items(), key=lambda t: t[1][value],reverse=True)[:number])
-
 
                      
         #print number of variants per gene

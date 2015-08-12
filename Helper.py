@@ -11,6 +11,7 @@ import traceback
 import ui
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import ylim
 
 
 
@@ -377,76 +378,83 @@ class Helper():
         
         return countDict
     
+    @staticmethod
+    def createBarplot(valueMatrix,fileName,barNamesTuple,legendTuple,width=0.25,title="",yLim=None):
+        '''
+        
+        :param valueMatrix: [[ValuesBar1][ValuesBar2][ValuesBar3]]
+        :param fileName: 
+        :param barNamesTuple: Name of Groups (has to be equal to Number of Values per Group (len(ValueArray[0])) )
+        :param legendTuple: Name of each bar (equal to len(valueArray))
+        :param width:
+        :param title:
+        '''
+        valueLen=len(valueMatrix[0])
+        
+        
+        
+        for values in valueMatrix:
+            assert valueLen==len(values), "ValueMatrix has to be Symmetric"
+            
+        assert len(legendTuple) == len(valueMatrix), "legendTuple has to have the same length as ValueArray "
+        assert len(barNamesTuple) == len(valueMatrix[0]), "barNamesTuple has to have the same length as ValueArray[0] "
+        
+        ind = np.arange(len(valueMatrix[0]))  # the x locations for the groups
+        fig, ax = plt.subplots()
+        ax.set_title(title)
+        ax.set_xticks(ind+width)
+        ax.set_xticklabels( barNamesTuple )
+        if yLim!=None:
+            ax.set_ylim(0,yLim)
+        
+        color=['r','g','b','y']*len(valueMatrix)
+        
+        
+        rects=()
+        
+        def autolabel(rects):# attach some text labels
+            for rect in rects:
+                height = rect.get_height()
+                ax.text(rect.get_x()+rect.get_width()/2., height, '%1.1f'%float(height), ha='center', va='bottom', fontsize=8)
+        
+        i=0
+        for values,c in zip(valueMatrix,color):
+            rect=ax.bar(ind+width*i, values, width, color=c, )
+            rects+=(rect,)
+            autolabel(rect)
+            i+=1
+        ax.legend( rects, legendTuple )
+        
+        fig.savefig(fileName)
+        
     @staticmethod    
     def createDiagramms(output,logFile=None,textField=0):
         '''
         writes all the diagrams wich aree then showd in the resultTab
         :param output: output variable of Params.putput
         '''
-        
+        outdir = output[0:output.rfind("/")+1]
+        sampleName=output[output.rfind("/"):]
         #################################################
         ####               Basecount Plot            ####
         #################################################
-        outdir = output[0:output.rfind("/")+1]
-        sampleName=output[output.rfind("/"):]
-        
-        ind = np.arange(12)  # the x locations for the groups
-        width = 0.35       # the width of the bars
-        fig, ax = plt.subplots()
-        
         counts1=Helper.getMMBaseCounts(output+".alu.vcf")
-        rects1 = ax.bar(ind, counts1.values(), width, color='y', )
+        counts2=Helper.getMMBaseCounts(output+".nonAlu.vcf")
         
-        counts2=Helper.getMMBaseCounts(output+".nonAlu.vcf") 
-        rects2 = ax.bar(ind+width, counts2.values(), width, color='b', )
+        fileName=outdir+"html/"+sampleName+"_baseCounts.png"
+        valueMatrix=[counts1.values(),counts2.values()]
+        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","nonAlu"),width=0.4,title="Variants per Base")
         
-        # add some text for labels, title and axes ticks
-        ax.set_title('Variants per Base')
-        ax.set_ylabel('Number')
-        ax.set_xticks(ind+width)
-        ax.set_xticklabels( counts1.keys() )
-        ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
-        
-        def autolabel(rects):# attach some text labels
-            for rect in rects:
-                height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%d'%int(height), ha='center', va='bottom', fontsize=9)
-        autolabel(rects1);autolabel(rects2)
-        
-        fig.savefig(outdir+"html/"+sampleName+"_baseCounts.png")
     
         #################################################
         ####       Editing per Position Plot         ####
         #################################################
-        ind = np.arange(6)  # the x locations for the groups
-        width = 0.35       # the width of the bars
-        fig, ax = plt.subplots()
-        
-        def getPercentage(list):
-            array=[]
-            summe=float(sum(list))
-            for value in list:
-                array.append(round((float(value)/summe)*100.0,2))
-            print array    
-            return array
-        
+        fileName=outdir+"html/"+sampleName+"_EditingPosition.png"
         counts1=Helper.countOccurrences(output+".editingSites.alu.gvf", 2, logFile, textField)
-        rects1 = ax.bar(ind, getPercentage(counts1.values()), width, color='y', )
         counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
-        rects2 = ax.bar(ind+width, getPercentage(counts2.values()), width, color='b', )
         
-        ax.set_title('Editing Sites per position')
-        ax.set_ylabel('Percentage')
-        ax.set_ylim(0,100)
-        ax.set_xticks(ind+width)
-        ax.set_xticklabels( (counts1.keys()) )
-        ax.legend( (rects1[0], rects2[0]), ('Alu', 'nonAlu') )
-        def autolabelFloat(rects):# attach some text labels
-            for rect in rects:
-                height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., 1.05*height, '%1.1f'%float(height), ha='center', va='bottom', fontsize=9)
-        autolabelFloat(rects1);autolabelFloat(rects2)
-        fig.savefig(outdir+"html/"+sampleName+"_EditingPosition.png")
+        valueMatrix=[Helper.getPercentage(counts1.values()),Helper.getPercentage(counts2.values())]
+        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","nonAlu"),width=0.4,title="Editing Sites per position",yLim=100)
         
     @staticmethod
     def printResultPage(output):
@@ -455,8 +463,18 @@ class Helper():
         :param output: output prefix from rnaEdit object
         '''
         
-        
-        
+    @staticmethod
+    def getPercentage(list):
+        '''
+        returns the percentage as a list
+        :param list:
+        '''
+        array=[]
+        summe=float(sum(list))
+        for value in list:
+            array.append(round((float(value)/summe)*100.0,2))
+        print array    
+        return array   
         
         htmlFile = open(output+".html","w+")
         

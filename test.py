@@ -18,7 +18,8 @@ from Genome import Genome
 output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
 Helper.createDiagramms(output)
 
-'''            
+
+            
 def deleteNonEditingBases(variants):
     startTime=Helper.getTime()
     Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
@@ -45,7 +46,7 @@ aluVariants.annotateVariantDict(genome)
 deleteNonEditingBases(aluVariants)
 aluVariants.printVariantDict(output+".editingSites.alu.vcf")
 aluVariants.printGeneList(genome,output+".editingSites.alu.gvf",printSummary=True)
-'''
+
 
 
 """
