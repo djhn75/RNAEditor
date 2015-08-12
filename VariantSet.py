@@ -290,6 +290,7 @@ class VariantSet(object):
                         sumDict[gene][3]+=1
                     sumDict[gene][4]+=1
         
+        self.topGenes(sumDict, 20, 0)
 
                      
         #print number of variants per gene
