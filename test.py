@@ -15,10 +15,6 @@ from VariantSet import VariantSet
 from Genome import Genome
 
 
-output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
-Helper.createDiagramms(output)
-
-
             
 def deleteNonEditingBases(variants):
     startTime=Helper.getTime()
@@ -31,24 +27,19 @@ def deleteNonEditingBases(variants):
         else:
             del variants.variantDict[varTuple]
 
-nonAluVariants=VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.nonAlu.vcf")
-aluVariants = VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
-output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
+
+aluVariants = VariantSet("/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
+output="/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1"
 genome=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
 
-#print nonAlu editing Sites
-nonAluVariants.annotateVariantDict(genome)
-deleteNonEditingBases(nonAluVariants)
-nonAluVariants.printVariantDict(output+".editingSites.nonAlu.vcf")
-nonAluVariants.printGeneList(genome,output+".editingSites.nonAlu.gvf",printSummary=True)
 #print Alu editing Sites
 aluVariants.annotateVariantDict(genome)
-deleteNonEditingBases(aluVariants)
+#deleteNonEditingBases(aluVariants)
 aluVariants.printVariantDict(output+".editingSites.alu.vcf")
 aluVariants.printGeneList(genome,output+".editingSites.alu.gvf",printSummary=True)
 
 
-
+Helper.createDiagramms(output)
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
 Yclust = dbCluster()

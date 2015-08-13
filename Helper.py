@@ -434,7 +434,8 @@ class Helper():
         :param output: output variable of Params.putput
         '''
         outdir = output[0:output.rfind("/")+1]
-        sampleName=output[output.rfind("/"):]
+        sampleName=output[output.rfind("/")+1:]
+        print outdir, sampleName
         #################################################
         ####               Basecount Plot            ####
         #################################################
