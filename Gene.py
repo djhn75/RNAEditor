@@ -34,7 +34,7 @@ class Gene(object):
             self.transcripts.append(transcript)
 
     def __str__(self, *args, **kwargs):
-        return "\n".join([self.geneId,str(self.names), "%s:%s:%s" % (str(self.chromosome),str(self.start), str(self.end))])
+        return "\n".join([self.geneId,str(self.names), "%s:%s-%s" % (str(self.chromosome),str(self.start), str(self.end))])
     
     def printInfo(self):
         '''

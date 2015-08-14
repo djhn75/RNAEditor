@@ -11,7 +11,7 @@ import traceback
 import ui
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import ylim
+
 
 
 
@@ -379,7 +379,7 @@ class Helper():
         return countDict
     
     @staticmethod
-    def createBarplot(valueMatrix,fileName,barNamesTuple,legendTuple,width=0.25,title="",yLim=None):
+    def createBarplot(valueMatrix,fileName,barNamesTuple,legendTuple,width=0.25,title="",yLim=None, vertical=False):
         '''
         
         :param valueMatrix: [[ValuesBar1][ValuesBar2][ValuesBar3]]
@@ -395,15 +395,18 @@ class Helper():
         
         for values in valueMatrix:
             assert valueLen==len(values), "ValueMatrix has to be Symmetric"
-            
+        print "ValueMatrix: ",len(valueMatrix)
+        print "legendTuple: ", len(legendTuple)
+         
         assert len(legendTuple) == len(valueMatrix), "legendTuple has to have the same length as ValueArray "
         assert len(barNamesTuple) == len(valueMatrix[0]), "barNamesTuple has to have the same length as ValueArray[0] "
         
         ind = np.arange(len(valueMatrix[0]))  # the x locations for the groups
         fig, ax = plt.subplots()
+        plt.subplots_adjust(bottom=0.21)
         ax.set_title(title)
         ax.set_xticks(ind+width)
-        ax.set_xticklabels( barNamesTuple )
+        ax.set_xticklabels( barNamesTuple, rotation='vertical' )
         if yLim!=None:
             ax.set_ylim(0,yLim)
         

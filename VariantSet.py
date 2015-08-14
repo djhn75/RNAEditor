@@ -206,7 +206,7 @@ class VariantSet(object):
             outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, attributeString+"\n"]))    
 
     #TODO: Finish this function
-    def topGenes(self,sumDict,number=20,value=4):
+    def topGenes(self,sumDict, fileName,number=20,value=4):
         if number > len(sumDict):
             Helper.error("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
         if value > 4:
@@ -214,7 +214,30 @@ class VariantSet(object):
         ordDict=collections.OrderedDict()
         
         counts=collections.OrderedDict(sorted(sumDict.items(), key=lambda t: t[1][value],reverse=True)[:number])
-        Helper.createBarplot([counts.values()], "dink.png", counts.keys(), ("Genes"))
+        barNameTuple=()
+        valueMatrix=[[]]
+        for array in counts.values():
+            valueMatrix[0].append(array[value])
+        for gene in counts.keys():
+            
+            try:
+                barNameTuple+=(gene.names[0],)
+            except (AttributeError, ), e:
+                pass
+        
+        
+        if value==0:
+            barName="3'UTR editing sites"
+        elif value==1:
+            barName="5'UTR editing sites"
+        elif value==2:
+            barName="Exon editing sites"
+        elif value==3:
+            barName="Intron editing sites"
+        elif value==4:
+            barName="Total editing sites"
+        
+        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName])
 
     def printGeneList(self,genome,outfile,printSummary=True):
         '''
@@ -246,7 +269,8 @@ class VariantSet(object):
         startTime=Helper.getTime()
         Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outfile.name),self.logFile,self.textField)
         
-        sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")
+        sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")        
+        
         outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_ID","VAR_POS",
                                  "REF","ALT","QUAL","#A","#C","#G","T","Reads Total","Edited Reads","Editing Ration","\n"]))
         
@@ -290,11 +314,31 @@ class VariantSet(object):
                         sumDict[gene][3]+=1
                     sumDict[gene][4]+=1
         
-        self.topGenes(sumDict, 20, 0)
+        
 
                      
         #print number of variants per gene
         if printSummary:
+            
+            outdir = outfile.name[:outfile.name.rfind("/")+1]
+            sampleName=outfile.name[outfile.name.rfind("/")+1:outfile.name.rfind(".editingSites")]
+            
+            fileName=outdir+"html/"+sampleName+"_3UTR_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 0)
+            
+            fileName=outdir+"html/"+sampleName+"_5UTR_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 1)
+            
+            fileName=outdir+"html/"+sampleName+"_Exon_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 2)
+            
+            fileName=outdir+"html/"+sampleName+"_Intron_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 3)
+            
+            fileName=outdir+"html/"+sampleName+"_Total_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 4)
+            
+            
             sumDictGeneIds=set()
             sumFile.write("\t".join(["#Gene_ID","Name","#3'UTR","#5'UTR","#EXON","INTRON","#TOTAL","\n"]))
             for gene in sumDict.keys():
