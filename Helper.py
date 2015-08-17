@@ -395,8 +395,6 @@ class Helper():
         
         for values in valueMatrix:
             assert valueLen==len(values), "ValueMatrix has to be Symmetric"
-        print "ValueMatrix: ",len(valueMatrix)
-        print "legendTuple: ", len(legendTuple)
          
         assert len(legendTuple) == len(valueMatrix), "legendTuple has to have the same length as ValueArray "
         assert len(barNamesTuple) == len(valueMatrix[0]), "barNamesTuple has to have the same length as ValueArray[0] "
@@ -410,7 +408,7 @@ class Helper():
         if yLim!=None:
             ax.set_ylim(0,yLim)
         
-        color=['r','g','b','y']*len(valueMatrix)
+        color=['b','g','r','y']*len(valueMatrix)
         
         
         rects=()

@@ -219,25 +219,22 @@ class VariantSet(object):
         for array in counts.values():
             valueMatrix[0].append(array[value])
         for gene in counts.keys():
+            barNameTuple+=(gene.names[0],)
             
-            try:
-                barNameTuple+=(gene.names[0],)
-            except (AttributeError, ), e:
-                pass
         
         
         if value==0:
-            barName="3'UTR editing sites"
+            barName="3'UTR"
         elif value==1:
-            barName="5'UTR editing sites"
+            barName="5'UTR"
         elif value==2:
-            barName="Exon editing sites"
+            barName="Exonic"
         elif value==3:
-            barName="Intron editing sites"
+            barName="Intronin"
         elif value==4:
-            barName="Total editing sites"
+            barName="Total"
         
-        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName])
+        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly edited genes")
 
     def printGeneList(self,genome,outfile,printSummary=True):
         '''
@@ -319,25 +316,7 @@ class VariantSet(object):
                      
         #print number of variants per gene
         if printSummary:
-            
-            outdir = outfile.name[:outfile.name.rfind("/")+1]
-            sampleName=outfile.name[outfile.name.rfind("/")+1:outfile.name.rfind(".editingSites")]
-            
-            fileName=outdir+"html/"+sampleName+"_3UTR_EditedGenes.png"
-            self.topGenes(sumDict,fileName, 20, 0)
-            
-            fileName=outdir+"html/"+sampleName+"_5UTR_EditedGenes.png"
-            self.topGenes(sumDict,fileName, 20, 1)
-            
-            fileName=outdir+"html/"+sampleName+"_Exon_EditedGenes.png"
-            self.topGenes(sumDict,fileName, 20, 2)
-            
-            fileName=outdir+"html/"+sampleName+"_Intron_EditedGenes.png"
-            self.topGenes(sumDict,fileName, 20, 3)
-            
-            fileName=outdir+"html/"+sampleName+"_Total_EditedGenes.png"
-            self.topGenes(sumDict,fileName, 20, 4)
-            
+
             
             sumDictGeneIds=set()
             sumFile.write("\t".join(["#Gene_ID","Name","#3'UTR","#5'UTR","#EXON","INTRON","#TOTAL","\n"]))
@@ -358,6 +337,26 @@ class VariantSet(object):
             for geneId in nonEffectedGenes:
                 gene=genesByGeneId[geneId]
                 sumFile.write("\t".join([gene.geneId,gene.names[0]]+["0","0","0","0","0",]+["\n"]))
+            
+                        
+            outdir = outfile.name[:outfile.name.rfind("/")+1]
+            sampleName=outfile.name[outfile.name.rfind("/")+1:outfile.name.rfind(".editingSites")]
+            
+            fileName=outdir+"html/"+sampleName+"_3UTR_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 0)
+            
+            fileName=outdir+"html/"+sampleName+"_5UTR_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 1)
+            
+            fileName=outdir+"html/"+sampleName+"_Exon_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 2)
+            
+            fileName=outdir+"html/"+sampleName+"_Intron_EditedGenes.png"
+            self.topGenes(sumDict,fileName, 20, 3)
+            
+            fileName=outdir+"html/"+sampleName+"_Total_EditedGenes.png"
+            del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
+            self.topGenes(sumDict,fileName, 20, 4)
                 
                 
     def getVariantTuble(self,line):
