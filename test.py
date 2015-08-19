@@ -15,9 +15,13 @@ from VariantSet import VariantSet
 from Genome import Genome
 
 
+output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
+Helper.printResultHtml(output)
+
+
 
       
-def deleteNonEditingBases(variants):
+"""def deleteNonEditingBases(variants):
     startTime=Helper.getTime()
     Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
     
@@ -41,7 +45,7 @@ aluVariants.printGeneList(genome,output+".editingSites.alu.gvf",printSummary=Tru
 
 
 Helper.createDiagramms(output)
-
+"""
 
 """
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")

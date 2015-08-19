@@ -230,7 +230,7 @@ class VariantSet(object):
         elif value==2:
             barName="Exonic"
         elif value==3:
-            barName="Intronin"
+            barName="Intronic"
         elif value==4:
             barName="Total"
         
@@ -342,19 +342,19 @@ class VariantSet(object):
             outdir = outfile.name[:outfile.name.rfind("/")+1]
             sampleName=outfile.name[outfile.name.rfind("/")+1:outfile.name.rfind(".editingSites")]
             
-            fileName=outdir+"html/"+sampleName+"_3UTR_EditedGenes.png"
+            fileName=outdir+"html/"+sampleName+".editedGenes(3UTR).png"
             self.topGenes(sumDict,fileName, 20, 0)
             
-            fileName=outdir+"html/"+sampleName+"_5UTR_EditedGenes.png"
+            fileName=outdir+"html/"+sampleName+".editedGenes(5UTR).png"
             self.topGenes(sumDict,fileName, 20, 1)
             
-            fileName=outdir+"html/"+sampleName+"_Exon_EditedGenes.png"
+            fileName=outdir+"html/"+sampleName+".editedGenes(Exon).png"
             self.topGenes(sumDict,fileName, 20, 2)
             
-            fileName=outdir+"html/"+sampleName+"_Intron_EditedGenes.png"
+            fileName=outdir+"html/"+sampleName+".editedGenes(Intron).png"
             self.topGenes(sumDict,fileName, 20, 3)
             
-            fileName=outdir+"html/"+sampleName+"_Total_EditedGenes.png"
+            fileName=outdir+"html/"+sampleName+".editedGenes(Total).png"
             del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
             self.topGenes(sumDict,fileName, 20, 4)
                 

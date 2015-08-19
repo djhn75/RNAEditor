@@ -19,6 +19,7 @@ class Parameters():
     '''
     Reads and saves the default values from the configuration File 'configurtion.txt'
     '''
+
     
     def __init__(self,source="configuration.txt"):
         '''
@@ -123,10 +124,7 @@ class Helper():
     '''
     Helpfunctions
     '''
-    
-    '''
-    check if given directory is a readable directory and give the right data type 
-    '''
+
     
     prefix = "*** "
     praefix = " ***"
@@ -436,7 +434,7 @@ class Helper():
         '''
         outdir = output[0:output.rfind("/")+1]
         sampleName=output[output.rfind("/")+1:]
-        print outdir, sampleName
+        #print outdir, sampleName
         #################################################
         ####               Basecount Plot            ####
         #################################################
@@ -451,7 +449,7 @@ class Helper():
         #################################################
         ####       Editing per Position Plot         ####
         #################################################
-        fileName=outdir+"html/"+sampleName+"_EditingPosition.png"
+        fileName=outdir+"html/"+sampleName+"_EditingPositions.png"
         counts1=Helper.countOccurrences(output+".editingSites.alu.gvf", 2, logFile, textField)
         counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
         
@@ -459,12 +457,122 @@ class Helper():
         Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","nonAlu"),width=0.4,title="Editing Sites per position",yLim=100)
         
     @staticmethod
-    def printResultPage(output):
+    def printResultHtml(output,logFile=None,textField=0):
         '''
         print the HTML file wich is shown when rnaEditor is finished
         :param output: output prefix from rnaEdit object
         '''
+        outdir = output[0:output.rfind("/")+1]
+        sampleName=output[output.rfind("/")+1:]
+        htmlOutPrefix=outdir+"html/"+sampleName
         
+        outDict={"title":"Result Page for "+ sampleName,
+                 "sampleName":sampleName,
+              "baseCounts":htmlOutPrefix+"_baseCounts.png",
+              "editingPositions":htmlOutPrefix+"_EditingPositions.png",
+              "3UTR":htmlOutPrefix+".editedGenes(3UTR).png",
+              "5UTR":htmlOutPrefix+".editedGenes(5UTR).png",
+              "Exon":htmlOutPrefix+".editedGenes(Exon).png",
+              "Intron":htmlOutPrefix+".editedGenes(Intron).png",
+              "Total":htmlOutPrefix+".editedGenes(Total).png"}
+        
+
+        outfile=open(output+".html","w+")
+        
+        outfile.write("""<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'
+    'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+<head>
+    <title>sampleName Results</title>
+    <meta http-equiv='content-type' content='text/html;charset=utf-8' />
+    <meta name='RnaEditor' content='Results from RnaEditor' />
+<style type='text/css'>
+    body {background-color: #F6F6F6;}
+    html, body {height: 100%;margin:0px;padding: 0px;font-family: sans-serif;}
+    h1,h2,h3,h4,h5,h6{margin-top: 1em;margin-bottom: 0.6em;}
+    h2{    font-size: 100%;font-weight: bold;}
+    h3{    font-size: 90%;    font-weight: bold;}
+    #left{width: 11em;position: absolute;}
+    #toc{margin-top: 40px;margin-left: 5px;}
+    #toc ul{padding-left: 10px;list-style-type:none;list-style-image:none;font-size: 90%;line-height: 1.9;}
+    #page, #header{z-index: 0;position: relative;padding: 0.1em 1.5em;margin-left: 11em;margin-right: 1em;border-width: 1px 1px 1px 1px;border-style: solid;border-color: #A7D7F9;}
+    #page{border-width: 0px 1px 1px 1px;background: #fff;}
+    #header{background-position: left bottom;background-color: #fff;}
+    imgl {height: 70%;width: 90%;max-width: 850px;max-height: 550px;}
+</style>
+</head>""")
+        
+        htmlString="""
+<body>
+    <div id='left'>
+        <div id='logo' class='logo'>
+            <img src='../ui/icons/rnaEditor_512x512.png' height=140 width=140>
+        </div>
+    
+            <!-- Table of Content-->
+        <div id='toc' class='toc'>
+        <div id='toctitle'><h2>Content</h2></div>
+        <ul>
+            <li class='toclevel-1 tocsection-1'><a href='#basicStats'><span class='tocnumber'>1</span> <span class='toctext'>Basic Statistic</span></a></li>
+            <li class='toclevel-1 tocsection-2'><a href='#NucleotideChanges'><span class='tocnumber'>2</span> <span class='toctext'>Nucleotide Changes</span></a></li>
+            <li class='toclevel-1 tocsection-3'><a href='#EditingPerPosition'><span class='tocnumber'>3</span> <span class='toctext'>Editing Sites per Position</span></a></li>
+            <li class='toclevel-1 tocsection-4'><a href='#EditedGenes'><span class='tocnumber'>4</span> <span class='toctext'>Highly Edited Genes</span></a></li>
+            <li class='toclevel-1 tocsection-5'><a href='#EditedIslands'><span class='tocnumber'>5</span> <span class='toctext'>Editing Islands</span></a></li>
+        </ul>
+        </div>
+    </div>    
+    
+    <div id='header'>
+        <h1>Results for %(sampleName)s</h1>
+    </div>
+    
+    
+    <div id='page' class='page'>
+
+        <!-- Content -->
+        <div id='content' class='content'>
+            <h2><span class='mw-headline' id='basicStats'>Basic Statistic</span></h2>
+                <p>
+                    Basic statistic 
+                </p>
+
+            <h2><span class='mw-headline' id='NucleotideChanges'>Nucleotide Changes</span></h2>
+                <p>Nucleotide changes after all the filters have been applied. A high amount of A->G and T-C missmatches is indicative for a high editing ratio.</p>
+                <img src='%(baseCounts)s'  alt='Base Counts' >
+                
+                
+            <h2><span class='mw-headline' id='EditingPerPosition'>Editing Sites per Position</span></h2>
+                <p>Positions where editing takes place.</p>
+                <img src='%(editingPositions)s'  alt='Editing Positions' >
+
+            <h2><span class='mw-headline' id='EditedGenes'>Highly Edited Genes</span></h2>
+                    <p>This paragraph shows highly edited genes for each segment of the genes.</p>
+                    <h3>3' UTR</h3>
+                        <img src='%(3UTR)s' alt='highly edited genes in 3'UTR'>
+                    <h3>5' UTR</h3>
+                        <img src='%(5UTR)s' alt='highly edited genes in 5'UTR'>
+                    <h3>Exons</h3>
+                        <img src='%(Exon)s' alt='highly edited genes in exons'>
+                    <h3>Introns</h3>
+                        <img src='%(Intron)s' alt='highly edited genes in introns'>
+                    <h3>Total</h3>
+                        <img src='%(Total)s' alt='highly edited genes (total)'>
+                
+                <ul>
+                    <li><a rel='nofollow' class='external text' href='http://www.academia-net.de/alias/Profil/1033482'>Stefanie Dimmeler</a> in der Datenbank renommierter Wissenschaftlerinnen <a href='https://de.wikipedia.org/wiki/AcademiaNet' title='AcademiaNet'>AcademiaNet</a></li>
+                </ul>
+                
+            <h2><span class='mw-headline' id='EditedIslands'>Editing Islands</span></h2>
+                <p>Following Regions are had editing Islands</p>
+        </div>
+    </div>
+</body>
+</html>
+        
+"""%outDict
+        outfile.write(htmlString)
+        
+
     @staticmethod
     def getPercentage(list):
         '''
@@ -475,33 +583,25 @@ class Helper():
         summe=float(sum(list))
         for value in list:
             array.append(round((float(value)/summe)*100.0,2))
-        print array    
+        #print array    
         return array   
-        
-        htmlFile = open(output+".html","w+")
-        
-        htmlFile.write("<html>")
-        
-        
-        
-        htmlFile.write("</html>")
-    
+
     @staticmethod
-    def getMMBaseCounts(inFile):
+    def getMMBaseCounts(vcfFile):
         '''
         Count the number of base mismatches and return the Dictionary with the numbers
         :param vcf File:
         '''
-        if type(inFile) == str:
-            if os.path.getsize(inFile) == 0: #getsize raises OSError if file is not existing
-                raise IOError("%s File is empty" % inFile)
-            inFile = open(inFile,"r")
-        elif type(inFile) != file:
-            raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(inFile)) 
+        if type(vcfFile) == str:
+            if os.path.getsize(vcfFile) == 0: #getsize raises OSError if file is not existing
+                raise IOError("%s File is empty" % vcfFile)
+            vcfFile = open(vcfFile,"r")
+        elif type(vcfFile) != file:
+            raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(vcfFile)) 
         
         mmBaseCounts=OrderedDict([("A->C",0),("A->G",0),("A->T",0),("C->A",0),("C->G",0),("C->T",0),("G->A",0),("G->C",0),("G->T",0),("T->A",0),("T->C",0),("T->G",0)])
         
-        for line in inFile:
+        for line in vcfFile:
             if line.startswith('#'): continue
             line=line.split()
             if line[3]=="A" and line[4]=="C": mmBaseCounts["A->C"]+=1
