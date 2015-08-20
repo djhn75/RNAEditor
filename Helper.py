@@ -377,7 +377,7 @@ class Helper():
         return countDict
     
     @staticmethod
-    def createBarplot(valueMatrix,fileName,barNamesTuple,legendTuple,width=0.25,title="",yLim=None, vertical=False):
+    def createBarplot(valueMatrix,fileName,barNamesTuple,legendTuple,width=0.25,title="",yLim=None, barText=True, yText=""):
         '''
         
         :param valueMatrix: [[ValuesBar1][ValuesBar2][ValuesBar3]]
@@ -399,8 +399,9 @@ class Helper():
         
         ind = np.arange(len(valueMatrix[0]))  # the x locations for the groups
         fig, ax = plt.subplots()
-        plt.subplots_adjust(bottom=0.21)
+        plt.subplots_adjust(bottom=0.24)
         ax.set_title(title)
+        ax.set_ylabel(yText)
         ax.set_xticks(ind+width)
         ax.set_xticklabels( barNamesTuple, rotation='vertical' )
         if yLim!=None:
@@ -414,13 +415,15 @@ class Helper():
         def autolabel(rects):# attach some text labels
             for rect in rects:
                 height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., height, '%1.1f'%float(height), ha='center', va='bottom', fontsize=8)
+                ax.text(rect.get_x()+rect.get_width()/2., height/2  , '%1.0f'%float(height), ha='center', va='bottom', fontsize=8, rotation='vertical')
         
         i=0
         for values,c in zip(valueMatrix,color):
-            rect=ax.bar(ind+width*i, values, width, color=c, )
+            rect=ax.bar((ind+width*i), values, width, color=c, )
             rects+=(rect,)
-            autolabel(rect)
+            
+            if barText==True:
+                autolabel(rect)
             i+=1
         ax.legend( rects, legendTuple )
         
@@ -443,7 +446,7 @@ class Helper():
         
         fileName=outdir+"html/"+sampleName+"_baseCounts.png"
         valueMatrix=[counts1.values(),counts2.values()]
-        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","nonAlu"),width=0.4,title="Variants per Base")
+        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Variants per Base",yText="Number")
         
     
         #################################################
@@ -454,7 +457,7 @@ class Helper():
         counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
         
         valueMatrix=[Helper.getPercentage(counts1.values()),Helper.getPercentage(counts2.values())]
-        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","nonAlu"),width=0.4,title="Editing Sites per position",yLim=100)
+        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
         
     @staticmethod
     def printResultHtml(output,logFile=None,textField=0):

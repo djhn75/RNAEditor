@@ -224,9 +224,9 @@ class VariantSet(object):
         
         
         if value==0:
-            barName="3'UTR"
+            barName="3'-UTR"
         elif value==1:
-            barName="5'UTR"
+            barName="5'-UTR"
         elif value==2:
             barName="Exonic"
         elif value==3:
@@ -234,7 +234,8 @@ class VariantSet(object):
         elif value==4:
             barName="Total"
         
-        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly edited genes")
+        yLim=max(max(i) for i in valueMatrix)+1
+        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly Edited Genes",yLim=yLim,barText=False,yText="Editing Counts")
 
     def printGeneList(self,genome,outfile,printSummary=True):
         '''
