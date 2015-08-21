@@ -404,6 +404,7 @@ class Helper():
         ax.set_ylabel(yText)
         ax.set_xticks(ind+width)
         ax.set_xticklabels( barNamesTuple, rotation='vertical' )
+        ax.set_xlim(min(ind)-0.1,max(ind)+(width*len(valueMatrix))+0.1)
         if yLim!=None:
             ax.set_ylim(0,yLim)
         
@@ -415,7 +416,7 @@ class Helper():
         def autolabel(rects):# attach some text labels
             for rect in rects:
                 height = rect.get_height()
-                ax.text(rect.get_x()+rect.get_width()/2., height/2  , '%1.0f'%float(height), ha='center', va='bottom', fontsize=8, rotation='vertical')
+                ax.text(rect.get_x()+rect.get_width()/2., height/2  , '%1.0f'%float(height), ha='center', va='bottom', fontsize=8, rotation='vertical', )
         
         i=0
         for values,c in zip(valueMatrix,color):
