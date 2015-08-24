@@ -503,6 +503,10 @@ class Helper():
     #page{border-width: 0px 1px 1px 1px;background: #fff;}
     #header{background-position: left bottom;background-color: #fff;}
     imgl {height: 70%;width: 90%;max-width: 850px;max-height: 550px;}
+    figure {padding: 5px;float: left;border: 1px solid #cccccc;border-radius: 5px;
+}
+    figure img {border-radius: 3px 3px 0 0;}
+    figure figcaption {padding: 2px 4px 2px 4px;background-color: #636363;color: #cccccc;font-style: italic;border-radius: 0 0 3px 3px;text-align:center}
 </style>
 </head>""")
         
@@ -535,20 +539,24 @@ class Helper():
 
         <!-- Content -->
         <div id='content' class='content'>
+            
             <h2><span class='mw-headline' id='basicStats'>Basic Statistic</span></h2>
                 <p>
-                    Basic statistic 
+                    Basic statistic:
                 </p>
-
+            
             <h2><span class='mw-headline' id='NucleotideChanges'>Nucleotide Changes</span></h2>
-                <p>Nucleotide changes after all the filters have been applied. A high amount of A->G and T-C missmatches is indicative for a high editing ratio.</p>
+                <p>Nucleotide changes after all the filters have been applied. 
+                   A high amount of A->G and T-C missmatches is indicative for a high editing ratio.</p>
                 <img src='%(baseCounts)s'  alt='Base Counts' >
                 
                 
             <h2><span class='mw-headline' id='EditingPerPosition'>Editing Sites per Position</span></h2>
                 <p>Positions where editing takes place.</p>
-                <img src='%(editingPositions)s'  alt='Editing Positions' >
-
+                <figure>
+                    <img src='%(editingPositions)s'  alt='Editing Positions' >
+                    <figcaption>Number of editing sites in different gene regions</figcaption>
+                </figure>
             <h2><span class='mw-headline' id='EditedGenes'>Highly Edited Genes</span></h2>
                     <p>This paragraph shows highly edited genes for each segment of the genes.</p>
                     <h3>3' UTR</h3>

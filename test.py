@@ -16,13 +16,13 @@ from Genome import Genome
 
 
 output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
-#Helper.printResultHtml(output)
-Helper.createDiagramms(output)
+Helper.printResultHtml(output)
+#Helper.createDiagramms(output)
 
 aluVariants = VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
 genome=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
 aluVariants.annotateVariantDict(genome)
-aluVariants.printGeneList(genome,output,printSummary=True)   
+aluVariants.printGeneList(genome,output+".testgvf",printSummary=True)
 """def deleteNonEditingBases(variants):
     startTime=Helper.getTime()
     Helper.info("Delete non Editing Bases (keep only T->C and A->G)")

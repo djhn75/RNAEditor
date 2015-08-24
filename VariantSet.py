@@ -341,8 +341,9 @@ class VariantSet(object):
             
                         
             outdir = outfile.name[:outfile.name.rfind("/")+1]
-            sampleName=outfile.name[outfile.name.rfind("/")+1:outfile.name.rfind(".editingSites")]
-            
+            tmp=outfile.name[outfile.name.rfind("/")+1:]
+            sampleName=tmp[:tmp.find(".")
+                           ]
             fileName=outdir+"html/"+sampleName+".editedGenes(3UTR).png"
             self.topGenes(sumDict,fileName, 20, 0)
             
