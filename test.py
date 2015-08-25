@@ -15,14 +15,17 @@ from VariantSet import VariantSet
 from Genome import Genome
 
 
-output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
+output="/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1"
+#output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
 Helper.printResultHtml(output)
-#Helper.createDiagramms(output)
+Helper.createDiagramms(output)
 
-aluVariants = VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
+"""aluVariants = VariantSet(output+".alu.vcf")
 genome=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
 aluVariants.annotateVariantDict(genome)
 aluVariants.printGeneList(genome,output+".testgvf",printSummary=True)
+"""
+Helper.printResultHtml(output)
 """def deleteNonEditingBases(variants):
     startTime=Helper.getTime()
     Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
