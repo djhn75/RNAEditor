@@ -362,7 +362,8 @@ ref : String</y:AttributeLabel>
 fastqFiles: List[Str]
 textField: QTextEdit
 runningCommand: Popen
-stop: Boolean</y:AttributeLabel>
+isTerminated: Boolean
+basicStatDict: Dictionary</y:AttributeLabel>
             <y:MethodLabel>__init__(self,fastqFiles,params, textField)
 start(self)
 __del(self)
@@ -377,7 +378,7 @@ printParameters(self)</y:MethodLabel>
       <data key="d5"><![CDATA[Static Class]]></data>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="378.76414155592306" width="396.55270457833126" x="152.09822064939578" y="-1904.0327370799287"/>
+          <y:Geometry height="415.54640319672126" width="396.55270457833126" x="104.28128051635804" y="-2119.6620493195596"/>
           <y:Fill color="#FF9900" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="52.6865234375" x="171.93309057041563" y="25.96875">Helper<y:LabelModel>
@@ -401,8 +402,11 @@ getPositionDictFromVcfFile(vcfFile,runNumber)
 removeVariantsAFromVariantsB(variantsDictA,variantsDictB)
 returnVariantDictFromVcfFile(vcfFile)
 getCommandOutput(command)
+countOccurrences(inFile,column)
+createBarplot(valueMatrix,fileName,barNameTuple,legendTuple,width,title,yLim,barText,yText)
 createDiagrams(output)
-printResultPage()
+printResultHtml(output)
+getPercentage(list)
 printTimeDiff(startTime,logFile=None,textField=0)
 newline (quantity=1,logFile=None,textField=0)
 info (message,logFile=None,textField=0)

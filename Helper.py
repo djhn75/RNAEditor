@@ -542,7 +542,30 @@ class Helper():
             
             <h2><span class='mw-headline' id='basicStats'>Basic Statistic</span></h2>
                 <p>
-                    Basic statistic:
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Measure</th>
+                                <th>Value</th>        
+                            </tr>
+                            <tr>
+                                <td>Total Number of editing sites:</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>in Alu Regions:</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>in non-Alu Regions:</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Percentage of edited Genes:</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </p>
             
             <h2><span class='mw-headline' id='NucleotideChanges'>Nucleotide Changes</span></h2>

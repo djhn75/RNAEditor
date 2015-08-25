@@ -38,6 +38,9 @@ class RnaEdit(QtCore.QThread):
         self.isTerminated = False
         #check if the input Files are there
         
+        #hold basic statistic values of the run
+        basicStatDict={}
+        
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
@@ -270,6 +273,7 @@ if __name__ == '__main__':
     edit.start()
     edit.wait()
     Helper.createDiagramms(edit.params.output)
+    Helper.printResultHtml(edit.params.output)
     del edit
     
     
