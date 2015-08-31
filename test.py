@@ -13,89 +13,94 @@ from collections import OrderedDict
 from Helper import Helper
 from VariantSet import VariantSet
 from Genome import Genome
+from dbCluster import dbCluster
+from sklearn import metrics
+from _collections import defaultdict
 
 
 output="/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1"
 #output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
-Helper.printResultHtml(output)
-Helper.createDiagramms(output)
+#Helper.printResultHtml(output)
+#Helper.createDiagramms(output)
 
 """aluVariants = VariantSet(output+".alu.vcf")
 genome=Genome("/media/Storage/databases/rnaEditor_annotations/human/genes.gtf")
 aluVariants.annotateVariantDict(genome)
 aluVariants.printGeneList(genome,output+".testgvf",printSummary=True)
 """
-Helper.printResultHtml(output)
-"""def deleteNonEditingBases(variants):
-    startTime=Helper.getTime()
-    Helper.info("Delete non Editing Bases (keep only T->C and A->G)")
-    
-    for varTuple in variants.variantDict.keys():
-        chr,pos,ref,alt = varTuple
-        if (ref =="A" and alt == "G") or (ref=="T" and alt=="C"):
-            pass
-        else:
-            del variants.variantDict[varTuple]
+#Helper.printResultHtml(output)
 
 
-aluVariants = VariantSet("/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1.alu.vcf")
-output="/media/ATLAS_NGS_storage/David/Kostas/rnaEditor/adar1/adar1"
-
-
-#print Alu editing Sites
-
-#deleteNonEditingBases(aluVariants)
-aluVariants.printVariantDict(output+".editingSites.alu.vcf")
-
-
-
-Helper.createDiagramms(output)
-"""
-
-"""
-variants= VariantSet("/media/Storage/bio-data/David/Kostas/scrambleN/scrambleN_1.vcf")
+variants= VariantSet("/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1.editingSites.alu.vcf")
 Yclust = dbCluster()
 
-varPosList = []
+varPosListByChromosome = variants.getVarPosListByChromosome()
 
-
-for v in variants:
-    varPosList.append(v.position)
-varPosList = np.asarray(varPosList)
-
-for eps in range(211,211):
-    for min_samples in range(3,50):
-        #print('EPS: %s, minSamples: %s' % (eps,min_samples))
-        Yclust.dbscan(varPosList, eps=eps, min_samples=min_samples)
-        core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
-        
-        # Number of clusters in labels, ignoring noise if present.w
-        n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-        labelNames = set(labels)
-        X = []
-        for el in varPosList:
-            X.append([el,0])
-        X = np.array(X)
-
-        if n_clusters_ > 0:
-            print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, metrics.silhouette_score(X, labels)))
-            #print('#Clusters: %d, SC: %0.3f' % (n_clusters_,metrics.silhouette_score(X, labels)))
-        else:
-            continue
-            #print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, 0))
+"""
+for chromosome in varPosListByChromosome.keys():
+    for eps in range(210,211):
+        for min_samples in range(3,50):
+            #print('EPS: %s, minSamples: %s' % (eps,min_samples))
+            Yclust.dbscan(varPosListByChromosome[chromosome], eps=eps, min_samples=min_samples)
+            core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
             
-        #print('Estimated number of clusters: %d' % n_clusters_)
-        #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
-        #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+            # Number of clusters in labels, ignoring noise if present.w
+            n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+            labelNames = set(labels)
+            X = []
+            for el in varPosListByChromosome[chromosome]:
+                X.append([el,0])
+            X = np.array(X)
+    
+            if n_clusters_ > 0:
+                print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, metrics.silhouette_score(X, labels)))
+                #print('#Clusters: %d, SC: %0.3f' % (n_clusters_,metrics.silhouette_score(X, labels)))
+            else:
+                continue
+                #print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, 0))
+                
+            #print('Estimated number of clusters: %d' % n_clusters_)
+            #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+            #print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
+"""
+eps=50,
+min_samples=4
+islandCounter=0
+for chromosome in varPosListByChromosome.keys():
+    Yclust.dbscan(varPosListByChromosome[chromosome], eps, min_samples)
+    core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    labelNames = set(labels)
+    X = []
+    clusterDict=defaultdict(list)
+    for varPos,label in zip(varPosListByChromosome[chromosome],labels):
+        clusterDict[label].append(varPos)
+        X.append([varPos,0])
+    X = np.array(X)
 
-Yclust.dbscan(varPosList, eps=2, min_samples=5)
+    if n_clusters_ > 0:
+        #print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, metrics.silhouette_score(X, labels)))
+        for key in clusterDict.keys():
+            if key==-1:
+                continue
+            
+            biggest=max(clusterDict[key])
+            smallest=min(clusterDict[key])
+            length=biggest-smallest
+            editingRate=float(len(clusterDict[key]))/float(length)
+            print "\t".join(map(str,[chromosome,biggest,smallest,"editingIsland"+str(islandCounter),length,editingRate,len(clusterDict[key])]))
+            islandCounter+=1
+        #print('#Clusters: %d, SC: %0.3f' % (n_clusters_,metrics.silhouette_score(X, labels)))
 
-print "%d number of variants" % len(varPosList)
+#print "%d number of variants" % len(varPosListByChromosome)
+
+
 
 core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
 # Number of clusters in labels, ignoring noise if present.w
 n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 
+"""
 labelNames = set(labels)
 #labels = list(labels)
 
@@ -122,5 +127,5 @@ X = np.array(X)
 print('Estimated number of clusters: %d' % n_clusters_)
 print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(X, labels))
 
-
 """
+

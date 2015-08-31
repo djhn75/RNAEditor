@@ -128,6 +128,21 @@ class VariantSet(object):
             variant = Variant(vcfList[0],vcfList[1],vcfList[2],vcfList[3],vcfList[4],vcfList[5],vcfList[6],vcfList[7])
             yield variant
     
+    def getVarPosListByChromosome(self):
+        '''
+        return: all the variant positions by chromosome
+        {"1":[4,6,8,45,67],"2":[6,9,67,69].....}
+        This is only needed for the cluster algorithm later on
+        '''
+        varPosList=defaultdict(list)
+        for v in self.variantDict.values():
+            varPosList[v.chromosome].append(v.position)
+            
+        #make numpy array out of the lists
+        for chromosome in varPosList.keys():
+            varPosList[chromosome]=np.asarray(varPosList[chromosome])
+        return varPosList
+    
     def getVariantSetByChromosome(self):
         '''
         returns the variants as Dictionary with chromosome as key and a list of VariantObjects as values

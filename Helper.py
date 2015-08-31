@@ -470,6 +470,8 @@ class Helper():
         sampleName=output[output.rfind("/")+1:]
         htmlOutPrefix=outdir+"html/"+sampleName
         
+        
+        
         outDict={"title":"Result Page for "+ sampleName,
                  "sampleName":sampleName,
               "baseCounts":htmlOutPrefix+"_baseCounts.png",
@@ -478,7 +480,8 @@ class Helper():
               "5UTR":htmlOutPrefix+".editedGenes(5UTR).png",
               "Exon":htmlOutPrefix+".editedGenes(Exon).png",
               "Intron":htmlOutPrefix+".editedGenes(Intron).png",
-              "Total":htmlOutPrefix+".editedGenes(Total).png"}
+              "Total":htmlOutPrefix+".editedGenes(Total).png",
+              "currentTime":Helper.getTime().strftime("%d.%m.%Y %H:%M")}
         
 
         outfile=open(output+".html","w+")
@@ -531,7 +534,8 @@ class Helper():
     </div>    
     
     <div id='header'>
-        <h1>Results for %(sampleName)s</h1>
+        <h1 >Results for %(sampleName)s</h1>
+        <p style="text-align: right;">%(currentTime)s</p>
     </div>
     
     
@@ -570,9 +574,11 @@ class Helper():
             
             <h2><span class='mw-headline' id='NucleotideChanges'>Nucleotide Changes</span></h2>
                 <p>Nucleotide changes after all the filters have been applied. 
-                   A high amount of A->G and T-C missmatches is indicative for a high editing ratio.</p>
-                <img src='%(baseCounts)s'  alt='Base Counts' >
-                
+                   A high amount of A->G and T-C missmatches is indicative for a high editing rate.</p>
+                <figure>
+                    <img src='%(baseCounts)s'  alt='Base Counts' >
+                    <figcaption>Number of mismatsch types</figcaption>
+                </figure>
                 
             <h2><span class='mw-headline' id='EditingPerPosition'>Editing Sites per Position</span></h2>
                 <p>Positions where editing takes place.</p>
@@ -583,19 +589,31 @@ class Helper():
             <h2><span class='mw-headline' id='EditedGenes'>Highly Edited Genes</span></h2>
                     <p>This paragraph shows highly edited genes for each segment of the genes.</p>
                     <h3>3' UTR</h3>
-                        <img src='%(3UTR)s' alt='highly edited genes in 3'UTR'>
+                        <figure>
+                            <img src='%(3UTR)s' alt='highly edited genes in 3'UTR'>
+                            <figcaption>Highly edited Genes in 3'UTR Regions</figcaption>
+                        </figure>
                     <h3>5' UTR</h3>
-                        <img src='%(5UTR)s' alt='highly edited genes in 5'UTR'>
+                        <figure>
+                            <img src='%(5UTR)s' alt='highly edited genes in 5'UTR'>
+                            <figcaption>Highly edited Genes in 5'UTR Regions</figcaption>
+                        </figure>
                     <h3>Exons</h3>
-                        <img src='%(Exon)s' alt='highly edited genes in exons'>
+                        <figure>
+                            <img src='%(Exon)s' alt='highly edited genes in exons'>
+                            <figcaption>Highly edited Genes in Exon Regions</figcaption>
+                        </figure>
                     <h3>Introns</h3>
-                        <img src='%(Intron)s' alt='highly edited genes in introns'>
+                        <figure>
+                            <img src='%(Intron)s' alt='highly edited genes in introns'>
+                            <figcaption>Highly edited Genes in Intron Regions</figcaption>
+                        </figure>
                     <h3>Total</h3>
-                        <img src='%(Total)s' alt='highly edited genes (total)'>
+                        <figure>
+                            <img src='%(Total)s' alt='highly edited genes (total)'>
+                            <figcaption>Highly edited Genes in 5'UTR Regions</figcaption>
+                        </figure>
                 
-                <ul>
-                    <li><a rel='nofollow' class='external text' href='http://www.academia-net.de/alias/Profil/1033482'>Stefanie Dimmeler</a> in der Datenbank renommierter Wissenschaftlerinnen <a href='https://de.wikipedia.org/wiki/AcademiaNet' title='AcademiaNet'>AcademiaNet</a></li>
-                </ul>
                 
             <h2><span class='mw-headline' id='EditedIslands'>Editing Islands</span></h2>
                 <p>Following Regions are had editing Islands</p>

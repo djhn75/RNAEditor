@@ -51,7 +51,6 @@ class dbCluster():
         shuffle(index_order)
         
         
-       
         distance_matrix = True
         D = self.calculate1dDistanceMatrix(X,eps=eps)
     
