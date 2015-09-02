@@ -4,7 +4,7 @@ Created on 05.06.2014
 @author: david
 '''
 from Helper import Helper
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import os
 import operator
 from copy import copy
@@ -13,6 +13,7 @@ from Genome import Genome
 import collections
 import numpy as np
 import matplotlib.pyplot as plt
+from random import shuffle
 
 class Variant:
     '''
@@ -72,7 +73,8 @@ class VariantSet(object):
         #trim comments
         info=info[:info.find("#")].rstrip()
         
-        values = map(lambda x: x.strip(), info.split(";")[:-1])
+        values = map(lambda x: x.strip(), info.split(";"))
+                     #[:-1])
         
         attributes={}
         for info in values:
@@ -143,11 +145,10 @@ class VariantSet(object):
             varPosList[chromosome]=np.asarray(varPosList[chromosome])
         return varPosList
     
-    def getVariantSetByChromosome(self):
+    def getVariantListByChromosome(self):
         '''
-        returns the variants as Dictionary with chromosome as key and a list of VariantObjects as values
+        @return: variants as Dictionary with chromosome as key and a list of VariantObjects as values
         {"1":[VariantObject1,VariantObject2....],"2":[VariantObject1,VariantObject2....]}
-        
         '''
         variantsByChromosome = defaultdict(list)
         for v in self.variantDict.values():
@@ -173,7 +174,7 @@ class VariantSet(object):
         elif type(vcfFile) != file:
             raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(vcfFile)) 
             
-        variantDict = {}
+        variantDict = OrderedDict()
         for v in self.iterator(vcfFile):
             variantDict[(v.chromosome,v.position,v.ref,v.alt)]=v
             #variantDict[(v.chromosome,v.position)]=v
@@ -223,7 +224,8 @@ class VariantSet(object):
     #TODO: Finish this function
     def topGenes(self,sumDict, fileName,number=20,value=4):
         if number > len(sumDict):
-            Helper.error("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
+            Helper.warning("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
+            number=len(sumDict)
         if value > 4:
             Helper.error("sumDict only hold four values", self.logFile, self.textField)
         ordDict=collections.OrderedDict()
@@ -374,8 +376,38 @@ class VariantSet(object):
             fileName=outdir+"html/"+sampleName+".editedGenes(Total).png"
             del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
             self.topGenes(sumDict,fileName, 20, 4)
+                            
+    def printClusters(self, outFile):
+        
+        if type(outFile) == str:
+            try:
+                outFile=open(outFile,"w")
                 
-                
+            except IOError:
+                Helper.warning("Could not open %s to write Variant" % outFile ,self.logFile,self.textField)
+        if type(outFile) != file:   
+            raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outFile))
+        
+        startTime=Helper.getTime()
+        Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outFile.name),self.logFile,self.textField)
+        
+        
+        outFile.write("\t".join(["#chr","start","stop","name","genes","length","editing_sites","editing_rate","\n"]))
+        
+        for cluster in self.clusterDict.keys():
+            end = max(v.position for v in self.clusterDict[cluster])
+            start = min(v.position for v in self.clusterDict[cluster])
+            
+            length = end - start
+            editingRate=float(len(self.clusterDict[cluster]))/float(length)
+            geneList=[]
+            for v in self.clusterDict[cluster]:
+                geneList.append(v.attributes['GI'][0][0])
+            geneSet=set(geneList)
+            
+            
+            outFile.write("\t".join([v.chromosome,str(start),str(end),str(cluster),",".join(geneSet),str(length),str(len(self.clusterDict[cluster])),'%1.2f'%float(editingRate),"\n"]))
+            
     def getVariantTuble(self,line):
         '''
         returns a tuple of (chromosome, position, alt, ref) from a line of a vcfFile
@@ -385,10 +417,8 @@ class VariantSet(object):
             for alt in line[4].split(","):
                 tuple = (line[0],int(line[1]),line[3],alt)
                 yield tuple
-            #tuple = (line[0],int(line[1]))
         except IndexError:
             raise ValueError("Error in line '%s'" % " ".join(line))
-        #return tuple
     
     def getVariantByGene(self):
         '''
@@ -449,7 +479,7 @@ class VariantSet(object):
         startTime=Helper.getTime()
         Helper.info("[%s] Delete overlaps from %s" %  (startTime.strftime("%c"),bedFile.name) ,self.logFile,self.textField)
         
-        variantsByChromosome = self.getVariantSetByChromosome() 
+        variantsByChromosome = self.getVariantListByChromosome() 
         overlapps = set()
         for line in bedFile:
             try:
@@ -501,3 +531,160 @@ class VariantSet(object):
         
         Helper.printTimeDiff(startTime,self.logFile,self.textField)
             
+    def createClusters(self,eps=50,minSamples=5):
+        
+        islandCounter=0
+        variantsByChromosome = self.getVariantListByChromosome()
+        self.clusterDict=defaultdict(list)
+        for chr in variantsByChromosome.keys():
+            posList = [v.position for v in variantsByChromosome[chr]] #position of all variants from that chromosome
+            
+            labels = self.getLabels(posList,eps,minSamples) #actually doing db clustering
+            n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+            
+            
+            if n_clusters_ > 0:
+                #loop over labels and variants
+                tmpDict=defaultdict(list)
+                for var,label in zip(variantsByChromosome[chr],labels):
+                    #clusterdict{1:[var1,var2],2:[var5,var8]}
+                    if label==-1:
+                        continue
+                    
+                    tmpDict[label].append(var)
+                    
+                #set new label for clusterdict, to avoid overwriting
+                for label in tmpDict.keys():
+                    self.clusterDict[islandCounter]=tmpDict.pop(label)
+                    islandCounter+=1
+                    
+                
+    def getLabels(self,positionList,eps=10, minSamples=5):
+        """Perform DBSCAN clustering from vector array.
+    
+        Parameters
+        ----------
+        X: array [int1,int1]
+            Array of Samples. 
+            In this case it should be the positions of the variations in the genome per chromosome
+    
+        eps: float, optional
+            The maximum distance between two samples for them to be considered
+            as in the same neighborhood.
+    
+        minSamples: int, optional
+            The number of samples in a neighborhood for a point to be considered
+            as a core point.
+    
+    
+        Returns
+        -------
+        core_samples: array [n_core_samples]
+            Indices of core samples.
+    
+        labels : array [n_samples]
+            Cluster labels for each point.  Noisy samples are given the label -1.
+    
+        """
+        if not eps > 0.0:
+            raise ValueError("eps must be positive.")
+    
+        X = np.asarray(positionList)
+        n = X.shape[0] #get number of elements (not sure) 
+    
+        index_order=range(n)
+        shuffle(index_order)
+        
+        
+        distanceMatrix = self.calculate1dDistanceMatrix(X,eps)
+    
+        # Calculate neighborhood for all samples. This leaves the original point
+        # in, which needs to be considered later (i.e. point i is the
+        # neighborhood of point i. While True, its useless information)
+    
+        #distanceMatrix = [np.where(x <= eps)[0] for x in distanceMatrix]
+        
+        # Initially, all samples are noise.
+        labels = -np.ones(n, dtype=np.int)
+    
+        # A list of all core samples found.
+        core_samples = []
+    
+        # label_num is the label given to the new cluster
+        label_num = 0
+    
+        # Look at all samples and determine if they are core.
+        # If they are then build a new cluster from them.
+        for index in index_order:
+            # Already classified
+            if labels[index] != -1:
+                continue
+    
+            # get neighbors from distanceMatrix or ballTree
+            index_neighborhood = []
+    
+            index_neighborhood = distanceMatrix[index]
+            
+    
+            # Too few samples to be core
+            if len(index_neighborhood) < minSamples:
+                continue
+    
+            core_samples.append(index)
+            labels[index] = label_num
+            # candidates for new core samples in the cluster.
+            candidates = [index]
+    
+            while len(candidates) > 0:
+                new_candidates = []
+                # A candidate is a core point in the current cluster that has
+                # not yet been used to expand the current cluster.
+                for c in candidates:
+                    c_neighborhood = []
+                    
+                    c_neighborhood = distanceMatrix[c]
+                    
+                    noise = np.where(labels[c_neighborhood] == -1)[0] #indexes of candidate neigbours which do not belong to a cluster yet
+                    noise = c_neighborhood[noise]
+                    labels[noise] = label_num
+                    for neighbor in noise:
+                        n_neighborhood = []
+                        
+                        n_neighborhood = distanceMatrix[neighbor]
+                        
+                        # check if its a core point as well
+                        if len(n_neighborhood) >= minSamples:
+                            # is new core point
+                            new_candidates.append(neighbor)
+                            core_samples.append(neighbor)
+                # Update candidates for next round of cluster expansion.
+                candidates = new_candidates
+            # Current cluster finished.
+            # Next core point found will start a new cluster.
+            label_num += 1
+        #return core_samples, labels
+        coreSamples = core_samples
+        return labels
+    
+    def calculate1dDistanceMatrix(self,lst,eps):
+        '''
+        creates a distance matrix for the given vector
+        :param lst: vector of samples       
+        :return: np.array(diffMatrix)
+        '''
+        if not isinstance(lst, (list, tuple, np.ndarray)):
+            raise TypeError("Paramer has to be eithe a List or a Tuple found %s" % type(lst))
+        if not all(isinstance(item, (int,float)) for item in lst):
+            raise TypeError("List should only contain numbers")
+        lst = np.asarray(lst)
+        diffMatrix=[]
+        i = 0
+        for l1 in lst:
+            diffList=[]
+            
+            diffList= abs(lst-l1)
+            diffList = np.where(diffList<=eps)[0]
+            diffMatrix.append(diffList)
+
+        return np.asarray(diffMatrix)
+

@@ -13,7 +13,7 @@ from collections import OrderedDict
 from Helper import Helper
 from VariantSet import VariantSet
 from Genome import Genome
-from dbCluster import dbCluster
+from dbCluster import DbCluster
 from sklearn import metrics
 from _collections import defaultdict
 
@@ -32,16 +32,19 @@ aluVariants.printGeneList(genome,output+".testgvf",printSummary=True)
 
 
 variants= VariantSet("/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1.editingSites.alu.vcf")
-Yclust = dbCluster()
+variants.createClusters(50, 5)
+variants.printClusters("/media/Storage/bio-data/David/Kostas/rnaEditor/adar1/adar1.editingSites.alu.clusters")
 
-varPosListByChromosome = variants.getVarPosListByChromosome()
+exit()
+
+#varPosListByChromosome = variants.getVarPosListByChromosome()
 
 """
 for chromosome in varPosListByChromosome.keys():
     for eps in range(210,211):
         for min_samples in range(3,50):
             #print('EPS: %s, minSamples: %s' % (eps,min_samples))
-            Yclust.dbscan(varPosListByChromosome[chromosome], eps=eps, min_samples=min_samples)
+            Yclust.getLabels(varPosListByChromosome[chromosome], eps=eps, min_samples=min_samples)
             core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
             
             # Number of clusters in labels, ignoring noise if present.w
@@ -67,7 +70,7 @@ eps=50,
 min_samples=4
 islandCounter=0
 for chromosome in varPosListByChromosome.keys():
-    Yclust.dbscan(varPosListByChromosome[chromosome], eps, min_samples)
+    Yclust.getLabels(varPosListByChromosome[chromosome], eps, min_samples)
     core_sample_indices, labels = Yclust.coreSamples, Yclust.labels
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
     labelNames = set(labels)
@@ -107,7 +110,7 @@ labelNames = set(labels)
 
 for label in labelNames:
     if label !=-1:
-        #get indices of poinst which belong to the current dbCluster
+        #get indices of poinst which belong to the current DbCluster
         labelIndices = np.where(labels == label)[0]
         clusterPoints = varPosList[labelIndices]
         #print "%d" % label
@@ -116,7 +119,7 @@ for label in labelNames:
         maxi= max(clusterPoints)
         mean= std(clusterPoints)
         dens= float(len(clusterPoints))/ float((maxi-mini))
-        print "dbCluster %d: [%s] ,min: %d, max: %d, mean: %d, Density: %f" % (int(label),",".join(map(str,clusterPoints)),mini, maxi, mean,dens)
+        print "DbCluster %d: [%s] ,min: %d, max: %d, mean: %d, Density: %f" % (int(label),",".join(map(str,clusterPoints)),mini, maxi, mean,dens)
 
 X = []
 for el in varPosList:
