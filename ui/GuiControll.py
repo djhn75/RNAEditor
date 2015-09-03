@@ -39,7 +39,7 @@ class GuiControll(object):
         if parameters.paired==True:
             #fastqs=inputTab.dropList.dropFirstTwoItems()
             fastqs = inputTab.dropList.dropFirstItem()
-            if not fastqs[0].endswith(".bam"):
+            if not str(fastqs[0].text()).endswith(".bam"):
                 fastqs+=inputTab.dropList.dropFirstItem()
         else:
             fastqs = inputTab.dropList.dropFirstItem()        

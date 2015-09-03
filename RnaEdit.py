@@ -40,7 +40,7 @@ class RnaEdit(QtCore.QThread):
         
         #hold basic statistic values of the run
         basicStatDict={}
-        
+            
         
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
