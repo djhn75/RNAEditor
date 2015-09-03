@@ -150,4 +150,4 @@ class GuiControll(object):
             quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(index))
             reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
             if reply == QtGui.QMessageBox.Yes:
-                    currentThreat.stopImmediately()
+                currentThreat.stopImmediately()

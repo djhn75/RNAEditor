@@ -402,7 +402,11 @@ class VariantSet(object):
             editingRate=float(len(self.clusterDict[cluster]))/float(length)
             geneList=[]
             for v in self.clusterDict[cluster]:
-                geneList.append(v.attributes['GI'][0][0])
+                try: 
+                    geneList.append(v.attributes['GI'][0][0])
+                except KeyError:
+                    geneList.append("N/A") #when variant has no attribute GI
+                
             geneSet=set(geneList)
             
             

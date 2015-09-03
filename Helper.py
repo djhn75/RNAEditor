@@ -506,7 +506,7 @@ class Helper():
     #page{border-width: 0px 1px 1px 1px;background: #fff;}
     #header{background-position: left bottom;background-color: #fff;}
     imgl {height: 70%;width: 90%;max-width: 850px;max-height: 550px;}
-    figure {padding: 5px;float: left;border: 1px solid #cccccc;border-radius: 5px;
+    figure {padding: 5px;border: 1px solid #cccccc;border-radius: 5px;
 }
     figure img {border-radius: 3px 3px 0 0;}
     figure figcaption {font-size: 70%; padding: 2px 4px 2px 4px;background-color: #636363;color: #cccccc;font-style: italic;border-radius: 0 0 3px 3px;text-align:center}
