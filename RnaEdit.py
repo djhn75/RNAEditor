@@ -107,24 +107,20 @@ class RnaEdit(QtCore.QThread):
     def stopImmediately(self):
         if hasattr(self, 'callEditSites'):
             self.callEditSites.cleanUp()
-        
         self.isTerminated=True
+        
         if self.runningCommand != False:
-            print "kill"
             self.runningCommand.kill()
         else:
-            print "terminate"
             self.terminate()
             self.wait()
-        
         Helper.error("Analysis was terminated by User", self.logFile, self.textField)
          
     def cleanUp(self):
         #print "deleteAssay " + str(self)
         if self.runningCommand != False:
             self.runningCommand.kill()
-        
-        
+
         try:
             if self.mapFastQ!=None:
                 self.mapFastQ.cleanUp()
@@ -133,9 +129,7 @@ class RnaEdit(QtCore.QThread):
             Helper.error("could not delete MapFastQ instance", self.logFile, self.textField)
         try:
             self.callEditSites.cleanUp()
-            
-            if self.callEditSites!=None:
-                del self.callEditSites
+            del self.callEditSites
         except AttributeError:
             Helper.error("could not delete RnaEdit instance", self.logFile, self.textField)
         
