@@ -11,6 +11,8 @@ import traceback
 import ui
 import numpy as np
 import matplotlib.pyplot as plt
+import shutil 
+from shutil import copyfile
 
 
 
@@ -470,10 +472,12 @@ class Helper():
         sampleName=output[output.rfind("/")+1:]
         htmlOutPrefix=outdir+"html/"+sampleName
         
-        
+        #copy rnaEditor logo to htmlOutPrefix
+        copyfile('ui/icons/rnaEditor_512x512.png',outdir+"html/rnaEditor_512x512.png")
         
         outDict={"title":"Result Page for "+ sampleName,
                  "sampleName":sampleName,
+                 "icon":outdir+"html/rnaEditor_512x512.png",
               "baseCounts":htmlOutPrefix+"_baseCounts.png",
               "editingPositions":htmlOutPrefix+"_EditingPositions.png",
               "3UTR":htmlOutPrefix+".editedGenes(3UTR).png",
@@ -517,7 +521,7 @@ class Helper():
 <body>
     <div id='left'>
         <div id='logo' class='logo'>
-            <img src='../ui/icons/rnaEditor_512x512.png' height=140 width=140>
+            <img src='%(icon)s' height=140 width=140>
         </div>
     
             <!-- Table of Content-->
