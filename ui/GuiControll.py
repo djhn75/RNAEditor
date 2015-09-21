@@ -47,6 +47,10 @@ class GuiControll(object):
         """
         check if droplist returned a value
         """
+        if parameters.paired==True:
+            if fastqs[-1] == None:
+                QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNot enough Sequencing Files for paired-end sequencing!!!\n\nDrop FASTQ-Files to the drop area!")
+                return
         if fastqs == None:
             QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo Sequencing Files found!!!\n\nDrop FASTQ-Files to the drop area!")
             return

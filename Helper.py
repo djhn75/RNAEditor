@@ -620,7 +620,7 @@ class Helper():
                 
                 
             <h2><span class='mw-headline' id='EditedIslands'>Editing Islands</span></h2>
-                <p>Following Regions are had editing Islands</p>
+                <p> Detected Editing Islands</p>
         </div>
     </div>
 </body>
