@@ -621,6 +621,25 @@ class Helper():
                 
             <h2><span class='mw-headline' id='EditedIslands'>Editing Islands</span></h2>
                 <p> Detected Editing Islands</p>
+                
+                
+            <!--<script language="javascript" src="http://141.2.38.250/rnaEditor/dalliance0.13a-compiled.js"></script> -->
+            <script language="javascript" src="dalliance0.13a-compiled.js"></script>
+
+            <p>
+            
+            <script>
+                createBrowser();
+            </script>
+            
+            <!--
+            Select the output bam File:  <input id='bam' type='file' name='bam'><br>
+            Select the output bam-index (.bai) File:  <input id='bai' type='file' name='bai'><br>
+            Select the output vcf File :  <input id='vcf' type='file' name='vcf' onchange='createBrowser()'><br>
+            -->
+            
+            <div id="svgHolder" style='margin-left: 5%; margin-right: 5%; border-width: 1px; border-style: solid; border-color: #ccc; border-radius: 4px; padding: 10px'></div>
+
         </div>
     </div>
 </body>
