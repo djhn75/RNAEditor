@@ -401,13 +401,19 @@ class CallEditingSites(object):
         @return: 0 on success and 1 if analysis was canceled by user
         '''
         
+        '''check if result file already exists''' 
+        if os.path.isfile(self.rnaEdit.params.output+".editingSites.clusters") and self.rnaEdit.params.overwrite==False:
+            print "\t [SKIP] Final result file already exist",self.rnaEdit.logFile,self.rnaEdit.textField
+            return 1
+        
+        
         #Rough variant calling with GATK
         self.printAttributes()
         
         #create transcriptome from GTF-File
         #startTime = Helper.getTime()
         #Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),self.rnaEdit.params.gtfFile),self.rnaEdit.logFile,self.rnaEdit.textField)
-        self.genome = Genome(self.rnaEdit.params.gtfFile)
+        
         #duration = Helper.getTime() -startTime
         #Helper.info(" Finished parsing in %s" % (str(duration)),self.rnaEdit.logFile,self.rnaEdit.textField)
     
@@ -420,25 +426,42 @@ class CallEditingSites(object):
         #print cmd
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.rnaEdit)
         
-        #read in initial SNPs
-        variants = VariantSet(vcfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
-        
-        
-        '''annotate all Variants'''
-        variants.annotateVariantDict(self.genome)
+        #check if file already exists
+        if not os.path.isfile(self.rnaEdit.params.output+"noSNPs.vcf") or self.rnaEdit.params.overwrite==True:
+            #read in initial SNPs
+            variants = VariantSet(vcfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
 
-        '''delete SNPs from dbSNP'''
-        variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
+    
+            '''delete SNPs from dbSNP'''
+            variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
+            
+            '''delete variants from 1000 Genome Project'''
+            variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
+            
+            '''delete variants from UW exome calls'''
+            variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
+            
+            '''annotate all Variants'''
+            #variants.annotateVariantDict(self.genome)
+            
+            '''save variants if something goes wrong'''
+            variants.printVariantDict(self.rnaEdit.params.output+"noSNPs.vcf")
+        else:
+            if not os.path.isfile(self.rnaEdit.params.output+"noReadEdges.vcf"):
+                variants = VariantSet(self.rnaEdit.params.output+"noSNPs.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+                
         
-        '''delete variants from 1000 Genome Project'''
-        variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
         
-        '''delete variants from UW exome calls'''
-        variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
-        
-        '''erase artificial missmatches at read-edges from variants'''
-        self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
-        
+        if not os.path.isfile(self.rnaEdit.params.output+"noReadEdges.vcf") or self.rnaEdit.params.overwrite==True:
+            '''erase artificial missmatches at read-edges from variants'''
+            #self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
+            
+            '''save variants if something goes wrong'''
+            variants.printVariantDict(self.rnaEdit.params.output+"noReadEdges.vcf")
+        else:
+            variants = VariantSet(self.rnaEdit.params.output+"noReadEdges.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+            
+            
         '''get non-Alu Variants'''
         nonAluVariants=copy(variants)
         nonAluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=True)
@@ -447,7 +470,13 @@ class CallEditingSites(object):
         aluVariants=copy(variants)
         aluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=False)
         
+        
+        '''Read Genome'''
+        self.genome = Genome(self.rnaEdit.params.gtfFile)
+        
+        
         #print out variants from Alu regions
+        aluVariants.annotateVariantDict(self.genome)
         aluVariants.printVariantDict(self.rnaEdit.params.output+".alu.vcf")
         aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".alu.gvf", printSummary=True)
         
@@ -490,7 +519,7 @@ class CallEditingSites(object):
         variants.printVariantDict(self.rnaEdit.params.output+".editingSites.vcf")
         variants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.gvf",printSummary=True)
         variants.createClusters(eps=50,minSamples=5)
-        variants.printVariantDict(self.rnaEdit.params.output+".editingSites.clusters")
+        variants.printClusters(self.rnaEdit.params.output+".editingSites.clusters")
         
         return 1
 
