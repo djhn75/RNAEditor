@@ -6,15 +6,9 @@ Created on 05.06.2014
 
 #!/usr/bin/env python
 # a bar plot with errorbars
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-from collections import OrderedDict
-from Helper import Helper
+import numpy.array
 from VariantSet import VariantSet
-from Genome import Genome
-from dbCluster import DbCluster
-from sklearn import metrics
+
 from _collections import defaultdict
 
 
@@ -79,7 +73,7 @@ for chromosome in varPosListByChromosome.keys():
     for varPos,label in zip(varPosListByChromosome[chromosome],labels):
         clusterDict[label].append(varPos)
         X.append([varPos,0])
-    X = np.array(X)
+    X = numpy.array(X)
 
     if n_clusters_ > 0:
         #print('EPS: %s, minSamples: %s, #Clusters: %d, SC: %0.3f' % (eps, min_samples, n_clusters_, metrics.silhouette_score(X, labels)))

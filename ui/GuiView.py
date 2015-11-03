@@ -1,10 +1,8 @@
 from PyQt4 import QtCore, QtGui
 from ui.InputTab import InputTab
-from ui.RunTab import RunTab
 from PyQt4.QtGui import QSizePolicy
-from PyQt4.Qt import QMenu, QString
 from ui.GuiControll import GuiControll
-from ui.ResultTab import ResultTab
+
 
 class GuiView(QtGui.QMainWindow):
     def __init__(self):

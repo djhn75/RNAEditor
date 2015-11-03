@@ -229,6 +229,8 @@ class RnaEdit(QtCore.QThread):
 
         
         Helper.info("Dependencies satisfied", self.logFile, self.textField)
+        
+        #check if display can activate 
 
     def printParameters(self):
 

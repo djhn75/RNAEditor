@@ -9,13 +9,9 @@ import argparse, sys, os, subprocess, errno
 from collections import defaultdict, OrderedDict
 import traceback
 import ui
-import numpy as np
-import matplotlib.pyplot as plt
-import shutil 
+from numpy import arange
+from matplotlib.pyplot import subplots_adjust, subplots
 from shutil import copyfile
-
-
-
 
 class Parameters():
     '''
@@ -399,9 +395,10 @@ class Helper():
         assert len(legendTuple) == len(valueMatrix), "legendTuple has to have the same length as ValueArray "
         assert len(barNamesTuple) == len(valueMatrix[0]), "barNamesTuple has to have the same length as ValueArray[0] "
         
-        ind = np.arange(len(valueMatrix[0]))  # the x locations for the groups
-        fig, ax = plt.subplots()
-        plt.subplots_adjust(bottom=0.24)
+        ind = arange(len(valueMatrix[0]))  # the x locations for the groups
+        fig, ax = subplots()
+        
+        subplots_adjust(bottom=0.24)
         ax.set_title(title)
         ax.set_ylabel(yText)
         ax.set_xticks(ind+width)

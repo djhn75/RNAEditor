@@ -12,7 +12,6 @@ from exceptions import KeyError
 from Genome import Genome
 import collections
 import numpy as np
-import matplotlib.pyplot as plt
 from random import shuffle
 
 class Variant:
@@ -74,7 +73,7 @@ class VariantSet(object):
         info=info[:info.find("#")].rstrip()
         
         values = map(lambda x: x.strip(), info.split(";"))
-                     #[:-1])
+        #[:-1])
         
         attributes={}
         for info in values:
@@ -228,7 +227,7 @@ class VariantSet(object):
             number=len(sumDict)
         if value > 4:
             Helper.error("sumDict only hold four values", self.logFile, self.textField)
-        ordDict=collections.OrderedDict()
+        
         
         counts=collections.OrderedDict(sorted(sumDict.items(), key=lambda t: t[1][value],reverse=True)[:number])
         barNameTuple=()
@@ -472,8 +471,6 @@ class VariantSet(object):
         Helper.printTimeDiff(startTime,self.logFile,self.textField)
     
     def getOverlappsFromBed(self,bedFile,getNonOverlapps=False):
-        startTime=Helper.getTime()
-        
         
         if type(bedFile) == str:
             bedFile = open(bedFile)
@@ -667,7 +664,7 @@ class VariantSet(object):
             # Next core point found will start a new cluster.
             label_num += 1
         #return core_samples, labels
-        coreSamples = core_samples
+        
         return labels
     
     def calculate1dDistanceMatrix(self,lst,eps):
@@ -682,7 +679,7 @@ class VariantSet(object):
             raise TypeError("List should only contain numbers")
         lst = np.asarray(lst)
         diffMatrix=[]
-        i = 0
+
         for l1 in lst:
             diffList=[]
             
