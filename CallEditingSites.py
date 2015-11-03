@@ -172,7 +172,7 @@ class CallEditingSites(object):
         for line in tempSeqFile:
             siteNuc,sequence = line.split()
             try:
-                chr,position,ref,alt = siteNuc.split(",")
+                chr,position,ref,alt = siteNuc.split(",",3)
             except (ValueError):
                 raise ValueError("Failed to read line: %s" % line)
             #check if mm sorounding sequence are homopolymer nukleotides

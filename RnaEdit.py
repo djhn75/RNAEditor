@@ -71,7 +71,7 @@ class RnaEdit(QtCore.QThread):
         try:
             self.startAnalysis()
         except Exception:
-            Helper.error("RnaEditor Failed")
+            Helper.error("RnaEditor Failed",self.rnaEdit.logFile,self.rnaEdit.textField)
         
         
     def startAnalysis(self):
