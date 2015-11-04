@@ -51,7 +51,7 @@ class GuiControll(object):
             if fastqs[-1] == None:
                 QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNot enough Sequencing Files for paired-end sequencing!!!\n\nDrop FASTQ-Files to the drop area!")
                 return
-        if fastqs == None:
+        if fastqs[0] == None:
             QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo Sequencing Files found!!!\n\nDrop FASTQ-Files to the drop area!")
             return
         sampleName = Helper.getSampleName(str(fastqs[0].text()))
