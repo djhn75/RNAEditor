@@ -440,7 +440,7 @@ class VariantSet(object):
             raise KeyError("Variant has no attribute GI. Try to run 'annotateVariantDict' before to get GeneInfo")
         return variantByGene
     
-    def deleteOverlappsFromVcf(self,variants):
+    def deleteOverlapsFromVcf(self,variants):
         '''
         delete the variants from 'variantsA' which also are in 'variantsB'
         '''
@@ -470,7 +470,13 @@ class VariantSet(object):
         #calculate duration 
         Helper.printTimeDiff(startTime,self.logFile,self.textField)
     
-    def getOverlappsFromBed(self,bedFile,getNonOverlapps=False):
+    def getOverlapsFromBed(self,bedFile,getNonOverlaps=False):
+        '''
+        returns overlaps from bed file features
+        :param bedFile: as string or file
+        :param getNonOverlaps: boolean
+        :return new variantSet of overlaps 
+        '''
         
         if type(bedFile) == str:
             bedFile = open(bedFile)
@@ -486,16 +492,16 @@ class VariantSet(object):
             try:
                 sl = line.split("\t") 
                 #if "\t" in line else line.split(" ")
-                chromosome,startAnalysis,stop = sl[:3]
-                startAnalysis,stop=(int(startAnalysis),int(stop))
+                chromosome,start,stop = sl[:3]
+                start,stop=(int(start),int(stop))
             except ValueError:
                 raise ValueError("Error in line '%s'" % line)
             
             for v in variantsByChromosome[chromosome]:
-                if startAnalysis < v.position < stop:
+                if start < v.position < stop:
                     overlapps.add((v.chromosome,v.position,v.ref,v.alt))
                      
-        if getNonOverlapps:
+        if getNonOverlaps:
             overlapps = set(self.variantDict.keys()) - overlapps #delete all accept the ones which are overlapping
         
         newSet={}
@@ -505,6 +511,56 @@ class VariantSet(object):
         
         Helper.printTimeDiff(startTime, self.logFile,self.textField)
         return newSet
+    
+    def splitByBed(self,bedFile):
+        '''
+        returns overlaps and nonOverlaps from bed file features
+        :param bedFile: as string or file
+        :param getNonOverlaps: boolean
+        '''
+        
+        if type(bedFile) == str:
+            bedFile = open(bedFile)
+        elif type(bedFile) != file:
+            raise TypeError("bedFile has wrong type, need str or file, %s found" % type(bedFile))
+        
+        startTime=Helper.getTime()
+        Helper.info("[%s] Delete overlaps from %s" %  (startTime.strftime("%c"),bedFile.name) ,self.logFile,self.textField)
+        
+        variantsByChromosome = self.getVariantListByChromosome() 
+        overlapSet = set()
+        for line in bedFile:
+            try:
+                sl = line.split("\t") 
+                #if "\t" in line else line.split(" ")
+                chromosome,start,stop = sl[:3]
+                start,stop=(int(start),int(stop))
+            except ValueError:
+                raise ValueError("Error in line '%s'" % line)
+            
+            for v in variantsByChromosome[chromosome]:
+                if start < v.position < stop:
+                    overlapSet.add((v.chromosome,v.position,v.ref,v.alt))
+                     
+        nonOverlapSet = set(self.variantDict.keys()) - overlapSet #delete all accept the ones which are overlapping
+        
+        
+        overlaps = {key: self.variantDict[key] for key in self.variantDict if key in overlapSet}
+        nonOverlaps = {key: self.variantDict[key] for key in self.variantDict if key not in overlapSet}
+        
+        """
+        overlaps={}
+        for variantTuple in overlapSet:
+            #del self.variantDict[variantTuple]
+            overlaps[variantTuple]=self.variantDict[variantTuple]
+        
+        nonOverlaps={}
+        for variantTuple in nonOverlapSet:
+            nonOverlaps[variantTuple]=self.variantDict
+        """
+        
+        Helper.printTimeDiff(startTime, self.logFile,self.textField)
+        return overlaps, nonOverlaps
 
     def sortVariantDict(self,variantDict):
         '''

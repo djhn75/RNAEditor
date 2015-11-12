@@ -5,17 +5,17 @@ Created on 05.06.2014
 '''
 
 #!/usr/bin/env python
-# a bar plot with errorbars
 
+from VariantSet import VariantSet
 
-from Helper import Helper
+var = VariantSet("/media/ATLAS_NGS_storage/Till/fastq/demultiplexed/rnaEditor/Icm4.vcf")
+bedFile="/media/Storage/databases/rnaEditor_annotations/human/Alu_repeats_noCHR.bed"
 
+alu,nonAlu=var.splitByBed(bedFile)
 
+savedAlu=VariantSet("/media/ATLAS_NGS_storage/Till/fastq/demultiplexed/rnaEditor/Icm4.alu.vcf")
+savedNonAlu=VariantSet("/media/ATLAS_NGS_storage/Till/fastq/demultiplexed/rnaEditor/Icm4.nonAlu.vcf")
 
-valueMatrix=[[4,8,4,3],[4,8,4,3],[4,8,4,3],[4,8,4,3]]
-fileName="/home/david/Desktop/dink.png"
-barNamesTuple=('a','b','c','d')
-legendTuple=('w','x','w','z')
-
-
-Helper.createBarplot(valueMatrix, fileName, barNamesTuple, legendTuple)
+print "original vars", len(var)
+print "alu:",len(alu), "nonAlu:", len(nonAlu)
+print "savedAlu:",len(savedAlu), "savedNonAlu:", len(savedNonAlu)

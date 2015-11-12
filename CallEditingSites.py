@@ -426,6 +426,10 @@ class CallEditingSites(object):
         #print cmd
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.rnaEdit)
         
+        
+        #################################
+        ###   Delete known SNPs!!!    ###
+        #################################
         #check if file already exists
         if not os.path.isfile(self.rnaEdit.params.output+"noSNPs.vcf") or self.rnaEdit.params.overwrite==True:
             #read in initial SNPs
@@ -433,13 +437,13 @@ class CallEditingSites(object):
 
     
             '''delete SNPs from dbSNP'''
-            variants.deleteOverlappsFromVcf(self.rnaEdit.params.dbsnp)
+            variants.deleteOverlapsFromVcf(self.rnaEdit.params.dbsnp)
             
             '''delete variants from 1000 Genome Project'''
-            variants.deleteOverlappsFromVcf(self.rnaEdit.params.omni)
+            variants.deleteOverlapsFromVcf(self.rnaEdit.params.omni)
             
             '''delete variants from UW exome calls'''
-            variants.deleteOverlappsFromVcf(self.rnaEdit.params.esp)
+            variants.deleteOverlapsFromVcf(self.rnaEdit.params.esp)
             
             '''annotate all Variants'''
             #variants.annotateVariantDict(self.genome)
@@ -451,7 +455,9 @@ class CallEditingSites(object):
                 variants = VariantSet(self.rnaEdit.params.output+"noSNPs.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
                 
         
-        
+        ###############################################
+        ###   Delete variants from read edges!!!    ###
+        ###############################################
         if not os.path.isfile(self.rnaEdit.params.output+"noReadEdges.vcf") or self.rnaEdit.params.overwrite==True:
             '''erase artificial missmatches at read-edges from variants'''
             #self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
@@ -461,14 +467,17 @@ class CallEditingSites(object):
         else:
             variants = VariantSet(self.rnaEdit.params.output+"noReadEdges.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
             
-            
+        
+        ###############################################
+        ###   split Alu- and non-Alu Variants!!!    ###
+        ###############################################  
         '''get non-Alu Variants'''
         nonAluVariants=copy(variants)
-        nonAluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=True)
+        nonAluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=True)
         
         '''get Alu Variants'''
         aluVariants=copy(variants)
-        aluVariants.variantDict=variants.getOverlappsFromBed(self.rnaEdit.params.aluRegions,getNonOverlapps=False)
+        aluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=False)
         
         
         '''Read Genome'''
