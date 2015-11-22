@@ -10,6 +10,8 @@ from collections import defaultdict, OrderedDict
 import traceback
 import ui
 from numpy import arange
+from matplotlib.backends import qt_compat
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
 from shutil import copyfile
 
@@ -30,8 +32,7 @@ class Parameters():
             self.getParametersFromInputTab(source)
         else:
             Helper.error("Parameter source has wrong Type [str or QWidget]")
-    
-    
+       
     def getParametersFromInputTab(self,inputTab):
         '''
         get the Parameters and update the default Parameters from the Default class 
@@ -55,8 +56,7 @@ class Parameters():
         self.paired = inputTab.pairedCheckBox.isChecked()
         self.overwrite = inputTab.overwriteCheckBox.isChecked()
         self.keepTemp = inputTab.keepTempCheckBox.isChecked()
-        
-            
+                  
     def readDefaultsFromFile(self,file):
         try:
             confFile = open(file)
@@ -333,8 +333,6 @@ class Helper():
             vcfDict[chromosome][position,ref,alt]=([line[2]]+line[5:])
         return vcfDict
 
-
-
     @staticmethod
     def getCommandOutput(command):
         #print command
@@ -435,6 +433,8 @@ class Helper():
         writes all the diagrams wich aree then showd in the resultTab
         :param output: output variable of Params.putput
         '''
+        Helper.status("Creating Diagrams", logFile, textField)
+        
         outdir = output[0:output.rfind("/")+1]
         sampleName=output[output.rfind("/")+1:]
         #print outdir, sampleName
@@ -645,7 +645,6 @@ class Helper():
 """%outDict
         outfile.write(htmlString)
         
-
     @staticmethod
     def getPercentage(list):
         '''
@@ -692,7 +691,6 @@ class Helper():
             
         return mmBaseCounts
         
-    
     @staticmethod
     def printTimeDiff(startTime,logFile=None,textField=0):
         duration = Helper.getTime() - startTime

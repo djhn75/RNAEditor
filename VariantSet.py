@@ -13,6 +13,8 @@ from Genome import Genome
 import collections
 import numpy as np
 from random import shuffle
+import sys
+import pysam
 
 class Variant:
     '''
@@ -223,6 +225,9 @@ class VariantSet(object):
     #TODO: Finish this function
     def topGenes(self,sumDict, fileName,number=20,value=4):
         if number > len(sumDict):
+            if len(sumDict)<1:
+                Helper.warning("no edited genes found", self.logFile, self.textField)
+                return
             Helper.warning("The number of top genes you wanted is bigger than the number of edited genes", self.logFile, self.textField)
             number=len(sumDict)
         if value > 4:
@@ -236,9 +241,7 @@ class VariantSet(object):
             valueMatrix[0].append(array[value])
         for gene in counts.keys():
             barNameTuple+=(gene.names[0],)
-            
-        
-        
+
         if value==0:
             barName="3'-UTR"
         elif value==1:
@@ -373,7 +376,9 @@ class VariantSet(object):
             self.topGenes(sumDict,fileName, 20, 3)
             
             fileName=outdir+"html/"+sampleName+".editedGenes(Total).png"
-            del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
+            
+            if "-" in sumDict.keys():
+                del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
             self.topGenes(sumDict,fileName, 20, 4)
                             
     def printClusters(self, outFile):
@@ -529,7 +534,9 @@ class VariantSet(object):
         
         variantsByChromosome = self.getVariantListByChromosome() 
         overlapSet = set()
+        i=0
         for line in bedFile:
+            
             try:
                 sl = line.split("\t") 
                 #if "\t" in line else line.split(" ")
@@ -541,11 +548,22 @@ class VariantSet(object):
             for v in variantsByChromosome[chromosome]:
                 if start < v.position < stop:
                     overlapSet.add((v.chromosome,v.position,v.ref,v.alt))
-                     
-        nonOverlapSet = set(self.variantDict.keys()) - overlapSet #delete all accept the ones which are overlapping
+            i+=1
+            if i %1000==0:
+                Helper.status("%s Bed Feautes parsed" % i, self.logFile,self.textField)
+        
+        
+        Helper.info("finished parsing Bed file", self.logFile,self.textField)
+        Helper.printTimeDiff(startTime, self.logFile,self.textField)
+               
+        #nonOverlapSet = set(self.variantDict.keys()) - overlapSet #delete all accept the ones which are overlapping
         
         
         overlaps = {key: self.variantDict[key] for key in self.variantDict if key in overlapSet}
+        
+        Helper.info("finished creating overlaps", self.logFile,self.textField)
+        Helper.printTimeDiff(startTime, self.logFile,self.textField)
+        
         nonOverlaps = {key: self.variantDict[key] for key in self.variantDict if key not in overlapSet}
         
         """
@@ -614,8 +632,7 @@ class VariantSet(object):
                 for label in tmpDict.keys():
                     self.clusterDict[islandCounter]=tmpDict.pop(label)
                     islandCounter+=1
-                    
-                
+                                    
     def getLabels(self,positionList,eps=10, minSamples=5):
         """Perform DBSCAN clustering from vector array.
     
@@ -745,3 +762,55 @@ class VariantSet(object):
 
         return np.asarray(diffMatrix)
 
+    def deleteNonEditingBases(self,):
+        startTime=Helper.getTime()
+        Helper.info("Delete non Editing Bases (keep only T->C and A->G)",self.logFile,self.textField)
+        
+        for varTuple in self.variantDict.keys():
+            chr,pos,ref,alt = varTuple
+            if (ref =="A" and alt == "G") or (ref=="T" and alt=="C"):
+                pass
+            else:
+                del self.variantDict[varTuple]
+
+    def __len__(self):
+        return len(self.variantDict)
+    
+    def removeEdgeMismatches(self,bamFile,minDistance, minBaseQual):
+        startTime=Helper.getTime()
+        minDistance=int(minDistance)
+        counter=0;j=0  
+        num_lines = len(self.variantDict)
+        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)))
+        
+        bamFile = pysam.AlignmentFile(bamFile, "rb")
+        
+        for varKey in self.variantDict.keys():
+            variant = self.variantDict[varKey]
+            
+            counter+=1
+            if counter%1000==0:
+                Helper.status('%s mm parsed ' % counter ,self.logFile, self.textField)
+            
+            keepSNP=False
+            varPos=variant.position-1
+            iter = bamFile.pileup(variant.chromosome, variant.position-1, variant.position)
+            for x in iter:
+                if x.pos == varPos:
+                    
+                    #loop over reads of that position
+                    for pileupread in x.pileups:
+                        if not pileupread.is_del and not pileupread.is_refskip:
+                            distance=abs(pileupread.alignment.alen-pileupread.query_position) if pileupread.alignment.is_reverse else pileupread.query_position
+                            if distance >= minDistance:
+                                #check readBase and Base Quality
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                    keepSNP=True
+                                    
+            if keepSNP==False:
+                j+=1
+                del self.variantDict[varKey]
+        
+        Helper.status('%s of %svariants were deleted' % (j,num_lines), self.logFile, self.textField) 
+        Helper.printTimeDiff(startTime, self.logFile, self.textField)
+        bamFile.close()

@@ -46,11 +46,9 @@ class CallEditingSites(object):
         Helper.info( "\t standEmit:" + self.rnaEdit.params.standEmit, self.rnaEdit.logFile, self.rnaEdit.textField) 
         Helper.info( "\t keepTemp:" + str(self.rnaEdit.params.keepTemp), self.rnaEdit.logFile, self.rnaEdit.textField) 
         Helper.info( "\t overwrite:" + str(self.rnaEdit.params.overwrite), self.rnaEdit.logFile, self.rnaEdit.textField) 
-        
-
-
-          
     
+    
+    #TODO: delete this function (old and slow) got replace by VariantSet.removerEdgeMismatches
     def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
         '''delete variants from Bam file which appear near read edges'''
         #Loop through vcf-File
@@ -355,7 +353,7 @@ class CallEditingSites(object):
                 os.remove(tempFasta)
                 os.remove(pslFile.name)
             
-            #output statisticsttkkg
+            #output statistics
             mmPassedNumber=mmNumberTotal-(mmNumberTooSmall+mmReadsSmallerDiscardReads)
             
             Helper.info("\t\t %d out of %d passed blat criteria" % (mmPassedNumber, mmNumberTotal),self.rnaEdit.logFile,self.rnaEdit.textField)
@@ -363,11 +361,7 @@ class CallEditingSites(object):
             Helper.info("\t\t %d Missmatches had more missaligned reads than correct ones." % (mmReadsSmallerDiscardReads),self.rnaEdit.logFile,self.rnaEdit.textField)
             
         Helper.printTimeDiff(startTime,self.rnaEdit.logFile,self.rnaEdit.textField)
-
-    
-   
-    
-            
+         
     def cleanUp(self):
         #print [x for x in gc.get_objects()]
         #print str(self) + " cleaned up"
@@ -382,19 +376,7 @@ class CallEditingSites(object):
             #os.remove(self.rnaEdit.params.output+".nonAlu.vcf")
             #os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.vcf")
             #os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf")
-        
             
-    def deleteNonEditingBases(self,variants):
-        startTime=Helper.getTime()
-        Helper.info("Delete non Editing Bases (keep only T->C and A->G)",self.rnaEdit.logFile,self.rnaEdit.textField)
-        
-        for varTuple in variants.variantDict.keys():
-            chr,pos,ref,alt = varTuple
-            if (ref =="A" and alt == "G") or (ref=="T" and alt=="C"):
-                pass
-            else:
-                del variants.variantDict[varTuple]
-    
     def startAnalysis(self):
         '''Proceeds all the steps to detect editing Sites from a bam File
         
@@ -431,7 +413,7 @@ class CallEditingSites(object):
         ###   Delete known SNPs!!!    ###
         #################################
         #check if file already exists
-        if not os.path.isfile(self.rnaEdit.params.output+"noSNPs.vcf") or self.rnaEdit.params.overwrite==True:
+        if not os.path.isfile(self.rnaEdit.params.output+".noSNPs.vcf") or self.rnaEdit.params.overwrite==True:
             #read in initial SNPs
             variants = VariantSet(vcfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
 
@@ -449,82 +431,115 @@ class CallEditingSites(object):
             #variants.annotateVariantDict(self.genome)
             
             '''save variants if something goes wrong'''
-            variants.printVariantDict(self.rnaEdit.params.output+"noSNPs.vcf")
+            variants.printVariantDict(self.rnaEdit.params.output+".noSNPs.vcf")
         else:
-            if not os.path.isfile(self.rnaEdit.params.output+"noReadEdges.vcf"):
-                variants = VariantSet(self.rnaEdit.params.output+"noSNPs.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+            if not os.path.isfile(self.rnaEdit.params.output+".noReadEdges.vcf"):
+                variants = VariantSet(self.rnaEdit.params.output+".noSNPs.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
                 
         
         ###############################################
         ###   Delete variants from read edges!!!    ###
         ###############################################
-        if not os.path.isfile(self.rnaEdit.params.output+"noReadEdges.vcf") or self.rnaEdit.params.overwrite==True:
+        if not os.path.isfile(self.rnaEdit.params.output+".noReadEdges.vcf") or self.rnaEdit.params.overwrite==True:
             '''erase artificial missmatches at read-edges from variants'''
+            variants.removeEdgeMismatches(self.bamFile, self.rnaEdit.params.edgeDistance, 25)
             #self.removeEdgeMissmatches(variants, self.bamFile, self.rnaEdit.params.edgeDistance, 25)
             
             '''save variants if something goes wrong'''
-            variants.printVariantDict(self.rnaEdit.params.output+"noReadEdges.vcf")
+            variants.printVariantDict(self.rnaEdit.params.output+".noReadEdges.vcf")
         else:
-            variants = VariantSet(self.rnaEdit.params.output+"noReadEdges.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+            if not os.path.isfile(self.rnaEdit.params.output+".alu.vcf") and not os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf"):
+                variants = VariantSet(self.rnaEdit.params.output+".noReadEdges.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
             
         
         ###############################################
         ###   split Alu- and non-Alu Variants!!!    ###
         ###############################################  
-        '''get non-Alu Variants'''
-        nonAluVariants=copy(variants)
-        nonAluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=True)
         
-        '''get Alu Variants'''
-        aluVariants=copy(variants)
-        aluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=False)
-        
-        
-        '''Read Genome'''
-        self.genome = Genome(self.rnaEdit.params.gtfFile)
+        if (not os.path.isfile(self.rnaEdit.params.output+".alu.vcf") and not os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf")) or self.rnaEdit.params.overwrite==True:
+            '''get non-Alu Variants'''
+            nonAluVariants=copy(variants)
+            #nonAluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=True)
+            
+            '''get Alu Variants'''
+            aluVariants=copy(variants)
+            #aluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=False)
+            aluVariants.variantDict,nonAluVariants.variantDict = variants.splitByBed(self.rnaEdit.params.aluRegions)
+            aluVariants.printVariantDict(self.rnaEdit.params.output+".alu.vcf")
+            nonAluVariants.printVariantDict(self.rnaEdit.params.output+".nonAlu.vcf")
+        else:     
+            aluVariants = VariantSet(self.rnaEdit.params.output+".alu.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+            if not os.path.isfile(self.rnaEdit.params.output+".noSpliceJunction.vcf"):
+                nonAluVariants = VariantSet(self.rnaEdit.params.output+".nonAlu.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
         
         
         #print out variants from Alu regions
-        aluVariants.annotateVariantDict(self.genome)
-        aluVariants.printVariantDict(self.rnaEdit.params.output+".alu.vcf")
-        aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".alu.gvf", printSummary=True)
+        #aluVariants.annotateVariantDict(self.genome)
         
         ##############################################
         ###   proceed with non-Alu reads only!!!    ##
         ##############################################
         
+        ##############################################
+        ###   Remove intronic Splice junction!!!    ##
+        ##############################################
+        self.genome = Genome(self.rnaEdit.params.gtfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
         #erase variants from intronic splice junctions
-        self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
+        if not os.path.isfile(self.rnaEdit.params.output+".noSpliceJunction.vcf") or self.rnaEdit.params.overwrite==True:
+            self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
+            nonAluVariants.printVariantDict(self.rnaEdit.params.output+".noSpliceJunction.vcf")
+        else:
+            if not os.path.isfile(self.rnaEdit.params.output+".noHomo.vcf"):
+                nonAluVariants = VariantSet(self.rnaEdit.params.output+".noSpliceJunction.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
         
-        #erase variants from homopolymer runs
-        self.removeHomopolymers(nonAluVariants,self.rnaEdit.params.output, 4)
         
-        #do blat search
-        blatOutfile = self.rnaEdit.params.output + "_blat"
-        self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
+        ##############################################
+        ### erase variants from homopolymers!!! ##
+        ##############################################
+        if not os.path.isfile(self.rnaEdit.params.output+".noHomo.vcf") or self.rnaEdit.params.overwrite==True:
+            self.removeHomopolymers(nonAluVariants,self.rnaEdit.params.output, 4)
+            nonAluVariants.printVariantDict(self.rnaEdit.params.output+".noHomo.vcf")
+        else:
+            if not os.path.isfile(self.rnaEdit.params.output+".noBlat.vcf"):
+                nonAluVariants = VariantSet(self.rnaEdit.params.output+".noHomo.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+            
         
-        #print nonAlu variants
-        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".nonAlu.vcf")
-        nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
+        ##############################################
+        ###     erase duplicate mapped reads!!!     ##
+        ##############################################
+        if not os.path.isfile(self.rnaEdit.params.output+".noBlat.vcf") or self.rnaEdit.params.overwrite==True:
+            blatOutfile = self.rnaEdit.params.output + "._blat"
+            self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
+            
+            #print nonAlu variants
+            nonAluVariants.printVariantDict(self.rnaEdit.params.output+".noBlat.vcf")
+        else:
+            if not os.path.isfile(self.rnaEdit.params.output+".editingSites.nonAlu.vcf"):
+                nonAluVariants = VariantSet(self.rnaEdit.params.output+".noBlat.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+        #nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
         
         #print nonAlu editing Sites
         self.deleteNonEditingBases(nonAluVariants)
         nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
-        nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
-        nonAluVariants.createClusters(eps=50,minSamples=5)
-        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.clusters")
+        #nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
+        #nonAluVariants.createClusters(eps=50,minSamples=5)
+        #nonAluVariants.printClusters(self.rnaEdit.params.output+".editingSites.nonAlu.clusters")
         #print Alu editing Sites
         self.deleteNonEditingBases(aluVariants)
         aluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.alu.vcf")
-        aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.alu.gvf",printSummary=True)
-        aluVariants.createClusters(eps=50,minSamples=5)
-        aluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.alu.clusters")
+        #aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.alu.gvf",printSummary=True)
+        #aluVariants.createClusters(eps=50,minSamples=5)
+        #aluVariants.printClusters(self.rnaEdit.params.output+".editingSites.alu.clusters")
         
         #combine alu and non Alu sites
         variants=aluVariants+nonAluVariants
-        self.deleteNonEditingBases(variants)
+        variants.deleteNonEditingBases(variants)
         
         #print Final tables
+        '''Read Genome'''
+        
+        variants.annotateVariantDict(self.genome)
+        
         variants.printVariantDict(self.rnaEdit.params.output+".editingSites.vcf")
         variants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.gvf",printSummary=True)
         variants.createClusters(eps=50,minSamples=5)

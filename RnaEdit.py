@@ -71,7 +71,7 @@ class RnaEdit(QtCore.QThread):
         try:
             self.startAnalysis()
         except Exception:
-            Helper.error("RnaEditor Failed",self.rnaEdit.logFile,self.rnaEdit.textField)
+            Helper.error("RnaEditor Failed",self.logFile,self.textField)
         
         
     def startAnalysis(self):
@@ -258,28 +258,20 @@ class RnaEdit(QtCore.QThread):
 
 
 if __name__ == '__main__':
-    
-    
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
     parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
     parser.add_argument('-c', '--conf', metavar='Configuration File', type=str, help='Configuration File used to read Parameters for RnaEditor', required=True)
     
-    
     args = parser.parse_args()
-    
     
     parameters = Parameters(args.conf) 
     edit=RnaEdit(args.input,parameters,0)
-    
     
     edit.start()
     edit.wait()
     Helper.createDiagramms(edit.params.output)
     Helper.printResultHtml(edit.params.output)
-    del edit
-    
-    
-    
+    del edit 
 else:
     pass    
     
