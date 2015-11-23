@@ -254,7 +254,7 @@ class VariantSet(object):
             barName="Total"
         
         yLim=max(max(i) for i in valueMatrix)+1
-        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly Edited Genes",yLim=yLim,barText=False,yText="Editing Counts")
+        #Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly Edited Genes",yLim=yLim,barText=False,yText="Editing Counts")
 
     def printGeneList(self,genome,outfile,printSummary=True):
         '''
@@ -396,7 +396,7 @@ class VariantSet(object):
         Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outFile.name),self.logFile,self.textField)
         
         
-        outFile.write("\t".join(["#chr","start","stop","name","genes","length","editing_sites","editing_rate","\n"]))
+        outFile.write("\t".join(["#Chr","Start","Stop","Cluster Name","GeneID","Gene Symbol","Cluster Length","Number of Editing_sites","Editing_rate","\n"]))
         
         for cluster in self.clusterDict.keys():
             end = max(v.position for v in self.clusterDict[cluster])
@@ -404,17 +404,27 @@ class VariantSet(object):
             
             length = end - start
             editingRate=float(len(self.clusterDict[cluster]))/float(length)
-            geneList=[]
+            geneIdList=[]
+            geneNameList=[]
             for v in self.clusterDict[cluster]:
                 try: 
-                    geneList.append(v.attributes['GI'][0][0])
+                    gene = v.attributes['GI'][0][0]
+                    if type(genome) == Gene:
+                        geneIdList.append(gene.geneId)
+                        geneNameList+=gene.names
+                        #geneList.append(v.attributes['GI'][0][0])
+                    else:
+                        geneIdList.append('Intergenic')
+                        geneNameList.append('Intergenic')
                 except KeyError:
-                    geneList.append("N/A") #when variant has no attribute GI
+                    geneIdList.append("N/A") #when variant has no attribute GI
                 
-            geneSet=set(geneList)
+            geneIdSet=set(geneIdList)
+            geneNamesSet=set(geneNameList)
             
-            
-            outFile.write("\t".join([v.chromosome,str(start),str(end),str(cluster),",".join(geneSet),str(length),str(len(self.clusterDict[cluster])),'%1.2f'%float(editingRate),"\n"]))
+            outFile.write("\t".join([v.chromosome,str(start),str(end),str(cluster), #Chr","Start","Stop","Cluster Name",
+                                     ",".join(map(str,geneIdList)),",".join(map(str,geneNamesSet)), #"GeneID","Gene Symbol"
+                                     str(length),str(len(self.clusterDict[cluster])),'%1.2f'%float(editingRate),"\n"]))
             
     def getVariantTuble(self,line):
         '''
@@ -762,7 +772,7 @@ class VariantSet(object):
 
         return np.asarray(diffMatrix)
 
-    def deleteNonEditingBases(self,):
+    def deleteNonEditingBases(self):
         startTime=Helper.getTime()
         Helper.info("Delete non Editing Bases (keep only T->C and A->G)",self.logFile,self.textField)
         

@@ -474,7 +474,7 @@ class CallEditingSites(object):
         
         
         #print out variants from Alu regions
-        #aluVariants.annotateVariantDict(self.genome)
+        #
         
         ##############################################
         ###   proceed with non-Alu reads only!!!    ##
@@ -516,24 +516,29 @@ class CallEditingSites(object):
         else:
             if not os.path.isfile(self.rnaEdit.params.output+".editingSites.nonAlu.vcf"):
                 nonAluVariants = VariantSet(self.rnaEdit.params.output+".noBlat.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
+                nonAluVariants.deleteNonEditingBases()
+                
+                nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
+            else:
+                nonAluVariants = VariantSet(self.rnaEdit.params.output+".editingSites.nonAlu.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
         #nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
         
         #print nonAlu editing Sites
-        self.deleteNonEditingBases(nonAluVariants)
-        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
-        #nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
-        #nonAluVariants.createClusters(eps=50,minSamples=5)
-        #nonAluVariants.printClusters(self.rnaEdit.params.output+".editingSites.nonAlu.clusters")
+        nonAluVariants.annotateVariantDict(self.genome)
+        nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
+        nonAluVariants.createClusters(eps=50,minSamples=5)
+        nonAluVariants.printClusters(self.rnaEdit.params.output+".editingSites.nonAlu.clusters")
         #print Alu editing Sites
-        self.deleteNonEditingBases(aluVariants)
+        aluVariants.deleteNonEditingBases()
+        aluVariants.annotateVariantDict(self.genome)
         aluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.alu.vcf")
-        #aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.alu.gvf",printSummary=True)
-        #aluVariants.createClusters(eps=50,minSamples=5)
-        #aluVariants.printClusters(self.rnaEdit.params.output+".editingSites.alu.clusters")
+        aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.alu.gvf",printSummary=True)
+        aluVariants.createClusters(eps=50,minSamples=5)
+        aluVariants.printClusters(self.rnaEdit.params.output+".editingSites.alu.clusters")
         
         #combine alu and non Alu sites
         variants=aluVariants+nonAluVariants
-        variants.deleteNonEditingBases(variants)
+        variants.deleteNonEditingBases()
         
         #print Final tables
         '''Read Genome'''
