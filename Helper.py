@@ -10,7 +10,7 @@ from collections import defaultdict, OrderedDict
 import traceback
 import ui
 from numpy import arange
-from matplotlib.backends import qt_compat
+#from matplotlib.backends import qt_compat
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
 from shutil import copyfile

@@ -448,7 +448,7 @@ class CallEditingSites(object):
             '''save variants if something goes wrong'''
             variants.printVariantDict(self.rnaEdit.params.output+".noReadEdges.vcf")
         else:
-            if not os.path.isfile(self.rnaEdit.params.output+".alu.vcf") and not os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf"):
+            if not os.path.isfile(self.rnaEdit.params.output+".alu.vcf") or not os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf"):
                 variants = VariantSet(self.rnaEdit.params.output+".noReadEdges.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
             
         
@@ -456,7 +456,7 @@ class CallEditingSites(object):
         ###   split Alu- and non-Alu Variants!!!    ###
         ###############################################  
         
-        if (not os.path.isfile(self.rnaEdit.params.output+".alu.vcf") and not os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf")) or self.rnaEdit.params.overwrite==True:
+        if (not os.path.isfile(self.rnaEdit.params.output+".alu.vcf") or not os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf")) or self.rnaEdit.params.overwrite==True:
             '''get non-Alu Variants'''
             nonAluVariants=copy(variants)
             #nonAluVariants.variantDict=variants.getOverlapsFromBed(self.rnaEdit.params.aluRegions,getNonOverlaps=True)

@@ -15,6 +15,7 @@ import numpy as np
 from random import shuffle
 import sys
 import pysam
+from Gene import Gene
 
 class Variant:
     '''
@@ -393,7 +394,7 @@ class VariantSet(object):
             raise AttributeError("Invalid outfile type in 'printVariantDict' (need string or file, %s found)" % type(outFile))
         
         startTime=Helper.getTime()
-        Helper.info("[%s] Print Genes and Variants to %s" %  (startTime.strftime("%c"),outFile.name),self.logFile,self.textField)
+        Helper.info("[%s] Print Clusters to %s" %  (startTime.strftime("%c"),outFile.name),self.logFile,self.textField)
         
         
         outFile.write("\t".join(["#Chr","Start","Stop","Cluster Name","GeneID","Gene Symbol","Cluster Length","Number of Editing_sites","Editing_rate","\n"]))
@@ -404,26 +405,23 @@ class VariantSet(object):
             
             length = end - start
             editingRate=float(len(self.clusterDict[cluster]))/float(length)
-            geneIdList=[]
-            geneNameList=[]
+            geneIdSet=set()
+            geneNameSet=set()
             for v in self.clusterDict[cluster]:
                 try: 
                     gene = v.attributes['GI'][0][0]
-                    if type(genome) == Gene:
-                        geneIdList.append(gene.geneId)
-                        geneNameList+=gene.names
+                    if type(gene) == Gene:
+                        geneIdSet.add(gene.geneId)
+                        geneNameSet |= set(gene.names)
                         #geneList.append(v.attributes['GI'][0][0])
                     else:
-                        geneIdList.append('Intergenic')
-                        geneNameList.append('Intergenic')
+                        geneIdSet.add("Intergenic")
+                        geneNameSet.add("Intergenic")
                 except KeyError:
-                    geneIdList.append("N/A") #when variant has no attribute GI
-                
-            geneIdSet=set(geneIdList)
-            geneNamesSet=set(geneNameList)
+                    geneIdSet.add("N/A") #when variant has no attribute GI
             
             outFile.write("\t".join([v.chromosome,str(start),str(end),str(cluster), #Chr","Start","Stop","Cluster Name",
-                                     ",".join(map(str,geneIdList)),",".join(map(str,geneNamesSet)), #"GeneID","Gene Symbol"
+                                     ",".join(map(str,geneIdSet)),",".join(map(str,geneNameSet)), #"GeneID","Gene Symbol"
                                      str(length),str(len(self.clusterDict[cluster])),'%1.2f'%float(editingRate),"\n"]))
             
     def getVariantTuble(self,line):
