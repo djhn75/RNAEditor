@@ -433,7 +433,7 @@ class Helper():
         writes all the diagrams wich aree then showd in the resultTab
         :param output: output variable of Params.putput
         '''
-        Helper.status("Creating Diagrams", logFile, textField)
+        Helper.status("Creating Diagrams for %s" % output, logFile, textField)
         
         outdir = output[0:output.rfind("/")+1]
         sampleName=output[output.rfind("/")+1:]
@@ -453,11 +453,20 @@ class Helper():
         ####       Editing per Position Plot         ####
         #################################################
         fileName=outdir+"html/"+sampleName+"_EditingPositions.png"
+        fileNamePercentage=outdir+"html/"+sampleName+"_EditingPositions(Percentage).png"
         counts1=Helper.countOccurrences(output+".editingSites.alu.gvf", 2, logFile, textField)
         counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
         
-        valueMatrix=[Helper.getPercentage(counts1.values()),Helper.getPercentage(counts2.values())]
-        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
+        
+        #set values to 0 if they dont exist in the opposite file
+        
+        a=[counts1["3'UTR"],counts1["5'UTR"],counts1["coding-exon"],counts1["noncoding-exon"],counts1["intron"],counts1["intergenic"]]
+        b=[counts2["3'UTR"],counts2["5'UTR"],counts2["coding-exon"],counts2["noncoding-exon"],counts2["intron"],counts2["intergenic"]]
+        valueMatrix=[a,b]
+        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yText="Total Counts")
+        
+        valueMatrix=[Helper.getPercentage(a),Helper.getPercentage(b)]
+        Helper.createBarplot(valueMatrix, fileNamePercentage, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
         
     @staticmethod
     def printResultHtml(output,logFile=None,textField=0):

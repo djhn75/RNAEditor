@@ -255,7 +255,7 @@ class VariantSet(object):
             barName="Total"
         
         yLim=max(max(i) for i in valueMatrix)+1
-        #Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly Edited Genes",yLim=yLim,barText=False,yText="Editing Counts")
+        Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly Edited Genes",yLim=yLim,barText=False,yText="Editing Counts")
 
     def printGeneList(self,genome,outfile,printSummary=True):
         '''
