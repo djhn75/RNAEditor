@@ -789,7 +789,7 @@ class VariantSet(object):
         minDistance=int(minDistance)
         counter=0;j=0  
         num_lines = len(self.variantDict)
-        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)))
+        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)),self.logFile,self.textField)
         
         bamFile = pysam.AlignmentFile(bamFile, "rb")
         
@@ -797,7 +797,7 @@ class VariantSet(object):
             variant = self.variantDict[varKey]
             
             counter+=1
-            if counter%1000==0:
+            if counter%10000==0:
                 Helper.status('%s mm parsed ' % counter ,self.logFile, self.textField)
             
             keepSNP=False
@@ -806,7 +806,7 @@ class VariantSet(object):
             for x in iter:
                 if x.pos == varPos:
                     
-                    #loop over reads of that position
+                    
                     for pileupread in x.pileups:
                         if not pileupread.is_del and not pileupread.is_refskip:
                             distance=abs(pileupread.alignment.alen-pileupread.query_position) if pileupread.alignment.is_reverse else pileupread.query_position

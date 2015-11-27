@@ -8,7 +8,7 @@ Created on 05.06.2014
 
 from VariantSet import VariantSet
 from Helper import Helper
-import re
+import re, os, sys
 import pysam
 
 
@@ -79,14 +79,70 @@ def removeEdgeMissmatches(variants,bamFile,minDistance, minBaseQual):
             if counter % 10000 == 0: #print out current status
                 Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished",)
 
-
-
-
+class dink:
+    
+    
+    def __init__(self):
+        class RneEdit():
+            def __init__(self):
+                self.logFile=None
+                self.textField=0
+        
+        self.rnaEdit=RneEdit()
+        self.bamFile="/media/Storage/bio-data/David/test/Icm4.realigned.marked.recalibrated.bam"
+    
+    def doBlatSearch2(self,variants, outFile, minBaseQual, minMissmatch):
+        startTime=Helper.getTime()
+        Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
+        
+        bamFile=pysam.AlignmentFile(self.bamFile,"rb")
+        #create Fasta file for blat to remap the variant overlapping reads
+        tempFasta = outFile + "_tmp.fa"
+        if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0: #check if temFast exists and is not empty. If it exist it will not be created again
+            tempFastaFile=open(tempFasta,"w+")
+            mmNumberTotal = len(variants.variantDict)
             
+            Helper.info(" [%s] Create fasta file for blat " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
+        
+            
+            for varKey in variants.variantDict.keys():
+                variant=variants.variantDict[varKey]
+                varPos=variant.position-1
+                iter = bamFile.pileup(variant.chromosome, variant.position-1, variant.position)
+                
+                alignements=[]
+                for x in iter:
+                    if x.pos == varPos:
+                        #loop over reads of that position
+                        for pileupread in x.pileups:
+                            if not pileupread.is_del and not pileupread.is_refskip:
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                    
+                                    alignements.append(pileupread.alignment.seq)
+                
+                if len(alignements)>=minMissmatch:
+                    missmatchReadCount=0
+                    for sequence in alignements:
+                        tempFastaFile.write("> "+variant.chromosome+"-"+str(variant.position)+"-"+variant.ref+"-"+variant.alt+"-"+str(missmatchReadCount)+"\n"+sequence+"\n")
+                        missmatchReadCount += 1
+                    
+    
+    
+    
+    
+ 
+
+
 bamFile="/media/Storage/bio-data/David/test/Icm4.realigned.marked.recalibrated.bam"
 
 var = VariantSet("/media/Storage/bio-data/David/test/Icm4.1.vcf")
-removeEdgeMissmatches2(var, bamFile, 26, 20)
+outFile='/media/Storage/bio-data/David/test/Icm4.1.'
+
+
+a=dink()
+a.doBlatSearch2(var, outFile, 25, 2)
+
+#removeEdgeMissmatches2(var, bamFile, 26, 20)
 
 #removeEdgeMissmatches(var, bamFile, 26, 20)
 

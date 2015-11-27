@@ -205,48 +205,38 @@ class CallEditingSites(object):
         startTime=Helper.getTime()
         Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
         
-        counter=0
-        geneHash = {}
+        bamFile=pysam.AlignmentFile(self.bamFile,"rb")
+        #create Fasta file for blat to remap the variant overlapping reads
         tempFasta = outFile + "_tmp.fa"
         if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0: #check if temFast exists and is not empty. If it exist it will not be created again
             tempFastaFile=open(tempFasta,"w+")
             mmNumberTotal = len(variants.variantDict)
             
-            #write missmatch read to fasta file
-            for key in variants.variantDict.keys():
-                chromosome,position,ref,alt = key
-                samPos=chromosome+":"+ str(position)+"-"+str(position)
-                missmatchReadCount=1
-    
-                samout = Helper.getCommandOutput([self.rnaEdit.params.sourceDir+"samtools", "view", "-F", "1024", self.bamFile, samPos]).splitlines() #-F 1024 to filter out duplicate reads
-                for samLine in samout:
-                    samfields=samLine.split()
-                    flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
-                    readPos=0
-                    mmReadPos=0
-                    keepRead=False
-                    cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
-                    cigarLetters=re.split("[0-9]+",cigar)[1:]
-                    
-                    for i in range(len(cigarLetters)): #parse over single read
-                        if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
-                            readPos = readPos + int(cigarNums[i])
-                        elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
-                            startPos = startPos + int(cigarNums[i])
-                        elif cigarLetters[i] in {"M"}: #Matches
-                            for j in range(int(cigarNums[i])):
-                                if startPos == position:
-                                    mmReadPos = readPos
-                                    mmBaseQual= ord(seqQual[mmReadPos])
-                                    mmReadBase= sequence[mmReadPos]
-                                    if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == alt): #check for quality of the base and the read contains the missmatch
-                                        keepRead=True
-                                readPos += 1
-                                startPos += 1
-                    if keepRead == True: #if read contains the missmatch 
-                        tempFastaFile.write("> "+chromosome+"-"+str(position)+"-"+ref+"-"+alt+"-"+str(missmatchReadCount)+"\n"+sequence+"\n")
+            #############################################
+            #########    CREATE FASTA FILE        #######
+            #############################################
+            Helper.info(" [%s] Create fasta file for blat " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
+            counter=1
+            for varKey in variants.variantDict.keys(): 
+                variant=variants.variantDict[varKey]
+                varPos=variant.position-1
+                iter = bamFile.pileup(variant.chromosome, variant.position-1, variant.position)               
+                alignements=[]
+                for x in iter:
+                    if x.pos == varPos:
+                        #loop over reads of that position
+                        for pileupread in x.pileups:
+                            if not pileupread.is_del and not pileupread.is_refskip:
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                    
+                                    alignements.append(pileupread.alignment.seq)
+                
+                if len(alignements)>=minMissmatch:
+                    missmatchReadCount=0
+                    for sequence in alignements:
+                        tempFastaFile.write("> "+variant.chromosome+"-"+str(variant.position)+"-"+variant.ref+"-"+variant.alt+"-"+str(missmatchReadCount)+"\n"+sequence+"\n")
                         missmatchReadCount += 1
-    
+                        
                 counter += 1
                 if counter % 1000 == 0:
                     sys.stdout.write("\r" + str(counter) + " of " + str(mmNumberTotal) + " variants done")
@@ -256,20 +246,22 @@ class CallEditingSites(object):
             Helper.printTimeDiff(startTime,self.rnaEdit.logFile,self.rnaEdit.textField)
             tempFastaFile.close()
                 
-        
-        #do blat search
+        #############################
+        #####   do blat search  #####
+        #############################
         pslFile=outFile+".psl"
         if not os.path.isfile(pslFile) or not os.path.getsize(pslFile) > 0:
             cmd = [self.rnaEdit.params.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.rnaEdit.params.refGenome, tempFasta, pslFile]
             #print cmd
             Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.rnaEdit)
-        
-        Helper.info(" [%s] look for non uniquely mapped reads by blat" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)    
+        Helper.info(" [%s] Blat finished" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
+        Helper.info(" [%s] Parse Blat output to look for non uniquely mapped reads" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)    
         
         if not os.path.isfile(outFile):
             #open psl file
             pslFile=open(pslFile)
             blatDict={}
+            
             for line in pslFile: #summarize the blat hits
                 pslFields = line.split()
                 chr,pos,ref,alt,mmReadCount = pslFields[9].split("-")
@@ -282,7 +274,8 @@ class CallEditingSites(object):
 
             siteDict = {}
             discardDict = {}
-            
+            Helper.info(" [%s] Analyse Blat hits (Slow)" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)    
+        
             #loop over blat Hits
             for varTuple in blatDict.keys():      #Loop over all blat hits of mmReads to observe the number of Alignements   
                 keepSNP=False
@@ -323,9 +316,11 @@ class CallEditingSites(object):
                         discardDict[varTuple]=1
             pslFile.close() 
             
-                    
-            #loop through variants again and check what passes the blat criteria
-            
+            ##############################################################################        
+            #####        loop through variants and delete invalid variants          ######
+            ##############################################################################
+            Helper.info(" [%s] Deleting invalid variants" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)    
+        
             
             mmNumberTotal=0
             mmNumberTooSmall=0
