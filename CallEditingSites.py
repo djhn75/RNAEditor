@@ -10,7 +10,7 @@ from VariantSet import VariantSet
 from Genome import Genome
 from copy import copy
 import gc
-
+import pysam
 
 
 class CallEditingSites(object):
