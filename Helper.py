@@ -427,47 +427,7 @@ class Helper():
         
         fig.savefig(fileName)
         
-    @staticmethod    
-    def createDiagramms(output,logFile=None,textField=0):
-        '''
-        writes all the diagrams wich aree then showd in the resultTab
-        :param output: output variable of Params.putput
-        '''
-        Helper.status("Creating Diagrams for %s" % output, logFile, textField)
-        
-        outdir = output[0:output.rfind("/")+1]
-        sampleName=output[output.rfind("/")+1:]
-        #print outdir, sampleName
-        #################################################
-        ####               Basecount Plot            ####
-        #################################################
-        counts1=Helper.getMMBaseCounts(output+".alu.vcf")
-        counts2=Helper.getMMBaseCounts(output+".nonAlu.vcf")
-        
-        fileName=outdir+"html/"+sampleName+"_baseCounts.png"
-        valueMatrix=[counts1.values(),counts2.values()]
-        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Variants per Base",yText="Number")
-        
-    
-        #################################################
-        ####       Editing per Position Plot         ####
-        #################################################
-        fileName=outdir+"html/"+sampleName+"_EditingPositions.png"
-        fileNamePercentage=outdir+"html/"+sampleName+"_EditingPositions(Percentage).png"
-        counts1=Helper.countOccurrences(output+".editingSites.alu.gvf", 2, logFile, textField)
-        counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
-        
-        
-        #set values to 0 if they dont exist in the opposite file
-        
-        a=[counts1["3'UTR"],counts1["5'UTR"],counts1["coding-exon"],counts1["noncoding-exon"],counts1["intron"],counts1["intergenic"]]
-        b=[counts2["3'UTR"],counts2["5'UTR"],counts2["coding-exon"],counts2["noncoding-exon"],counts2["intron"],counts2["intergenic"]]
-        valueMatrix=[a,b]
-        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yText="Total Counts")
-        
-        valueMatrix=[Helper.getPercentage(a),Helper.getPercentage(b)]
-        Helper.createBarplot(valueMatrix, fileNamePercentage, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
-        
+
     @staticmethod
     def printResultHtml(output,logFile=None,textField=0):
         '''

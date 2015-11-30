@@ -259,14 +259,18 @@ class CallEditingSites(object):
         
         if not os.path.isfile(outFile):
             #open psl file
-            pslFile=open(pslFile)
+            pslFile=open(pslFile,"r")
             blatDict={}
             
             for line in pslFile: #summarize the blat hits
                 pslFields = line.split()
                 chr,pos,ref,alt,mmReadCount = pslFields[9].split("-")
                 varTuple=(chr,int(pos),ref,alt)
-                blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
+                try:
+                    blatScore = [pslFields[0], pslFields[13], pslFields[17], pslFields[18], pslFields[20]] # #of Matches, targetName, blockCount, blockSize, targetStarts 
+                except IndexError:
+                    Helper.warning("Not enough Values in '%s' (Skip)" % line, self.rnaEdit.logFile,self.rnaEdit.textField)
+                    continue
                 if varTuple in blatDict:
                     blatDict[varTuple] = blatDict[varTuple] + [blatScore]
                 else:
@@ -503,7 +507,7 @@ class CallEditingSites(object):
         ###     erase duplicate mapped reads!!!     ##
         ##############################################
         if not os.path.isfile(self.rnaEdit.params.output+".noBlat.vcf") or self.rnaEdit.params.overwrite==True:
-            blatOutfile = self.rnaEdit.params.output + "._blat"
+            blatOutfile = self.rnaEdit.params.output + ".noBlat.vcf"
             self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
             
             #print nonAlu variants

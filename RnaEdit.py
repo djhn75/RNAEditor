@@ -95,7 +95,7 @@ class RnaEdit(QtCore.QThread):
         #finished
         self.isTerminated=True
         
-        self.emit(QtCore.SIGNAL("taskDone"), self.params.output)
+        #self.emit(QtCore.SIGNAL("taskDone"), self.params.output)
         
         Helper.status("rnaEditor Finished with %s" % self.params.output, self.logFile, self.textField)
         self.cleanUp()

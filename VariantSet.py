@@ -359,7 +359,10 @@ class VariantSet(object):
                 gene=genesByGeneId[geneId]
                 sumFile.write("\t".join([gene.geneId,gene.names[0]]+["0","0","0","0","0",]+["\n"]))
             
-                        
+            ################################################################
+            ############    Draw Barplots with high edited Genes ###########
+            ################################################################
+            '''
             outdir = outfile.name[:outfile.name.rfind("/")+1]
             tmp=outfile.name[outfile.name.rfind("/")+1:]
             sampleName=tmp[:tmp.find(".")
@@ -381,6 +384,7 @@ class VariantSet(object):
             if "-" in sumDict.keys():
                 del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
             self.topGenes(sumDict,fileName, 20, 4)
+            '''
                             
     def printClusters(self, outFile):
         
@@ -538,7 +542,7 @@ class VariantSet(object):
             raise TypeError("bedFile has wrong type, need str or file, %s found" % type(bedFile))
         
         startTime=Helper.getTime()
-        Helper.info("[%s] Delete overlaps from %s" %  (startTime.strftime("%c"),bedFile.name) ,self.logFile,self.textField)
+        Helper.info("[%s] Split Variants by Bed File %s" %  (startTime.strftime("%c"),bedFile.name) ,self.logFile,self.textField)
         
         variantsByChromosome = self.getVariantListByChromosome() 
         overlapSet = set()
@@ -557,7 +561,7 @@ class VariantSet(object):
                 if start < v.position < stop:
                     overlapSet.add((v.chromosome,v.position,v.ref,v.alt))
             i+=1
-            if i %1000==0:
+            if i %10000==0:
                 Helper.status("%s Bed Feautes parsed" % i, self.logFile,self.textField)
         
         
