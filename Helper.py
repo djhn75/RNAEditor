@@ -328,7 +328,7 @@ class Helper():
         for line in vcfFile:
             #skip comments
             if line.startswith("#"): continue
-            line=line.rstrip().split("\t")
+            line=line.rstrip().split()
             chromosome,position,ref, alt = line[0],line[1], line[3], line[4]
             vcfDict[chromosome][position,ref,alt]=([line[2]]+line[5:])
         return vcfDict
