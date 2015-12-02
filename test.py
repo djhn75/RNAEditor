@@ -10,6 +10,7 @@ from VariantSet import VariantSet
 from Helper import Helper
 import re, os, sys
 import pysam
+import subprocess
 
 
 
@@ -133,14 +134,13 @@ class dink:
  
 
 
-bamFile="/media/Storage/bio-data/David/test/Icm4.realigned.marked.recalibrated.bam"
+out="/media/Storage/bio-data/David/test/Icm4"
 
-var = VariantSet("/media/Storage/bio-data/David/test/Icm4.1.vcf")
-outFile='/media/Storage/bio-data/David/test/Icm4.1.'
+cmd=["python",os.getcwd()+"/createDiagrams.py","-o", out]
+print os.getcwd()
+a=os.popen(" ".join(cmd))
+#Helper.proceedCommand("print figure", cmd, infile, outfile, rnaEdit)
 
-
-a=dink()
-a.doBlatSearch2(var, outFile, 25, 2)
 
 #removeEdgeMissmatches2(var, bamFile, 26, 20)
 

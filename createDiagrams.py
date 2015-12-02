@@ -83,7 +83,7 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         writes all the diagrams wich aree then showd in the resultTab
         :param output: output variable of Params.output
         '''
-        Helper.status("Creating Diagrams for %s" % output, logFile, textField)
+        Helper.info("Creating Diagrams for %s" % output, logFile, textField)
         
         outdir = output[0:output.rfind("/")+1]
         sampleName=output[output.rfind("/")+1:]
@@ -158,6 +158,7 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
             del sumDict["-"] #delete intergenics, because we only we only want to show highly edited Genes!!!
         topGenes(sumDict,fileName, geneNumber, 5)
         
+        Helper.printResultHtml(output, logFile, textField)
         
 parser = argparse.ArgumentParser(description='create Diagrams for the output of RNA Editor results')
 parser.add_argument('-o', '--output', metavar='str', type=str, help="output directory and Samplename (Example: '/home/rnaEditor/sample/sample')", required=True)

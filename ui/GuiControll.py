@@ -83,7 +83,7 @@ class GuiControll(object):
         
         assay.start()
         
-        self.view.connect(assay, QtCore.SIGNAL("taskDone"), Helper.createDiagramms)
+        self.view.connect(assay, QtCore.SIGNAL("taskDone"), self.openAnalysis)
         
     @QtCore.pyqtSlot()
     def openFileDialog(self,textBox):
@@ -107,8 +107,10 @@ class GuiControll(object):
                 item.setIcon(icon)        
                 item.setStatusTip(url)     
             
-    def openAnalysis(self):
-        fileName = str(QtGui.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), filter = QtCore.QString("*html")))
+    def openAnalysis(self,fileName=None):
+        if fileName==None:
+            fileName = str(QtGui.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), filter = QtCore.QString("*html")))
+        
         resultTab = ResultTab(self,fileName)
         self.view.tabMainWindow.addTab(resultTab,fileName[fileName.rfind("/")+1:fileName.rfind(".html")])
         Helper.runningThreads.append(resultTab)

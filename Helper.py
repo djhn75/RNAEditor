@@ -451,7 +451,8 @@ class Helper():
               "Exon":htmlOutPrefix+".editedGenes(Exon).png",
               "Intron":htmlOutPrefix+".editedGenes(Intron).png",
               "Total":htmlOutPrefix+".editedGenes(Total).png",
-              "currentTime":Helper.getTime().strftime("%d.%m.%Y %H:%M")}
+              "currentTime":Helper.getTime().strftime("%d.%m.%Y %H:%M")
+              }
         
 
         outfile=open(output+".html","w+")
@@ -475,10 +476,10 @@ class Helper():
     #page, #header{z-index: 0;position: relative;padding: 0.1em 1.5em;margin-left: 11em;margin-right: 1em;border-width: 1px 1px 1px 1px;border-style: solid;border-color: #A7D7F9;}
     #page{border-width: 0px 1px 1px 1px;background: #fff;}
     #header{background-position: left bottom;background-color: #fff;}
-    imgl {height: 70%;width: 90%;max-width: 850px;max-height: 550px;}
+    img {}
     figure {padding: 5px;border: 1px solid #cccccc;border-radius: 5px;
 }
-    figure img {border-radius: 3px 3px 0 0;}
+    figure img {border-radius: 3px 3px 0 0;height: 70%;width: 90%;max-width: 850px;max-height: 550px;}
     figure figcaption {font-size: 70%; padding: 2px 4px 2px 4px;background-color: #636363;color: #cccccc;font-style: italic;border-radius: 0 0 3px 3px;text-align:center}
 </style>
 </head>""")
@@ -589,23 +590,7 @@ class Helper():
                 <p> Detected Editing Islands</p>
                 
                 
-            <!--<script language="javascript" src="http://141.2.38.250/rnaEditor/dalliance0.13a-compiled.js"></script> -->
-            <script language="javascript" src="dalliance0.13a-compiled.js"></script>
-
-            <p>
             
-            <script>
-                createBrowser();
-            </script>
-            
-            <!--
-            Select the output bam File:  <input id='bam' type='file' name='bam'><br>
-            Select the output bam-index (.bai) File:  <input id='bai' type='file' name='bai'><br>
-            Select the output vcf File :  <input id='vcf' type='file' name='vcf' onchange='createBrowser()'><br>
-            -->
-            
-            <div id="svgHolder" style='margin-left: 5%; margin-right: 5%; border-width: 1px; border-style: solid; border-color: #ccc; border-radius: 4px; padding: 10px'></div>
-
         </div>
     </div>
 </body>

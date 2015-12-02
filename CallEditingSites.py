@@ -368,13 +368,28 @@ class CallEditingSites(object):
         
         if self.rnaEdit.params.keepTemp==False:
             #os.remove(self.rnaEdit.params.output+".vcf")
-            os.remove(self.rnaEdit.params.output+"_tmp.bep")
-            os.remove(self.rnaEdit.params.output+"_tmp.tsv")
-            os.remove(self.rnaEdit.params.output+"_blat.psl")
-            os.remove(self.rnaEdit.params.output+"_blat_tmp.fa")
-            #os.remove(self.rnaEdit.params.output+".nonAlu.vcf")
-            #os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.vcf")
-            #os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+"_tmp.bed"):
+                os.remove(self.rnaEdit.params.output+"_tmp.bed")
+            if os.path.isfile(self.rnaEdit.params.output+"_tmp.tsv"):
+                os.remove(self.rnaEdit.params.output+"_tmp.tsv")
+            if os.path.isfile(self.rnaEdit.params.output+".noBlat.vcf.psl"):
+                os.remove(self.rnaEdit.params.output+".noBlat.vcf.psl")
+            if os.path.isfile(self.rnaEdit.params.output+"noBlat.vcf_tmp.fa"):
+                os.remove(self.rnaEdit.params.output+"noBlat.vcf_tmp.fa")
+            if os.path.isfile(self.rnaEdit.params.output+".noSNPs.vcf"):
+                os.remove(self.rnaEdit.params.output+".noSNPs.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+".noSpliceJunction.vcf"):
+                os.remove(self.rnaEdit.params.output+".noSpliceJunction.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+".noHomo.vcf"):
+                os.remove(self.rnaEdit.params.output+".noHomo.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+".noReadEdges.vcf"):
+                os.remove(self.rnaEdit.params.output+".noReadEdges.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+".nonAlu.vcf"):
+                os.remove(self.rnaEdit.params.output+".nonAlu.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+".nonAlu.noSpliceSites.vcf"):
+                os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.vcf")
+            if os.path.isfile(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf"):
+                os.remove(self.rnaEdit.params.output+".nonAlu.noSpliceSites.noHomo.vcf")
             
     def startAnalysis(self):
         '''Proceeds all the steps to detect editing Sites from a bam File

@@ -15,6 +15,7 @@ from PyQt4 import QtGui, QtCore
 
 
 import gc
+import subprocess
 
 
 class RnaEdit(QtCore.QThread):
@@ -72,7 +73,9 @@ class RnaEdit(QtCore.QThread):
             self.startAnalysis()
         except Exception:
             Helper.error("RnaEditor Failed",self.logFile,self.textField)
-        
+        cmd=["python",os.getcwd()+"/createDiagrams.py","-o", self.params.output]
+        a=subprocess.call(cmd)
+        self.emit(QtCore.SIGNAL("taskDone"), self.params.output+".html")
         
     def startAnalysis(self):
         """
@@ -92,10 +95,12 @@ class RnaEdit(QtCore.QThread):
         self.callEditSites=CallEditingSites(mapResultFile,self)
         result = self.callEditSites.startAnalysis()
         
+        
+        
         #finished
         self.isTerminated=True
         
-        #self.emit(QtCore.SIGNAL("taskDone"), self.params.output)
+        
         
         Helper.status("rnaEditor Finished with %s" % self.params.output, self.logFile, self.textField)
         self.cleanUp()
