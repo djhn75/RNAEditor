@@ -128,8 +128,10 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         
         a=[counts1["3'UTR"],counts1["5'UTR"],counts1["coding-exon"],counts1["noncoding-exon"],counts1["intron"],counts1["intergenic"]]
         b=[counts2["3'UTR"],counts2["5'UTR"],counts2["coding-exon"],counts2["noncoding-exon"],counts2["intron"],counts2["intergenic"]]
+        barNames=["3'UTR","5'UTR","coding-exon","noncoding-exon","intron","intergenic"]
         valueMatrix=[a,b]
-        Helper.createBarplot(valueMatrix, fileName, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yText="Total Counts")
+        
+        Helper.createBarplot(valueMatrix, fileName, barNames, ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yText="Total Counts")
         
         valueMatrix=[Helper.getPercentage(a),Helper.getPercentage(b)]
         Helper.createBarplot(valueMatrix, fileNamePercentage, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
