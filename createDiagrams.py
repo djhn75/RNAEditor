@@ -134,7 +134,7 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         Helper.createBarplot(valueMatrix, fileName, barNames, ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yText="Total Counts")
         
         valueMatrix=[Helper.getPercentage(a),Helper.getPercentage(b)]
-        Helper.createBarplot(valueMatrix, fileNamePercentage, counts1.keys(), ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
+        Helper.createBarplot(valueMatrix, fileNamePercentage, barNames, ("Alu","non-Alu"),width=0.4,title="Editing Sites per Position",yLim=100,yText="Precentage")
         
         
         #################################################

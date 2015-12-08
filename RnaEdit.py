@@ -274,8 +274,8 @@ if __name__ == '__main__':
     
     edit.start()
     edit.wait()
-    Helper.createDiagramms(edit.params.output)
-    Helper.printResultHtml(edit.params.output)
+   
+    
     del edit 
 else:
     pass    
