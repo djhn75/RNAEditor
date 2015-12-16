@@ -149,32 +149,16 @@ class CallEditingSites(object):
         tempBedFile = open(outFile+"_tmp.bed","w+")
         tempSeqFile = outFile + "_tmp.tsv"
         
+        refGenome = "/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta"
+        fastaFile = pysam.FastaFile(self.rnaEdit.params.refGenome)
+        mmNumberTotal = len(variants.variantDict)
         #print temporary BedFile
+        numberPassed=0
         for key in variants.variantDict.keys():
             chr,position,ref,alt = key
-            siteNuc = ",".join([chr,str(position),ref,alt])
             startPos = position - distance if position >= distance else 0
             endpos = position + distance
-            
-            tempBedFile.write("\t".join([chr,str(startPos),str(endpos),siteNuc])+"\n")
-        
-        tempBedFile.close()
-        #run fastaFromBed
-        cmd=[self.rnaEdit.params.sourceDir+"bedtools/fastaFromBed", "-name", "-tab", "-fi", self.rnaEdit.params.refGenome, "-bed", tempBedFile.name, "-fo", tempSeqFile]
-        Helper.proceedCommand("catch surrounding sequences of Missmatches", cmd, tempBedFile.name, tempSeqFile,self.rnaEdit)
-        
-        mmNumberTotal = len(variants.variantDict)
-        
-        #read sequence file
-        tempSeqFile= open(tempSeqFile)
-        for line in tempSeqFile:
-            siteNuc,sequence = line.split()
-            try:
-                chr,position,ref,alt = siteNuc.split(",",3)
-            except (ValueError):
-                raise ValueError("Failed to read line: %s" % line)
-            #check if mm sorounding sequence are homopolymer nukleotides
-            
+            sequence = fastaFile.fetch(chr,startPos,endpos)
             pattern = ref*distance
             
             """ !!!Test if this gives better results
@@ -186,19 +170,15 @@ class CallEditingSites(object):
             """
             if pattern in sequence:
                 try:
-                    del variants.variantDict[(chr,int(position),ref,alt)]
+                    del variants.variantDict[key]
                 except KeyError:
                     pass
-                
+            else:
+                numberPassed+=1
+                    
         #output statistics
-        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (mmNumberTotal, mmNumberTotal),self.rnaEdit.logFile,self.rnaEdit.textField)
+        Helper.info("\t\t %d out of %d passed the Homopolymer-Filter" % (numberPassed, mmNumberTotal),self.rnaEdit.logFile,self.rnaEdit.textField)
         Helper.printTimeDiff(startTime,self.rnaEdit.logFile,self.rnaEdit.textField)
-        
-        tempSeqFile.close()
-        
-        if self.rnaEdit.params.keepTemp == False:
-            os.remove(tempBedFile.name)
-            os.remove(tempSeqFile.name)   
                 
     '''do blat search (delete variants from reads that are not uniquely mapped)'''
     def blatSearch(self,variants, outFile, minBaseQual, minMissmatch):
@@ -228,7 +208,6 @@ class CallEditingSites(object):
                         for pileupread in x.pileups:
                             if not pileupread.is_del and not pileupread.is_refskip:
                                 if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
-                                    
                                     alignements.append(pileupread.alignment.seq)
                 
                 if len(alignements)>=minMissmatch:
