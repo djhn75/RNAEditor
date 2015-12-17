@@ -43,7 +43,7 @@ class DropListWidget(QtGui.QListWidget):
             for url in event.mimeData().urls():
                 url = url.toString()
                 urlSuffix = url.split(".")[-1]
-                if urlSuffix not in ["fastq","fq","bam"]:
+                if urlSuffix not in ["fastq","fq","bam","txt"]:
                     isFastq=False
             if isFastq:
                 event.setDropAction(QtCore.Qt.CopyAction)
@@ -333,9 +333,11 @@ class InputTab(QtGui.QWidget):
         
         self.connect(self.dropList, QtCore.SIGNAL("dropped"), self.control.fileDropped)
         
-    def createDefaults(self):
-        p=Parameters()
-        
+    def createDefaults(self,file=None):
+        if file==None:
+            p=Parameters()
+        else:
+            p=Parameters(file)
         self.gtfFileTextBox.setText(p.gtfFile)
         self.refGenomeTextBox.setText(p.refGenome)   
         self.dbsnpTextBox.setText(p.dbsnp)

@@ -7,6 +7,7 @@ Created on May 22, 2013
 
 import argparse, os, multiprocessing
 from Helper import Helper
+import pysam
 #from RnaEdit import RnaEdit
 
 
@@ -98,12 +99,17 @@ class MapFastq(object):
             Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.rnaEdit)
         
         #convert sam to bam
+        
         bamFile=self.rnaEdit.params.output+".bam"
+        """
         cmd=["java", "-Xmx4G", "-jar", self.rnaEdit.params.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.rnaEdit)
+        """
         
-        #pysam.sort("-O", "bam",samFile, bamFile)
+        Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
+        pysam.sort("-@",self.rnaEdit.params.threads,samFile, bamFile)
         
+
         #return bamFile
         
         
@@ -137,14 +143,20 @@ class MapFastq(object):
         Helper.proceedCommand("Proceed Realignement", cmd, intervalFile, realignedFile, self.rnaEdit)
         
         #mark PCR duplicates
-        markedFile=self.rnaEdit.params.output+".realigned.marked.bam"
-        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.rnaEdit.params.output+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
-        Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.rnaEdit)
         
+        markedFile=self.rnaEdit.params.output+".realigned.marked.bam"
+        Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
+        if self.rnaEdit.params.paired == False:
+            pysam.rmdup("-s",bamFile,markedFile)
+        else:
+            pysam.rmdup(bamFile,markedFile)
+        """cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.rnaEdit.params.output+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
+        Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.rnaEdit)
+        """
         #Find Quality Score recalibration spots
         recalFile=self.rnaEdit.params.output+".recalSpots.grp"
         cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "BaseRecalibrator", "-l", "ERROR", "-R", self.rnaEdit.params.refGenome, "-knownSites", self.rnaEdit.params.dbsnp, "-I", markedFile, "-cov", "CycleCovariate", "-cov", "ContextCovariate", "-o", recalFile]
-        Helper.proceedCommand("Find Quality Score recalibration spots", cmd, markedFile, recalFile, self.rnaEdit)
+        Helper.proceedCommand("Find Quality Score recalibration spots", cmd, realignedFile, recalFile, self.rnaEdit)
         
         #proceed Quality Score recalibration
         cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.rnaEdit.params.refGenome, "-I", markedFile, "-BQSR", recalFile, "-o",recaledBamFile]

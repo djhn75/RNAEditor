@@ -99,13 +99,16 @@ class GuiControll(object):
     def fileDropped(self, l):
         for url in l:
             if os.path.exists(url):
-                print(url)                
-                icon = QtGui.QIcon(url)
-                pixmap = icon.pixmap(72, 72)                
-                icon = QtGui.QIcon(pixmap)
-                item = QtGui.QListWidgetItem(url, self.view.inputTab.dropList)
-                item.setIcon(icon)        
-                item.setStatusTip(url)     
+                if url.endswith(".txt"):
+                    self.view.inputTab.createDefaults(url)
+                else:
+                    print(url)                
+                    icon = QtGui.QIcon(url)
+                    pixmap = icon.pixmap(72, 72)                
+                    icon = QtGui.QIcon(pixmap)
+                    item = QtGui.QListWidgetItem(url, self.view.inputTab.dropList)
+                    item.setIcon(icon)        
+                    item.setStatusTip(url)     
             
     def openAnalysis(self,fileName=None):
         if fileName==None:
