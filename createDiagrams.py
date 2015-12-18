@@ -96,7 +96,8 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         ####               Basecount Plot            ####
         #################################################
         counts1=Helper.getMMBaseCounts(output+".alu.vcf")
-        counts2=Helper.getMMBaseCounts(output+".nonAlu.vcf")
+        counts2=Helper.getMMBaseCounts(output+".noBlat.vcf") #use the var file after all the filters have been applied for nonAlu regions
+        
         
         file=open(outdir+"html/"+sampleName+"_baseCounts.txt","w")
         file.write("MM    alu    nonAlu\n")

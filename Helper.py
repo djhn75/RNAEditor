@@ -427,7 +427,6 @@ class Helper():
         
         fig.savefig(fileName)
         
-
     @staticmethod
     def printResultHtml(output,logFile=None,textField=0):
         '''

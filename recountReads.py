@@ -11,7 +11,7 @@ from Helper import Helper
 import argparse, os, re, sys
 
 
-parser = argparse.ArgumentParser(description='Merges the GTF Files and recalculates the base Counts after RnaEditor is finished.')
+parser = argparse.ArgumentParser(description='Merges the GVF Files and recalculates the base Counts after RnaEditor is finished.')
 parser.add_argument('-f', '--files', metavar='N', type=str, nargs='+', help='the list of files')
 parser.add_argument('-b', '--bams', metavar='N', type=str, nargs='+', help='the list of bam files')
 parser.add_argument('-t', '--top', metavar='N', type=str, nargs="+", help='list of header names (space separated)')

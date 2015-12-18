@@ -509,15 +509,16 @@ class CallEditingSites(object):
         else:
             if not os.path.isfile(self.rnaEdit.params.output+".editingSites.nonAlu.vcf"):
                 nonAluVariants = VariantSet(self.rnaEdit.params.output+".noBlat.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
-                nonAluVariants.deleteNonEditingBases()
-                
-                nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
+                #nonAluVariants.deleteNonEditingBases()
+                #nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
             else:
                 nonAluVariants = VariantSet(self.rnaEdit.params.output+".editingSites.nonAlu.vcf",self.rnaEdit.logFile,self.rnaEdit.textField)
         #nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".nonAlu.gvf", printSummary=True)
         
         #print nonAlu editing Sites
+        nonAluVariants.deleteNonEditingBases()
         nonAluVariants.annotateVariantDict(self.genome)
+        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
         nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
         nonAluVariants.createClusters(eps=50,minSamples=5)
         nonAluVariants.printClusters(self.rnaEdit.params.output+".editingSites.nonAlu.clusters")
