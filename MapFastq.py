@@ -107,7 +107,7 @@ class MapFastq(object):
         """
         
         Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
-        pysam.sort("-@",self.rnaEdit.params.threads,samFile, bamFile)
+        pysam.sort("-f","-@",self.rnaEdit.params.threads,samFile, bamFile)
         
 
         #return bamFile
