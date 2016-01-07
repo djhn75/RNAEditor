@@ -84,7 +84,7 @@ class MapFastq(object):
         
             #convert sai to sam
             samFile=self.rnaEdit.params.output+".sam"
-            cmd = [self.rnaEdit.params.sourceDir + "bwa", "sampe", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile1, saiFile2, self.fastqFile1, self.fastqFile2]
+            cmd = [self.rnaEdit.params.sourceDir + "bwa", "sampe", "-r", "@RG\tID:bwa\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile1, saiFile2, self.fastqFile1, self.fastqFile2]
             Helper.proceedCommand("convert sai to sam", cmd, saiFile1, samFile, self.rnaEdit)
         elif self.rnaEdit.params.paired == False:  #For single end sequencing
             #Align Fastq Reads to the Genome
@@ -95,7 +95,8 @@ class MapFastq(object):
             #convert sai to sam
             samFile=self.rnaEdit.params.output+".sam"
 
-            cmd = [self.rnaEdit.params.sourceDir + "bwa", "samse", "-r", "@RG\tID:A\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile, self.fastqFile]
+            cmd = [self.rnaEdit.params.sourceDir + "bwa", "samse", "-r", "@RG\tID:bwa\tLB:A\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile, self.fastqFile]
+            #cmd = [self.rnaEdit.params.sourceDir + "bwa", "samse", self.rnaEdit.params.refGenome, saiFile, self.fastqFile]
             Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.rnaEdit)
         
         #convert sam to bam
@@ -109,6 +110,7 @@ class MapFastq(object):
         Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         pysam.sort("-f","-@",self.rnaEdit.params.threads,samFile, bamFile)
         
+        pysam.index(bamFile)
 
         #return bamFile
         
@@ -124,7 +126,7 @@ class MapFastq(object):
         #sort bam
         #sortBamFile=self.rnaEdit.params.output+".bam"
         #cmd=["java", "-Xmx4G", "-jar", self.rnaEdit.params.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + bamFile, "OUTPUT=" + sortBamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
-        #Helper.proceedCommand("sortq bam", cmd, bamFile, sortBamFile, self.rnaEdit)
+        #Helper.proceedCommand("sort bam", cmd, bamFile, sortBamFile, self.rnaEdit)
         
         #Add read group ONLY NEEDED WHEN MAPPED WITH TOPHAT
         #rgFile=self.rnaEdit.params.output+".bam"
@@ -147,9 +149,9 @@ class MapFastq(object):
         markedFile=self.rnaEdit.params.output+".realigned.marked.bam"
         Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
         if self.rnaEdit.params.paired == False:
-            pysam.rmdup("-s",bamFile,markedFile)
+            pysam.rmdup("-s",realignedFile,markedFile)
         else:
-            pysam.rmdup(bamFile,markedFile)
+            pysam.rmdup(realignedFile,markedFile)
         """cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.rnaEdit.params.output+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.rnaEdit)
         """
