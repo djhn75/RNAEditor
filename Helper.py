@@ -661,6 +661,7 @@ class Helper():
             textField.append("\n"*quantity)
         if logFile!=None:
             logFile.write("\n"*quantity)
+            logFile.flush()
         sys.stderr.write("\n"*quantity)
     @staticmethod
     def info (message,logFile=None,textField=0):
@@ -669,6 +670,7 @@ class Helper():
             textField.append(Helper.prefix + "INFO:    "  + message + Helper.praefix)
         if logFile!=None:
             logFile.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
+            logFile.flush()
         sys.stderr.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
     @staticmethod
     def warning (message,logFile=None,textField=0):
@@ -676,6 +678,7 @@ class Helper():
             textField.append("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "WARNING:    "  + message + Helper.praefix + "\n")
+            logFile.flush()
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
     @staticmethod
     def error (message,logFile=None,textField=0):
@@ -683,6 +686,7 @@ class Helper():
             textField.append("\n\n" + Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n\n")
         if logFile!=None:
             logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
+            logFile.flush()
         print(traceback.format_exc())
         #sys.stderr.write("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
         raise Exception("\n\n" + Helper.prefix + "ERROR:    " + message + Helper.praefix + "\n\n")
@@ -692,6 +696,7 @@ class Helper():
             textField.append(Helper.prefix + "DEBUG:    "  + message + Helper.praefix)
         if logFile!=None:
             logFile.write(Helper.prefix + "DEBUG:    "  + message + Helper.praefix + "\n")
+            logFile.flush()
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
     @staticmethod
     def status(message,logFile=None,textField=0):
@@ -700,5 +705,6 @@ class Helper():
             textField.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix)
         if logFile!=None:
             logFile.write(Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
+            logFile.flush()
         sys.stdout.write("\r" + Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
         sys.stdout.flush()

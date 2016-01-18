@@ -150,7 +150,7 @@ class CallEditingSites(object):
         tempSeqFile = outFile + "_tmp.tsv"
         
         refGenome = "/media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta"
-        fastaFile = pysam.FastaFile(self.rnaEdit.params.refGenome)
+        fastaFile = pysam.Fastafile(self.rnaEdit.params.refGenome)
         mmNumberTotal = len(variants.variantDict)
         #print temporary BedFile
         numberPassed=0
@@ -185,7 +185,7 @@ class CallEditingSites(object):
         startTime=Helper.getTime()
         Helper.info(" [%s] Search non uniquely mapped reads" % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
         
-        bamFile=pysam.AlignmentFile(self.bamFile,"rb")
+        bamFile=pysam.Samfile(self.bamFile,"rb")
         #create Fasta file for blat to remap the variant overlapping reads
         tempFasta = outFile + "_tmp.fa"
         if not os.path.isfile(tempFasta) or not os.path.getsize(tempFasta) > 0: #check if temFast exists and is not empty. If it exist it will not be created again

@@ -7,7 +7,7 @@ Created on May 22, 2013
 
 import argparse, os, multiprocessing
 from Helper import Helper
-import pysam
+import pysam 
 #from RnaEdit import RnaEdit
 
 
@@ -64,7 +64,7 @@ class MapFastq(object):
     
         
     def startAnalysis(self):   
-        recaledBamFile=self.rnaEdit.params.output+".realigned.marked.recalibrated.bam"
+        recaledBamFile=self.rnaEdit.params.output+".noDup.realigned.recalibrated.bam"
         if os.path.isfile(recaledBamFile):
             Helper.info("* * * [Skipping] Mapping result File already exists * * *",self.rnaEdit.logFile,self.rnaEdit.textField)
             self.rnaEdit.logFile.flush()
@@ -100,17 +100,39 @@ class MapFastq(object):
             Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.rnaEdit)
         
         #convert sam to bam
-        
+        unsortedBamFile=self.rnaEdit.params.output+".unsorted.bam"
         bamFile=self.rnaEdit.params.output+".bam"
         """
         cmd=["java", "-Xmx4G", "-jar", self.rnaEdit.params.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.rnaEdit)
         """
-        
+
+        #Sort and Index Bam File
         Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
-        pysam.sort("-f","-@",self.rnaEdit.params.threads,samFile, bamFile)
         
+        pysamSamFile = pysam.Samfile(samFile,'r')
+        pysamBamFile = pysam.Samfile(unsortedBamFile,'wb', template=pysamSamFile)
+        
+        for read in pysamSamFile.fetch():
+             pysamBamFile.write(read)
+        
+        pysam.sort("-f","-@",self.rnaEdit.params.threads,unsortedBamFile, bamFile)
+        
+        Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         pysam.index(bamFile)
+
+
+        #mark PCR duplicates
+        Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
+        markedFile=self.rnaEdit.params.output+".noDup.bam"
+        if self.rnaEdit.params.paired == False:
+            pysam.rmdup("-s",bamFile,markedFile)
+        else:
+            pysam.rmdup(bamFile,markedFile)
+
+
+        Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
+        pysam.index(markedFile)
 
         #return bamFile
         
@@ -136,32 +158,26 @@ class MapFastq(object):
         
         #Identify Target Regions for realignment
         intervalFile=self.rnaEdit.params.output+".indels.intervals"
-        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.rnaEdit.params.threads, "-T", "RealignerTargetCreator", "-R", self.rnaEdit.params.refGenome, "-I", bamFile, "-o", intervalFile,"-l", "ERROR"]
+        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-nt",self.rnaEdit.params.threads, "-T", "RealignerTargetCreator", "-R", self.rnaEdit.params.refGenome, "-I", markedFile, "-o", intervalFile,"-l", "ERROR"]
         Helper.proceedCommand("Identify Target Regions for realignment", cmd, bamFile, intervalFile, self.rnaEdit)
         
         #Proceed Realignement
-        realignedFile=self.rnaEdit.params.output+".realigned.bam"
-        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.rnaEdit.params.refGenome, "-I", bamFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
+        realignedFile=self.rnaEdit.params.output+".noDup.realigned.bam"
+        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "IndelRealigner", "-R", self.rnaEdit.params.refGenome, "-I", markedFile, "-l", "ERROR", "-targetIntervals", intervalFile, "-o", realignedFile]
         Helper.proceedCommand("Proceed Realignement", cmd, intervalFile, realignedFile, self.rnaEdit)
         
-        #mark PCR duplicates
         
-        markedFile=self.rnaEdit.params.output+".realigned.marked.bam"
-        Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
-        if self.rnaEdit.params.paired == False:
-            pysam.rmdup("-s",realignedFile,markedFile)
-        else:
-            pysam.rmdup(realignedFile,markedFile)
+        
         """cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + realignedFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.rnaEdit.params.output+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("mark PCR duplicates", cmd, realignedFile, markedFile, self.rnaEdit)
         """
         #Find Quality Score recalibration spots
         recalFile=self.rnaEdit.params.output+".recalSpots.grp"
-        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "BaseRecalibrator", "-l", "ERROR", "-R", self.rnaEdit.params.refGenome, "-knownSites", self.rnaEdit.params.dbsnp, "-I", markedFile, "-cov", "CycleCovariate", "-cov", "ContextCovariate", "-o", recalFile]
+        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "BaseRecalibrator", "-l", "ERROR", "-R", self.rnaEdit.params.refGenome, "-knownSites", self.rnaEdit.params.dbsnp, "-I", realignedFile, "-cov", "CycleCovariate", "-cov", "ContextCovariate", "-o", recalFile]
         Helper.proceedCommand("Find Quality Score recalibration spots", cmd, realignedFile, recalFile, self.rnaEdit)
         
         #proceed Quality Score recalibration
-        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.rnaEdit.params.refGenome, "-I", markedFile, "-BQSR", recalFile, "-o",recaledBamFile]
+        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "GATK/GenomeAnalysisTK.jar", "-T", "PrintReads","-l", "ERROR", "-R", self.rnaEdit.params.refGenome, "-I", realignedFile, "-BQSR", recalFile, "-o",recaledBamFile]
         Helper.proceedCommand("Proceed Quality Score recalibration", cmd, recalFile, recaledBamFile, self.rnaEdit)
         
         return recaledBamFile
@@ -174,18 +190,20 @@ class MapFastq(object):
                 os.remove(self.rnaEdit.params.output+".sam")
             if os.path.isfile(self.rnaEdit.params.output+".bam"):
                 os.remove(self.rnaEdit.params.output+".bam")
-            if os.path.isfile(self.rnaEdit.params.output+".bai"):
-                os.remove(self.rnaEdit.params.output+".bai")
+            if os.path.isfile(self.rnaEdit.params.output+".unsorted.bam"):
+                os.remove(self.rnaEdit.params.output+".unsorted.bam")
+            if os.path.isfile(self.rnaEdit.params.output+".bam.bai"):
+                os.remove(self.rnaEdit.params.output+".bam.bai")
             if os.path.isfile(self.rnaEdit.params.output+".indels.intervals"):
                 os.remove(self.rnaEdit.params.output+".indels.intervals")
-            if os.path.isfile(self.rnaEdit.params.output+".realigned.bam"):
-                os.remove(self.rnaEdit.params.output+".realigned.bam")
-            if os.path.isfile(self.rnaEdit.params.output+".realigned.bai"):
-                os.remove(self.rnaEdit.params.output+".realigned.bai")
-            if os.path.isfile(self.rnaEdit.params.output+".realigned.marked.bam"):
-                os.remove(self.rnaEdit.params.output+".realigned.marked.bam")
-            if os.path.isfile(self.rnaEdit.params.output+".realigned.marked.bai"):
-                os.remove(self.rnaEdit.params.output+".realigned.marked.bai")
+            if os.path.isfile(self.rnaEdit.params.output+".noDup.bam"):
+                os.remove(self.rnaEdit.params.output+".noDup.bam")
+            if os.path.isfile(self.rnaEdit.params.output+".noDup.bam.bai"):
+                os.remove(self.rnaEdit.params.output+".noDup.bam.bai")
+            if os.path.isfile(self.rnaEdit.params.output+".noDup.realigned.bam"):
+                os.remove(self.rnaEdit.params.output+".noDup.realigned.bam")
+            if os.path.isfile(self.rnaEdit.params.output+".noDup.realigned.bai"):
+                os.remove(self.rnaEdit.params.output+".noDup.realigned.bai")
             if os.path.isfile(self.rnaEdit.params.output+".recalSpots.grp"):
                 os.remove(self.rnaEdit.params.output+".recalSpots.grp")
             #os.remove(self.outfilePrefix+".realigned.marked.recalibrated.bam")

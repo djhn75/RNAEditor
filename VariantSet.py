@@ -795,7 +795,7 @@ class VariantSet(object):
         num_lines = len(self.variantDict)
         Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)),self.logFile,self.textField)
         
-        bamFile = pysam.AlignmentFile(bamFile, "rb")
+        bamFile = pysam.Samfile(bamFile, "rb")
         
         for varKey in self.variantDict.keys():
             variant = self.variantDict[varKey]
