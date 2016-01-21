@@ -26,7 +26,7 @@ class MapFastq(object):
         #check read Quality encoding and convert to phred33 quality if necessary
         for i in range(len(self.rnaEdit.fastqFiles)):
             if Helper.isPhred33Encoding(self.rnaEdit.fastqFiles[i], 100, self.rnaEdit.logFile, self.rnaEdit.textField) == False:
-                self.rnaEdit.fastqFiles[i]=Helper.convertPhred64toPhred33(self,self.rnaEdit.fastqFiles[i],self.rnaEdit.params.output+ "_" + str(i+1) + "_phred33.fastq",self.rnaEdit.logFile,self.rnaEdit.textField)
+                self.rnaEdit.fastqFiles[i]=Helper.convertPhred64toPhred33(self.rnaEdit.fastqFiles[i],self.rnaEdit.params.output+ "_" + str(i+1) + "_phred33.fastq",self.rnaEdit.logFile,self.rnaEdit.textField)
                 
         
         
@@ -116,7 +116,7 @@ class MapFastq(object):
         for read in pysamSamFile.fetch():
              pysamBamFile.write(read)
         
-        pysam.sort("-f","-@",self.rnaEdit.params.threads,unsortedBamFile, bamFile)
+        pysam.sort("-f",unsortedBamFile, bamFile)
         
         Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         pysam.index(bamFile)
