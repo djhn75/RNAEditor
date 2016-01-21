@@ -197,6 +197,10 @@ class CallEditingSites(object):
             #############################################
             Helper.info(" [%s] Create fasta file for blat " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
             counter=1
+            
+            if len(variants.variantDict.keys()) == 0:
+                Helper.error("No Variants left" ,self.rnaEdit.logFile,self.rnaEdit.textField)
+            
             for varKey in variants.variantDict.keys(): 
                 variant=variants.variantDict[varKey]
                 varPos=variant.position-1
