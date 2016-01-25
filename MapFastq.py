@@ -110,13 +110,13 @@ class MapFastq(object):
         #Sort and Index Bam File
         Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         
-        pysamSamFile = pysam.Samfile(samFile,'r')
+        '''pysamSamFile = pysam.Samfile(samFile,'r')
         pysamBamFile = pysam.Samfile(unsortedBamFile,'wb', template=pysamSamFile)
         
         for read in pysamSamFile.fetch():
-             pysamBamFile.write(read)
+             pysamBamFile.write(read)'''
         
-        pysam.sort("-f",unsortedBamFile, bamFile)
+        pysam.sort(samFile,"-o", bamFile)
         
         Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         pysam.index(bamFile)
@@ -125,12 +125,13 @@ class MapFastq(object):
         #mark PCR duplicates
         Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
         markedFile=self.rnaEdit.params.output+".noDup.bam"
-        if self.rnaEdit.params.paired == False:
+        """if self.rnaEdit.params.paired == False:
             pysam.rmdup("-s",bamFile,markedFile)
         else:
             pysam.rmdup(bamFile,markedFile)
-
-
+"""
+        pysam.rmdup(bamFile,markedFile)
+        
         Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         pysam.index(markedFile)
 
