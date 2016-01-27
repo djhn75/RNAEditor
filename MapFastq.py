@@ -108,7 +108,7 @@ class MapFastq(object):
         """
 
         #Sort and Index Bam File
-        Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
+        #Helper.status("Sort Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         
         '''pysamSamFile = pysam.Samfile(samFile,'r')
         pysamBamFile = pysam.Samfile(unsortedBamFile,'wb', template=pysamSamFile)
@@ -116,26 +116,41 @@ class MapFastq(object):
         for read in pysamSamFile.fetch():
              pysamBamFile.write(read)'''
         
-        pysam.sort(samFile,"-o", bamFile)
+        #pysam.sort(samFile,"-o", bamFile)
+        cmd = [self.rnaEdit.params.sourceDir + "samtools", "sort", samFile,"-o", bamFile]
+        Helper.proceedCommand("Sort Bam File", cmd, samFile, bamFile, self.rnaEdit)
         
-        Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
-        pysam.index(bamFile)
-
-
+        #Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
+        #pysam.index(bamFile)
+        cmd = [self.rnaEdit.params.sourceDir + "samtools", "index", bamFile]
+        Helper.proceedCommand("Index Bam File", cmd, samFile, bamFile+".bai", self.rnaEdit)
+        
         #mark PCR duplicates
         Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
         markedFile=self.rnaEdit.params.output+".noDup.bam"
+        cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + bamFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.rnaEdit.params.output+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
+        Helper.proceedCommand("mark PCR duplicates", cmd, bamFile, markedFile, self.rnaEdit)
+        
+        
         """if self.rnaEdit.params.paired == False:
             pysam.rmdup("-s",bamFile,markedFile)
         else:
             pysam.rmdup(bamFile,markedFile)
-"""
-        pysam.rmdup(bamFile,markedFile)
+
+        #pysam.rmdup(bamFile,markedFile)
+        if self.rnaEdit.params.paired == False:
+            cmd = [self.rnaEdit.params.sourceDir + "samtools", "rmdup", "-s", bamFile, markedFile]
+        else:
+            cmd = [self.rnaEdit.params.sourceDir + "samtools", "rmdup", bamFile, markedFile]
+        Helper.proceedCommand("Index Bam File", cmd, bamFile, markedFile, self.rnaEdit)
+        
         
         Helper.status("index Bam", self.rnaEdit.logFile,self.rnaEdit.textField)
         pysam.index(markedFile)
-
-        #return bamFile
+        
+        cmd = [self.rnaEdit.params.sourceDir + "samtools", "index", bamFile]
+        Helper.proceedCommand("Index Bam File", cmd, bamFile, markedFile+".bai", self.rnaEdit)
+        #return bamFile"""
         
         
         #run Alignement with tophat
