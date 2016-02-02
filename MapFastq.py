@@ -243,8 +243,6 @@ def checkDependencies(args):
         Helper.error("MarkDuplicates.jar not found in %s" % args.sourceDir+"picard-tools")
     if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
         Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
-    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
-        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
     if not os.path.isfile(args.sourceDir+"samtools"):
         Helper.error("samtools not found in %s" % args.sourceDir)
     if not os.system("java -version")==0:

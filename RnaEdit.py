@@ -173,8 +173,6 @@ class RnaEdit(QtCore.QThread):
             Helper.error("MarkDuplicates.jar not found in %s" % self.params.sourceDir+"picard-tools",self.logFile,self.textField)
         if not os.path.isfile(self.params.sourceDir+"GATK/GenomeAnalysisTK.jar"):
             Helper.error("GenomeAnalysisTK.jar not found in %s" % self.params.sourceDir+"GATK/",self.logFile,self.textField)
-        if not os.path.isfile(self.params.sourceDir+"bedtools/fastaFromBed"):
-            Helper.error("fastaFromBed not found in %s" % self.params.sourceDir+"bedtools/",self.logFile,self.textField)
         if not os.path.isfile(self.params.sourceDir+"blat"):
             Helper.error("blat not found in %s" % self.params.sourceDir,self.logFile,self.textField)
         if not os.path.isfile(self.params.sourceDir+"samtools"):

@@ -562,8 +562,6 @@ def checkDependencies(args):
     #check if all tools are there
     if not os.path.isfile(args.sourceDir+"GATK/GenomeAnalysisTK.jar"):
         Helper.error("GenomeAnalysisTK.jar not found in %s" % args.sourceDir+"GATK/")
-    if not os.path.isfile(args.sourceDir+"bedtools/fastaFromBed"):
-        Helper.error("fastaFromBed not found in %s" % args.sourceDir+"bedtools/")
     if not os.path.isfile(args.sourceDir+"blat"):
         Helper.error("blat not found in %s" % args.sourceDir)
     if not os.path.isfile(args.sourceDir+"samtools"):
@@ -583,15 +581,6 @@ def checkDependencies(args):
         Helper.error("Could not find %s.fai" % args.RefGenome)
         Helper.error("run: 'samtools faidx %s' to create it" % args.RefGenome)
 
-    #SNP databases
-    if not os.path.isfile(args.dbsnp):
-        Helper.error("Could not find %s: " % args.dbsnp)
-    if not os.path.isfile(args.hapmap):
-        Helper.error("Could not find %s: " % args.hapmap)
-    if not os.path.isfile(args.omni):
-        Helper.error("Could not find %s: " % args.omni)
-    if not os.path.isfile(args.esp):
-        Helper.error("Could not find %s: " % args.esp)
     
     #region Files
     if not os.path.isfile(args.aluRegions):
