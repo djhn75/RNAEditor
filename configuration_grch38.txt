@@ -1,13 +1,13 @@
 #This file is used to configure the behaviour of RNAeditor
 
 #Standard input files
-refGenome = /media/Storage/databases/rnaEditor_annotations/human/human_g1k_v37.fasta
-gtfFile = /media/Storage/databases/rnaEditor_annotations/human/genes.gtf
-dbSNP = /media/Storage/databases/rnaEditor_annotations/human/dbsnp_135.b37.vcf
-hapmap = /media/Storage/databases/rnaEditor_annotations/human/hapmap_3.3.b37.sites.vcf
-omni = /media/Storage/databases/rnaEditor_annotations/human/1000G_omni2.5.b37.sites.vcf
-esp = /media/Storage/databases/rnaEditor_annotations/human/NHLBI_Exome_Sequencing_Project_6500SI.vcf
-aluRegions = /media/Storage/databases/rnaEditor_annotations/human/Alu_repeats_noCHR.bed
+refGenome = /media/ATLAS_Genomes_Annotations/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
+gtfFile = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.83.gtf
+dbSNP = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/dbSNP.vcf
+hapmap = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/HAPMAP.vcf
+omni = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/1000GenomeProject.vcf
+esp = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/ESP.vcf
+aluRegions = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/repeats.bed
 output = default
 sourceDir = /usr/local/bin/
 maxDiff = 0.04

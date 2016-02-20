@@ -188,29 +188,37 @@ class RnaEdit(QtCore.QThread):
         
         # Files for BWA
         if not os.path.isfile(self.params.refGenome+".amb"):
-            Helper.error("Could not find %s.amb" % self.params.refGenome,self.logFile,self.textField)
+            Helper.warning("Could not find %s.amb" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'bwa index %s' to create it" % self.params.refGenome,self.logFile,self.textField)
         if not os.path.isfile(self.params.refGenome+".ann"):
-            Helper.error("Could not find %s.ann" % self.params.refGenome,self.logFile,self.textField)
+            Helper.warning("Could not find %s.ann" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'bwa index %s' to create it" % self.params.refGenome,self.logFile,self.textField)
         if not os.path.isfile(self.params.refGenome+".bwt"):
-            Helper.error("Could not find %s.bwt" % self.params.refGenome,self.logFile,self.textField)
+            Helper.warning("Could not find %s.bwt" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'bwa index %s' to create it" % self.params.refGenome,self.logFile,self.textField)
         if not os.path.isfile(self.params.refGenome+".pac"):
-            Helper.error("Could not find %s.pac" % self.params.refGenome,self.logFile,self.textField)
+            Helper.warning("Could not find %s.pac" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'bwa index %s' to create it" % self.params.refGenome,self.logFile,self.textField)
         if not os.path.isfile(self.params.refGenome+".sa"):
-            Helper.error("Could not find %s.sa" % self.params.refGenome,self.logFile,self.textField)
+            Helper.warning("Could not find %s.sa" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'bwa index %s' to create it" % self.params.refGenome,self.logFile,self.textField)
 
         
         #Files for GATK
         
-        if not os.path.isfile(self.params.refGenome.replace(".fastq",".dict")):
-            Helper.error("Could not find %s" % self.params.refGenome.replace(".fastq",".dict"),self.logFile,self.textField)
-            Helper.error("run: 'java -jar %s/picard-tools/CreateSequenceDictionary.jar R=%s  O= %s.dict' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome),self.logFile,self.textField)
+        
+        if self.params.refGenome.endswith("fastq"):
+            if not os.path.isfile(self.params.refGenome.replace(".fastq",".dict")):
+                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fastq",".dict"),self.logFile,self.textField)
+                Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome.replace(".fastq",".dict")),self.logFile,self.textField)
+        elif self.params.refGenome.endswith("fa"):
+            if not os.path.isfile(self.params.refGenome.replace(".fa",".dict")):
+                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fa",".dict"),self.logFile,self.textField)
+                Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome.replace(".fa",".dict")),self.logFile,self.textField)
+        else:
+            Helper.error("RefGenome has wrong suffix. Either '.fa' or '.fastq'")
         if not os.path.isfile(self.params.refGenome+".fai"):
-            Helper.error("Could not find %s.sai" % self.params.refGenome,self.logFile,self.textField)
+            Helper.warning("Could not find %s.sai" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'samtools faidx %s' to create it" % self.params.refGenome,self.logFile,self.textField)
     
         #SNP databases
