@@ -561,7 +561,7 @@ class VariantSet(object):
                 if start < v.position < stop:
                     overlapSet.add((v.chromosome,v.position,v.ref,v.alt))
             i+=1
-            if i %10000==0:
+            if i %100000==0:
                 Helper.status("%s Bed Feautes parsed" % i, self.logFile,self.textField)
         
         
