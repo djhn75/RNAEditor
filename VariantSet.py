@@ -562,7 +562,7 @@ class VariantSet(object):
                     overlapSet.add((v.chromosome,v.position,v.ref,v.alt))
             i+=1
             if i %100000==0:
-                Helper.status("%s Bed Feautes parsed" % i, self.logFile,self.textField)
+                Helper.status("%s Bed Feautes parsed" % i, self.logFile,self.textField,"grey")
         
         
         Helper.info("finished parsing Bed file", self.logFile,self.textField)
@@ -802,7 +802,7 @@ class VariantSet(object):
             
             counter+=1
             if counter%10000==0:
-                Helper.status('%s mm parsed ' % counter ,self.logFile, self.textField)
+                Helper.status('%s mm parsed ' % counter ,self.logFile, self.textField,"grey")
             
             keepSNP=False
             varPos=variant.position-1
@@ -823,6 +823,6 @@ class VariantSet(object):
                 j+=1
                 del self.variantDict[varKey]
         
-        Helper.status('%s of %svariants were deleted' % (j,num_lines), self.logFile, self.textField) 
+        Helper.status('%s of %svariants were deleted' % (j,num_lines), self.logFile, self.textField,"black") 
         Helper.printTimeDiff(startTime, self.logFile, self.textField)
         bamFile.close()

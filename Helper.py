@@ -10,6 +10,7 @@ from collections import defaultdict, OrderedDict
 import traceback
 import ui
 from numpy import arange
+from PyQt4.QtCore import QString
 #from matplotlib.backends import qt_compat
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
@@ -126,7 +127,7 @@ class Helper():
     
     prefix = "*** "
     praefix = " ***"
-    
+    colors = ["red","green","blue","olive","grey"]
     #dummy element is added to the array to avoid 0/1 problem from the Tab array and these arrays
     #otherwise i had to add -1 every time i want to access the following arrays
     runningThreads=["dummy"]
@@ -283,7 +284,7 @@ class Helper():
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
-            Helper.printTimeDiff(startTime, logFile, textField)
+            Helper.printTimeDiff(startTime, logFile, textField, "green")
         else:
             print "\t [SKIP] File already exist",logFile,textField
 
@@ -645,11 +646,14 @@ class Helper():
         return mmBaseCounts
         
     @staticmethod
-    def printTimeDiff(startTime,logFile=None,textField=0):
+    def printTimeDiff(startTime,logFile=None,textField=0,color="green"):
         duration = Helper.getTime() - startTime
         if textField!=0:
             #currentAssay = Helper.runningAssays[textField] 
-            textField.append("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix)
+            if color in Helper.colors:
+                textField.append(QString("<font color=\""+color+"\">%1</font>").arg("[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n"))
+            else:
+                textField.append(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         if logFile!=None:
             logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         
@@ -664,10 +668,12 @@ class Helper():
             logFile.flush()
         sys.stderr.write("\n"*quantity)
     @staticmethod
-    def info (message,logFile=None,textField=0):
+    def info (message,logFile=None,textField=0,color="olive"):
         if textField!=0:
-            #currentAssay = Helper.runningAssays[runNumber] 
-            textField.append(Helper.prefix + "INFO:    "  + message + Helper.praefix)
+            if color in Helper.colors:
+                textField.append(QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+            else:
+                textField.append(Helper.prefix + "INFO:    "  + message + Helper.praefix)
         if logFile!=None:
             logFile.write(Helper.prefix + "INFO:    "  + message + Helper.praefix + "\n")
             logFile.flush()
@@ -681,9 +687,12 @@ class Helper():
             logFile.flush()
         sys.stderr.write("\n\n" + Helper.prefix + "WARNING:    " + message + Helper.praefix + "\n\n")
     @staticmethod
-    def error (message,logFile=None,textField=0):
+    def error (message,logFile=None,textField=0,color="red"):
         if textField!=0:
-            textField.append("\n\n" + Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n\n")
+            if color in Helper.colors:
+                textField.append(QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+            else:
+                textField.append(Helper.prefix + "ERROR:    "  + message + Helper.praefix)
         if logFile!=None:
             logFile.write(Helper.prefix + "ERROR:    "  + message + Helper.praefix + "\n")
             logFile.flush()
@@ -699,10 +708,16 @@ class Helper():
             logFile.flush()
         sys.stderr.write(Helper.prefix + message + Helper.praefix + "\n")
     @staticmethod
-    def status(message,logFile=None,textField=0):
+    def status(message,logFile=None,textField=0,color=None,bold=False):
         if textField!=0:
             #currentAssay = Helper.runningAssays[runNumber] 
-            textField.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix)
+            if color in Helper.colors:
+                if bold==True:
+                    textField.append(QString("<font color=\""+color+"\"><b>%1</b></font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                else:
+                    textField.append(QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+            else:
+                textField.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix)
         if logFile!=None:
             logFile.write(Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
             logFile.flush()

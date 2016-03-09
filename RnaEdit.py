@@ -102,7 +102,7 @@ class RnaEdit(QtCore.QThread):
         
         
         
-        Helper.status("rnaEditor Finished with %s" % self.params.output, self.logFile, self.textField)
+        Helper.status("rnaEditor Finished with %s" % self.params.output, self.logFile, self.textField,"green",True)
         self.cleanUp()
     
     def stopSafely(self):
