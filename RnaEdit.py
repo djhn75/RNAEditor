@@ -126,7 +126,7 @@ class RnaEdit(QtCore.QThread):
         #print "deleteAssay " + str(self)
         if self.runningCommand != False:
             self.runningCommand.kill()
-
+ 
         try:
             if self.mapFastQ!=None:
                 self.mapFastQ.cleanUp()
