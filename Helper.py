@@ -402,7 +402,7 @@ class Helper():
         ax.set_ylabel(yText)
         ax.set_xticks(ind+width)
         ax.set_xticklabels( barNamesTuple, rotation='vertical' )
-        ax.set_xlim(min(ind)-0.1,max(ind)+(width*len(valueMatrix))+0.1)
+        ax.set_xlim(min(ind)-0.1,max(ind)+(width*len(valueMatrix))*1.1)
         if yLim!=None:
             ax.set_ylim(0,yLim)
         
@@ -429,21 +429,20 @@ class Helper():
         fig.savefig(fileName)
         
     @staticmethod
-    def printResultHtml(output,logFile=None,textField=0):
+    def printResultHtml(stats,logFile=None,textField=0):
         '''
         print the HTML file wich is shown when rnaEditor is finished
         :param output: output prefix from rnaEdit object
         '''
-        outdir = output[0:output.rfind("/")+1]
-        sampleName=output[output.rfind("/")+1:]
-        htmlOutPrefix=outdir+"html/"+sampleName
+        
+        htmlOutPrefix=stats.outdir+"html/"+stats.sampleName
         
         #copy rnaEditor logo to htmlOutPrefix
-        copyfile('ui/icons/rnaEditor_512x512.png',outdir+"html/rnaEditor_512x512.png")
+        copyfile('ui/icons/rnaEditor_512x512.png',stats.outdir+"html/rnaEditor_512x512.png")
         
-        outDict={"title":"Result Page for "+ sampleName,
-                 "sampleName":sampleName,
-                 "icon":outdir+"html/rnaEditor_512x512.png",
+        outDict={"title":"Result Page for "+ stats.sampleName,
+                 "sampleName":stats.sampleName,
+                 "icon":stats.outdir+"html/rnaEditor_512x512.png",
               "baseCounts":htmlOutPrefix+"_baseCounts.png",
               "editingPositions":htmlOutPrefix+"_EditingPositions.png",
               "3UTR":htmlOutPrefix+".editedGenes(3UTR).png",
@@ -451,11 +450,22 @@ class Helper():
               "Exon":htmlOutPrefix+".editedGenes(Exon).png",
               "Intron":htmlOutPrefix+".editedGenes(Intron).png",
               "Total":htmlOutPrefix+".editedGenes(Total).png",
-              "currentTime":Helper.getTime().strftime("%d.%m.%Y %H:%M")
+              "currentTime":Helper.getTime().strftime("%d.%m.%Y %H:%M"),
+              "totalAluNumber": str(stats.totalAluNumber),
+              "totalNonAluNumber" : str(stats.totalNonAluNumber),
+              "totalNumber": str(stats.totalNumber),
+              "percentageEditing": str(stats.percentageEditing)+"%",
+              "baseCoutHtmlTable": str(stats.baseCountHTMLTable),
+              "editingPositionHTMLTable": str(stats.editingPositionHTMLTable),
+              "utr3HtmlTable":  str(stats.utr3HtmlTable),
+              "utr5HtmlTable": str(stats.utr5HtmlTable),
+              "exonHtmlTable": str(stats.exonHtmlTable),
+              "intronHtmlTable": str(stats.intronHtmlTable),
+              "totalHtmlTable": str(stats.totalHtmlTable)
               }
         
 
-        outfile=open(output+".html","w+")
+        outfile=open(stats.output+".html","w+")
         
         outfile.write("""<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'
     'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
@@ -469,7 +479,8 @@ class Helper():
     html, body {height: 100%;margin:0px;padding: 0px;font-family: sans-serif;}
     h1,h2,h3,h4,h5,h6{margin-top: 1em;margin-bottom: 0.6em;}
     h2{    font-size: 100%;font-weight: bold;}
-    h3{    font-size: 90%;    font-weight: bold;}
+    h3{margin-left:1em;font-size: 90%;    font-weight: bold;}
+    .contentBlock{margin-top: 1em;border-width: 1px 1px 3px 1px;border-style: solid;border-color: #A7D7F9; max-width: 950px}
     #left{width: 11em;position: absolute;}
     #toc{margin-top: 40px;margin-left: 5px;}
     #toc ul{padding-left: 10px;list-style-type:none;list-style-image:none;font-size: 90%;line-height: 1.9;}
@@ -477,8 +488,12 @@ class Helper():
     #page{border-width: 0px 1px 1px 1px;background: #fff;}
     #header{background-position: left bottom;background-color: #fff;}
     img {}
-    figure {padding: 5px;border: 1px solid #cccccc;border-radius: 5px;
-}
+    table {font-size: 80%;background-color: #DDD;width:70%;max-width: 850px;margin-left:auto;margin-right:auto; text-align: center;}
+    th {text-align: center;background-color: #0000FF;color: #FFF;padding: 0.4em;}      
+    td {text-align: center;background-color: #FFF;color: #000;padding: 0.4em;}
+    .geneTable{width: 500px;}
+
+    figure {padding: 5px;border: 1px solid #cccccc;border-radius: 5px;max-width: 900px}
     figure img {border-radius: 3px 3px 0 0;height: 70%;width: 90%;max-width: 850px;max-height: 550px;}
     figure figcaption {font-size: 70%; padding: 2px 4px 2px 4px;background-color: #636363;color: #cccccc;font-style: italic;border-radius: 0 0 3px 3px;text-align:center}
 </style>
@@ -498,6 +513,13 @@ class Helper():
             <li class='toclevel-1 tocsection-1'><a href='#basicStats'><span class='tocnumber'>1</span> <span class='toctext'>Basic Statistic</span></a></li>
             <li class='toclevel-1 tocsection-2'><a href='#NucleotideChanges'><span class='tocnumber'>2</span> <span class='toctext'>Nucleotide Changes</span></a></li>
             <li class='toclevel-1 tocsection-3'><a href='#EditingPerPosition'><span class='tocnumber'>3</span> <span class='toctext'>Editing Sites per Position</span></a></li>
+            <ul>
+                <li class='toclevel-2 tocsection-3.1'><a href='#3utr'><span class='tocnumber'>3.1</span> <span class='toctext'>3'UTR</span></a></li>
+                <li class='toclevel-2 tocsection-3.2'><a href='#5utr'><span class='tocnumber'>3.2</span> <span class='toctext'>5'UTR</span></a></li>
+                <li class='toclevel-2 tocsection-3.3'><a href='#exon'><span class='tocnumber'>3.3</span> <span class='toctext'>Exons</span></a></li>
+                <li class='toclevel-2 tocsection-3.4'><a href='#intron'><span class='tocnumber'>3.4</span> <span class='toctext'>Introns</span></a></li>
+                <li class='toclevel-2 tocsection-3.4'><a href='#total'><span class='tocnumber'>3.5</span> <span class='toctext'>Total</span></a></li>
+            </ul>
             <li class='toclevel-1 tocsection-4'><a href='#EditedGenes'><span class='tocnumber'>4</span> <span class='toctext'>Highly Edited Genes</span></a></li>
             <li class='toclevel-1 tocsection-5'><a href='#EditedIslands'><span class='tocnumber'>5</span> <span class='toctext'>Editing Islands</span></a></li>
         </ul>
@@ -514,7 +536,7 @@ class Helper():
 
         <!-- Content -->
         <div id='content' class='content'>
-            
+            <div class='contentBlock'>
             <h2><span class='mw-headline' id='basicStats'>Basic Statistic</span></h2>
                 <p>
                     <table>
@@ -525,70 +547,81 @@ class Helper():
                             </tr>
                             <tr>
                                 <td>Total Number of editing sites:</td>
-                                <td></td>
+                                <td>%(totalNumber)s</td>
                             </tr>
                             <tr>
                                 <td>in Alu Regions:</td>
-                                <td></td>
+                                <td>%(totalAluNumber)s</td>
                             </tr>
                             <tr>
                                 <td>in non-Alu Regions:</td>
-                                <td></td>
+                                <td>%(totalNonAluNumber)s</td>
                             </tr>
                             <tr>
                                 <td>Percentage of edited Genes:</td>
-                                <td></td>
+                                <td>%(percentageEditing)s</td>
                             </tr>
                         </tbody>
                     </table>
                 </p>
-            
+            </div>
+            <div class='contentBlock'>
             <h2><span class='mw-headline' id='NucleotideChanges'>Nucleotide Changes</span></h2>
                 <p>Nucleotide changes after all the filters have been applied. 
-                   A high amount of A->G and T-C missmatches is indicative for a high editing rate.</p>
+                   A high amount of A->G and T->C missmatches is indicative for a high editing rate.</p>
                 <figure>
                     <img src='%(baseCounts)s'  alt='Base Counts' >
                     <figcaption>Number of mismatsch types</figcaption>
                 </figure>
-                
+                %(baseCoutHtmlTable)s
+            </div>
+            <div class='contentBlock'>
             <h2><span class='mw-headline' id='EditingPerPosition'>Editing Sites per Position</span></h2>
                 <p>Positions where editing takes place.</p>
                 <figure>
                     <img src='%(editingPositions)s'  alt='Editing Positions' >
                     <figcaption>Number of editing sites in different gene regions</figcaption>
                 </figure>
+                %(editingPositionHTMLTable)s
+            </div>
+            <div class='contentBlock'>
             <h2><span class='mw-headline' id='EditedGenes'>Highly Edited Genes</span></h2>
                     <p>This paragraph shows highly edited genes for each segment of the genes.</p>
-                    <h3>3' UTR</h3>
+                    <h3 id='3utr'>3' UTR</h3>
                         <figure>
                             <img src='%(3UTR)s' alt='highly edited genes in 3'UTR'>
                             <figcaption>Highly edited Genes in 3'UTR Regions</figcaption>
                         </figure>
-                    <h3>5' UTR</h3>
+                        %(utr3HtmlTable)s
+                    <h3 id='5utr'>5' UTR</h3>
                         <figure>
                             <img src='%(5UTR)s' alt='highly edited genes in 5'UTR'>
                             <figcaption>Highly edited Genes in 5'UTR Regions</figcaption>
                         </figure>
-                    <h3>Exons</h3>
+                        %(utr5HtmlTable)s
+                    <h3 id='exon'>Exons</h3>
                         <figure>
                             <img src='%(Exon)s' alt='highly edited genes in exons'>
                             <figcaption>Highly edited Genes in Exon Regions</figcaption>
                         </figure>
-                    <h3>Introns</h3>
+                        %(exonHtmlTable)s
+                    <h3 id='intron'>Introns</h3>
                         <figure>
                             <img src='%(Intron)s' alt='highly edited genes in introns'>
                             <figcaption>Highly edited Genes in Intron Regions</figcaption>
                         </figure>
-                    <h3>Total</h3>
+                        %(intronHtmlTable)s
+                    <h3 id='total'>Total</h3>
                         <figure>
                             <img src='%(Total)s' alt='highly edited genes (total)'>
                             <figcaption>Highly edited Genes in 5'UTR Regions</figcaption>
                         </figure>
-                
-                
+                        %(totalHtmlTable)s
+            </div>   
+            <div class='contentBlock'>
             <h2><span class='mw-headline' id='EditedIslands'>Editing Islands</span></h2>
                 <p> Detected Editing Islands</p>
-                
+            </div>
                 
             
         </div>
