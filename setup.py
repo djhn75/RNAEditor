@@ -7,8 +7,8 @@ Usage:
 import sys, os
 from setuptools import setup
 
-root = '/dist/RnaEditor.app/Contents'
-pythonhome = os.path.join(root, 'Frameworks/Python.framework/Versions/Current')
+#root = '/dist/RnaEditor.app/Contents'
+#pythonhome = os.path.join(root, 'Frameworks/Python.framework/Versions/Current')
 
 APP = ['Main.py']
 DATA_FILES = ['ui/icons/rnaEditor_icon.pdf','ui/icons/rnaEditor_icon.png','ui/icons/rnaEditor_icon.svg','configuration.txt']

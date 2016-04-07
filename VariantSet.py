@@ -14,7 +14,7 @@ import collections
 import numpy as np
 from random import shuffle
 import sys
-import pysam
+from pysam import Samfile
 from Gene import Gene
 
 class Variant:

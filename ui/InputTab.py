@@ -90,6 +90,13 @@ class DropListWidget(QtGui.QListWidget):
             return self.takeItem(self.count()-1)
         else:
             return None
+    
+    
+    #delete the selected item
+    def _del_item(self):
+        for item in self.selectedItems():
+            self.takeItem(self.row(item))
+
 
 class InputTab(QtGui.QWidget):
     
@@ -332,6 +339,11 @@ class InputTab(QtGui.QWidget):
         self.startButton.clicked.connect(self.control.newAssay)
         
         self.connect(self.dropList, QtCore.SIGNAL("dropped"), self.control.fileDropped)
+        
+        # connect del key to lists
+        del_one = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete), self.dropList)
+        self.connect(del_one, QtCore.SIGNAL('activated()'), self.dropList._del_item)
+        
         
     def createDefaults(self,file=None):
         if file==None:

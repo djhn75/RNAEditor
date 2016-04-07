@@ -7,7 +7,7 @@ Created on May 22, 2013
 
 import argparse, os, multiprocessing
 from Helper import Helper
-import pysam 
+#from pysam import * 
 #from RnaEdit import RnaEdit
 
 

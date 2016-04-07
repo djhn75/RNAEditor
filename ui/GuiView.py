@@ -67,7 +67,7 @@ class GuiView(QtGui.QMainWindow):
         self.setMinimumSize(QtCore.QSize(900, 600))
         self.setStyleSheet("""
             .QWidget{border: 1px solid grey}
-            .DropListWidget{border: 1px solid black; background-color: #f2f2f2; background-image: url(ui/icons/inputTab_icon.png); background-repeat: no-repeat; background-position:center; background-size:cover;}
+            .DropListWidget{border: 1px solid black; background-color: #f2f2f2; background-image: url(inputTab_icon.png); background-repeat: no-repeat; background-position:center; background-size:cover;}
             """)
         
         
