@@ -73,6 +73,8 @@ class RnaEdit(QtCore.QThread):
             self.startAnalysis()
         except Exception:
             Helper.error("RnaEditor Failed",self.logFile,self.textField)
+        
+        """ At this point the RnaEditor has succesfully finished """
         cmd=["python",os.getcwd()+"/createDiagrams.py","-o", self.params.output]
         a=subprocess.call(cmd)
         self.emit(QtCore.SIGNAL("taskDone"), self.params.output+".html")
@@ -82,9 +84,12 @@ class RnaEdit(QtCore.QThread):
         START MAPPING
         """
         if self.fastqFiles[0].endswith(".bam"):
-            Helper.info("Bam File given. Skip mapping", self.logFile, self.textField)
-            self.mapFastQ=None
-            mapResultFile=self.fastqFiles[0]
+            if self.fastqFiles[0].endswith("noDup.realigned.recalibrated.bam"):
+                Helper.info("Bam File given. Skip mapping", self.logFile, self.textField)
+                self.mapFastQ=None
+                mapResultFile=self.fastqFiles[0]
+            else: 
+                Helper.error("Bam File was not mapped with RnaEditor, this is not supported. Please provide the fastq Files to RnaEditor", self.logFile, self.textField, "red")
         else:
             self.mapFastQ=MapFastq(self)
             mapResultFile=self.mapFastQ.startAnalysis()
@@ -247,11 +252,14 @@ class RnaEdit(QtCore.QThread):
     def printParameters(self):
 
         Helper.info("*** Start RnaEditor with: ***", self.logFile,self.textField) 
-        if self.params.paired:
-            Helper.info("\t FastQ-File_1: " + self.fastqFiles[0],self.logFile,self.textField)
-            Helper.info("\t FastQ-File_2: " + self.fastqFiles[1],self.logFile,self.textField)
+        if self.fastqFiles[0].endswith(".bam"):
+            Helper.info("\t Bam File: " + self.fastqFiles[0],self.logFile,self.textField)
         else:
-            Helper.info("\t FastQ-File: " + self.fastqFiles[0],self.logFile,self.textField)
+            if self.params.paired:
+                Helper.info("\t FastQ-File_1: " + self.fastqFiles[0],self.logFile,self.textField)
+                Helper.info("\t FastQ-File_2: " + self.fastqFiles[1],self.logFile,self.textField)
+            else:
+                Helper.info("\t FastQ-File: " + self.fastqFiles[0],self.logFile,self.textField)
         Helper.info("\t outfilePrefix:" + self.params.output,self.logFile,self.textField)
         Helper.info("\t refGenome:" + self.params.refGenome,self.logFile,self.textField)
         Helper.info("\t dbsnp:" + self.params.dbsnp,self.logFile,self.textField)
@@ -264,11 +272,7 @@ class RnaEdit(QtCore.QThread):
         Helper.info("\t overwrite:" + str(self.params.overwrite),self.logFile,self.textField)
         Helper.info("",self.logFile,self.textField)
 
-        def createDiagrams(self):
-            pass
-
-
-
+       
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
     parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
