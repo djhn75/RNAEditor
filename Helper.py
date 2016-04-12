@@ -237,7 +237,7 @@ class Helper():
         
         #check if infile exists
         if not os.path.isfile(infile):
-            Helper.error(infile + "does not exist, Error in previous Step",logFile,textField)
+            Helper.error(infile + " does not exist, Error in previous Step",logFile,textField)
             #Exception(infile + "does not exist, Error in previous Step")
             #exit(1)
         

@@ -213,16 +213,16 @@ class RnaEdit(QtCore.QThread):
         #Files for GATK
         
         
-        if self.params.refGenome.endswith("fastq"):
-            if not os.path.isfile(self.params.refGenome.replace(".fastq",".dict")):
-                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fastq",".dict"),self.logFile,self.textField)
+        if self.params.refGenome.endswith("fasta"):
+            if not os.path.isfile(self.params.refGenome.replace(".fasta",".dict")):
+                Helper.warning("Could not find %s" % self.params.refGenome.replace(".fasta",".dict"),self.logFile,self.textField)
                 Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome.replace(".fastq",".dict")),self.logFile,self.textField)
         elif self.params.refGenome.endswith("fa"):
             if not os.path.isfile(self.params.refGenome.replace(".fa",".dict")):
                 Helper.warning("Could not find %s" % self.params.refGenome.replace(".fa",".dict"),self.logFile,self.textField)
                 Helper.error("run: 'java -jar %spicard-tools/CreateSequenceDictionary.jar R=%s  O= %s' to create it" % (self.params.sourceDir,self.params.refGenome,self.params.refGenome.replace(".fa",".dict")),self.logFile,self.textField)
         else:
-            Helper.error("RefGenome has wrong suffix. Either '.fa' or '.fastq'")
+            Helper.error("RefGenome has wrong suffix. Either '.fa' or '.fasta'")
         if not os.path.isfile(self.params.refGenome+".fai"):
             Helper.warning("Could not find %s.sai" % self.params.refGenome,self.logFile,self.textField)
             Helper.error("run: 'samtools faidx %s' to create it" % self.params.refGenome,self.logFile,self.textField)

@@ -76,7 +76,7 @@ class GuiControll(object):
         try:
             assay = RnaEdit(fastqFiles, parameters,runTab.commandBox)
         except Exception,err:
-            Helper.error(err+"\ncreating rnaEditor Object Failed!" ,textField=runTab.commandBox)
+            Helper.error(str(err)+"\n creating rnaEditor Object Failed!" ,textField=runTab.commandBox)
         
         
         Helper.runningThreads.append(assay)
