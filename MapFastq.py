@@ -126,10 +126,10 @@ class MapFastq(object):
         Helper.proceedCommand("Index Bam File", cmd, samFile, bamFile+".bai", self.rnaEdit)
         
         #mark PCR duplicates
-        Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
+        #Helper.status("Remove Duplicates", self.rnaEdit.logFile,self.rnaEdit.textField)
         markedFile=self.rnaEdit.params.output+".noDup.bam"
         cmd=["java","-Xmx16G","-jar",self.rnaEdit.params.sourceDir + "picard-tools/MarkDuplicates.jar","INPUT=" + bamFile, "OUTPUT=" + markedFile, "METRICS_FILE="+self.rnaEdit.params.output+".pcr.metrics", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
-        Helper.proceedCommand("mark PCR duplicates", cmd, bamFile, markedFile, self.rnaEdit)
+        Helper.proceedCommand("Remove PCR duplicates", cmd, bamFile, markedFile, self.rnaEdit)
         
         
         """if self.rnaEdit.params.paired == False:
