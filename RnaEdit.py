@@ -46,7 +46,7 @@ class RnaEdit(QtCore.QThread):
         #set directory where the outputFiles should be written to
         if self.params.output=="default":
             if self.fastqFiles[0].endswith("noDup.realigned.recalibrated.bam"):
-                self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind("noDup.realigned.recalibrated.bam")]
+                self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".noDup.realigned.recalibrated.bam")]
                 self.outdir=fastqFiles[0][0:fastqFiles[0].rfind("/")+1]
             else:
                 self.sampleName=fastqFiles[0][fastqFiles[0].rfind("/")+1:fastqFiles[0].rfind(".")]
