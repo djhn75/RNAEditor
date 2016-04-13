@@ -83,7 +83,7 @@ class RnaEdit(QtCore.QThread):
         """
         START MAPPING
         """
-        if self.fastqFiles[0].endswith(".bam"):
+        if self.fastqFiles[0].endswith("bam"):
             if self.fastqFiles[0].endswith("noDup.realigned.recalibrated.bam"):
                 Helper.info("Bam File given. Skip mapping", self.logFile, self.textField)
                 self.mapFastQ=None
