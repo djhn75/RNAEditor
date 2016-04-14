@@ -158,8 +158,17 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         
         #set values to 0 if they dont exist in the opposite file
         orderList = ["3'UTR","5'UTR","coding-exon","noncoding-exon","intron","intergenic"]
-        aluPositions=[counts1[key] for key in orderList]
-        nonAluPositions=[counts2[key] for key in orderList]
+        aluPositions,nonAluPositions = [],[]
+        for key in orderList:
+            aluPositions.append(counts1[key]) if key in counts1.keys() else aluPositions.append(0.000000001)
+            nonAluPositions.append(counts2[key]) if key in counts2.keys() else nonAluPositions.append(0.00000001)
+            """if key in counts1.keys():
+                aluPositions.append(counts1[key])
+            else:
+                aluPositions.append(0)
+        for key in orderList:
+            nonAluPositions.append(counts2[key]) 
+            """
         sumAlu,sumNonAlu = sum(aluPositions),sum(nonAluPositions)
         #aluPositions=[counts1["3'UTR"],counts1["5'UTR"],counts1["coding-exon"],counts1["noncoding-exon"],counts1["intron"],counts1["intergenic"]]
         #nonAluPositions=[counts2["3'UTR"],counts2["5'UTR"],counts2["coding-exon"],counts2["noncoding-exon"],counts2["intron"],counts2["intergenic"]]
@@ -176,10 +185,12 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         file.write("Position    alu    nonAlu\n")
         stats.editingPositionHTMLTable="<table><tr><th>Editing Position</th><th>Total Alu</th><th>Alu Percentage</th><th>Total Non Alu</th><th>Non Alu Percentage</th></tr>"
         for key in orderList:
-            aluNumber=str(counts1[key])
-            nonAluNumber=str(counts2[key])
-            aluPercentage= str(round(float(counts1[key])/sumAlu,3)*100)+" %"
-            nonAluPercentage= str(round(float(counts2[key])/sumNonAlu,3)*100)+" %"
+            alu = counts1[key] if key in counts1.keys() else 0
+            nonAlu = counts2[key] if key in counts2.keys() else 0
+            aluNumber=str(counts1[key]) if key in counts1.keys() else "0"
+            nonAluNumber=str(counts2[key]) if key in counts2.keys() else "0"
+            aluPercentage= str(round(float(alu)/sumAlu,3)*100)+" %"
+            nonAluPercentage= str(round(float(nonAlu)/sumNonAlu,3)*100)+" %"
             file.write("\t".join([str(key),aluNumber,nonAluNumber,"\n"]))
             stats.editingPositionHTMLTable+="<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(key,aluNumber, aluPercentage,nonAluNumber, nonAluPercentage)
         file.close()
@@ -193,7 +204,8 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         #################################################
         sumDict,totalGenes=parseSummaryFile(output+".editingSites.summary", logFile, textField)
         stats.percentageEditing = round(float(len(sumDict))/float(totalGenes)*100.0, 2)
-        del sumDict["intergenic"]
+        if "intergenic" in sumDict.keys():
+            del sumDict["intergenic"] 
         fileName=stats.outdir+"html/"+stats.sampleName+".editedGenes(3UTR).png"
         stats.utr3HtmlTable = topGenesDict = topGenes(sumDict,fileName, geneNumber, 1)
            
