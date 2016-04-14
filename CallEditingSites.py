@@ -211,7 +211,8 @@ class CallEditingSites(object):
                         #loop over reads of that position
                         for pileupread in x.pileups:
                             if not pileupread.is_del and not pileupread.is_refskip:
-                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                #if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt:
                                     alignements.append(pileupread.alignment.seq)
                 
                 if len(alignements)>=minMissmatch:
