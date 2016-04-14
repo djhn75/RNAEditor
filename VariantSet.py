@@ -807,16 +807,16 @@ class VariantSet(object):
             keepSNP=False
             varPos=variant.position-1
             iter = bamFile.pileup(variant.chromosome, variant.position-1, variant.position)
+            #walks up the region wich overlap this position
             for x in iter:
                 if x.pos == varPos:
-                    
-                    
-                    for pileupread in x.pileups:
+                    for pileupread in x.pileups: #walk through the single reads
                         if not pileupread.is_del and not pileupread.is_refskip:
                             distance=abs(pileupread.alignment.alen-pileupread.query_position) if pileupread.alignment.is_reverse else pileupread.query_position
                             if distance >= minDistance:
                                 #check readBase and Base Quality
-                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                #if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt:
                                     keepSNP=True
                                     
             if keepSNP==False:

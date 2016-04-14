@@ -5,20 +5,9 @@ Created on 05.06.2014
 '''
 
 #!/usr/bin/env python
+from VariantSet import VariantSet
 
+v = VariantSet("/media/Storage/bio-data/Eva/rnaEditor/1024_Endothelzellen_LNA92a_R1.trimmed/1024_Endothelzellen_LNA92a_R1.trimmed.noSNPs.vcf")
 
-class Stats():
-    pass
-    
-
-def a():
-    d.c=56
-
-d = Stats()
-
-a()
-print "LK"
-d.y=4
-print d.y
-print d.c
-
+bamFile="/media/Storage/bio-data/Eva/rnaEditor/1024_Endothelzellen_LNA92a_R1.trimmed/1024_Endothelzellen_LNA92a_R1.trimmed.noDup.realigned.recalibrated.bam"
+noEdges = v.removeEdgeMismatches(bamFile, 3, 25)
