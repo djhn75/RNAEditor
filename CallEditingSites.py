@@ -48,72 +48,7 @@ class CallEditingSites(object):
         Helper.info( "\t overwrite:" + str(self.rnaEdit.params.overwrite), self.rnaEdit.logFile, self.rnaEdit.textField) 
     
     
-    #TODO: delete this function (old and slow) got replace by VariantSet.removerEdgeMismatches
-    def removeEdgeMissmatches(self,variants,bamFile,minDistance, minBaseQual):
-        '''delete variants from Bam file which appear near read edges'''
-        #Loop through vcf-File
-            #call overlapping reads with samtools view
-            #loop over reads
-                #discard variants wich appear ONLY near edges
-                #write the rest to the output file
-        startTime=Helper.getTime()
-        minDistance=int(minDistance)
-        
-        counter=0    
-        
-        num_lines = len(variants.variantDict)
-        Helper.info(" [%s] remove Missmatches from the first %s bp from read edges" % (startTime.strftime("%c"),str(minDistance)),self.rnaEdit.logFile,self.rnaEdit.textField)
-        
-        for varKey in variants.variantDict.keys():
-            variant = variants.variantDict[varKey]
-            snpPos = variant.position
-            position=variant.chromosome+":" + str(snpPos) + "-" + str(snpPos) 
-            #line[1]+"-"+line[1]
-            keepSNP=False
-            
-            command = [self.rnaEdit.params.sourceDir+"samtools", "view", bamFile, position] 
-            samout = Helper.getCommandOutput(command).splitlines() #get the reads wich are overlapping the snp region
-            for samLine in samout: #loop over reads
-                samfields=samLine.split()
-                try:
-                    flag,startPos,mapQual,cigar,sequence,seqQual = samfields[1],int(samfields[3]),samfields[4],samfields[5],samfields[9],samfields[10]
-                except ValueError:
-                    raise ValueError("Error in line '%s'" % " ".join(samfields))
-
-                readPos=0
-                mmReadPos=0
-                cigarNums=re.split("[MIDNSHP]", cigar)[:-1]
-                cigarLetters=re.split("[0-9]+",cigar)[1:]
-                
-                #loop over read cigar (check insertions,deletions and skipped regions) 
-                for i in range(len(cigarLetters)): #parse over single read
-                    if cigarLetters[i] in {"I","S","H"}: #Insertion, Soft Clipping and Hard Clipping
-                        readPos = readPos + int(cigarNums[i])
-                    elif cigarLetters[i] in {"D","N"}: #Deletions and skipped Regions
-                        startPos = startPos + int(cigarNums[i])
-                    elif cigarLetters[i] in {"M"}: #Matches
-                        for j in range(int(cigarNums[i])):
-                            if startPos == snpPos:
-                                mmReadPos = readPos
-                            readPos += 1
-                            startPos += 1         
-                if mmReadPos != 0: #happens when snp is in non matching regions (like Insertion, Soft Clipping and Hard Clipping, Deletions ans skipped regions)    
-                    edgeDistance = snpPos - startPos
-                
-                    #only remove the snps from first minDistance bases
-                    revStrand = int(flag) & 16 #check if 5th bit is set (results: 0 = +strand; 16= -strand)
-                    if (revStrand == 0 and mmReadPos > minDistance) or (revStrand == 16 and mmReadPos < readPos - minDistance):
-                        mmBaseQual= ord(seqQual[mmReadPos])
-                        mmReadBase= sequence[mmReadPos]
-                        if(mmBaseQual >= minBaseQual + 33) and (mmReadBase == variant.alt): #check for quality of the base and the read contains the missmatch
-                            keepSNP=True
-
-            if not keepSNP:
-                del variants.variantDict[varKey]    
-            counter+=1
-            if counter % 10000 == 0: #print out current status
-                Helper.status(str(counter) + " of " + str(num_lines) + " missmatches finished",self.rnaEdit.logFile,self.rnaEdit.textField)
-          
+  
     def removeIntronicSpliceJunctions(self,variants,genome,distance=4): 
         '''
         remove variant near splice junctions and returns the other variants
@@ -211,8 +146,8 @@ class CallEditingSites(object):
                         #loop over reads of that position
                         for pileupread in x.pileups:
                             if not pileupread.is_del and not pileupread.is_refskip:
-                                #if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
-                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt:
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                #if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt:
                                     alignements.append(pileupread.alignment.seq)
                 
                 if len(alignements)>=minMissmatch:
@@ -224,6 +159,7 @@ class CallEditingSites(object):
                 counter += 1
                 if counter % 1000 == 0:
                     sys.stdout.write("\r" + str(counter) + " of " + str(mmNumberTotal) + " variants done")
+                    Helper.info(str(counter) + " of " + str(mmNumberTotal) + " variants done", self.rnaEdit.logFile,self.rnaEdit.textField)
                     sys.stdout.flush()
         
             Helper.info("\n created fasta file " + tempFasta,self.rnaEdit.logFile,self.rnaEdit.textField)
@@ -420,10 +356,12 @@ class CallEditingSites(object):
             variants.deleteOverlapsFromVcf(self.rnaEdit.params.dbsnp)
             
             '''delete variants from 1000 Genome Project'''
-            variants.deleteOverlapsFromVcf(self.rnaEdit.params.omni)
+            if self.rnaEdit.params.omni != "None":
+                variants.deleteOverlapsFromVcf(self.rnaEdit.params.omni)
             
             '''delete variants from UW exome calls'''
-            variants.deleteOverlapsFromVcf(self.rnaEdit.params.esp)
+            if self.rnaEdit.params.esp != "None":
+                variants.deleteOverlapsFromVcf(self.rnaEdit.params.esp)
             
             '''annotate all Variants'''
             #variants.annotateVariantDict(self.genome)

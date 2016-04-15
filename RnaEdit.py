@@ -230,11 +230,11 @@ class RnaEdit(QtCore.QThread):
         #SNP databases
         if not os.path.isfile(self.params.dbsnp):
             Helper.error("Could not find dbSNP database %s: " % self.params.dbsnp,self.logFile,self.textField)
-        if not os.path.isfile(self.params.hapmap) and self.params.hapmap != "":
+        if not os.path.isfile(self.params.hapmap) and self.params.hapmap != "None":
             Helper.error("Could not find Hapmap database %s: " % self.params.hapmap,self.logFile,self.textField)
-        if not os.path.isfile(self.params.omni) and self.params.omni != "":
+        if not os.path.isfile(self.params.omni) and self.params.omni != "None":
             Helper.error("Could not find Omni database %s: " % self.params.omni,self.logFile,self.textField)
-        if not os.path.isfile(self.params.esp) and self.params.esp != "":
+        if not os.path.isfile(self.params.esp) and self.params.esp != "None":
             Helper.error("Could not find 1000G database %s: " % self.params.esp,self.logFile,self.textField)
             
         #region Files

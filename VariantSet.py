@@ -815,8 +815,8 @@ class VariantSet(object):
                             distance=abs(pileupread.alignment.alen-pileupread.query_position) if pileupread.alignment.is_reverse else pileupread.query_position
                             if distance >= minDistance:
                                 #check readBase and Base Quality
-                                #if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
-                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt:
+                                if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt and pileupread.alignment.query_qualities[pileupread.query_position]>=minBaseQual:
+                                #if pileupread.alignment.query_sequence[pileupread.query_position] == variant.alt:
                                     keepSNP=True
                                     
             if keepSNP==False:
