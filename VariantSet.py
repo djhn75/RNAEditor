@@ -223,7 +223,7 @@ class VariantSet(object):
                 attributeString+= key+"="+str(v.attributes[key])+";"
             outfile.write("\t".join([v.chromosome,str(v.position),v.id,v.ref,v.alt,str(v.qual),v.filter, attributeString+"\n"]))    
 
-    #TODO: Finish this function
+
     def topGenes(self,sumDict, fileName,number=20,value=4):
         if number > len(sumDict):
             if len(sumDict)<1:
