@@ -1,0 +1,2393 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100%"
+   height="100%"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="rna.svg">
+  <metadata
+     id="metadata950">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs948" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1781"
+     inkscape:window-height="1079"
+     id="namedview946"
+     showgrid="false"
+     inkscape:zoom="2.0320852"
+     inkscape:cx="662.37706"
+     inkscape:cy="-1.6591155"
+     inkscape:window-x="1280"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g9438" />
+  <g
+     id="g7016"
+     transform="translate(-180.08752,-240.0226)">
+    <g
+       id="g9438"
+       transform="translate(666.20482,16.186708)">
+      <line
+         id="line8490"
+         y2="419.7832"
+         x2="119.89125"
+         y1="429.7832"
+         x1="119.89125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8492"
+         y2="399.7832"
+         x2="119.89125"
+         y1="409.7832"
+         x1="119.89125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8494"
+         y2="379.7832"
+         x2="119.89125"
+         y1="389.7832"
+         x1="119.89125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8496"
+         y2="359.7832"
+         x2="119.89125"
+         y1="369.7832"
+         x1="119.89125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8498"
+         y2="346.09106"
+         x2="111.07121"
+         y1="351.27359"
+         x1="116.32999"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8500"
+         y2="330.62009"
+         x2="104.30492"
+         y1="337.75183"
+         x1="106.21586"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8502"
+         y2="313.85284"
+         x2="106.30315"
+         y1="320.97043"
+         x1="104.34017"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8504"
+         y2="296.04242"
+         x2="100.13251"
+         y1="304.70267"
+         x1="105.13249"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8506"
+         y2="278.72189"
+         x2="90.132523"
+         y1="287.38214"
+         x1="95.132515"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8508"
+         y2="261.40137"
+         x2="80.132545"
+         y1="270.06161"
+         x1="85.132538"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8510"
+         y2="244.08084"
+         x2="70.132561"
+         y1="252.7411"
+         x1="75.132553"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8512"
+         y2="226.76033"
+         x2="60.132584"
+         y1="235.42059"
+         x1="65.132576"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8514"
+         y2="209.4398"
+         x2="50.132603"
+         y1="218.10007"
+         x1="55.132591"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8516"
+         y2="202.75932"
+         x2="35.355511"
+         y1="204.16954"
+         x1="42.721786"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8518"
+         y2="193.96443"
+         x2="20.720798"
+         y1="198.67729"
+         x1="26.555151"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8520"
+         y2="179.31419"
+         x2="11.951781"
+         y1="186.21922"
+         x1="14.879474"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8522"
+         y2="162.26062"
+         x2="11.114687"
+         y1="169.73079"
+         x1="10.445873"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8524"
+         y2="146.82202"
+         x2="18.406757"
+         y1="153.09715"
+         x1="14.299028"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8526"
+         y2="136.63614"
+         x2="32.109779"
+         y1="140.23764"
+         x1="25.531029"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8528"
+         y2="119.57056"
+         x2="39.64994"
+         y1="129.34695"
+         x1="37.547035"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8530"
+         y2="100.01778"
+         x2="43.855755"
+         y1="109.79417"
+         x1="41.75285"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8532"
+         y2="86.311699"
+         x2="36.047516"
+         y1="91.602425"
+         x1="41.363327"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8534"
+         y2="71.234207"
+         x2="27.724577"
+         y1="78.164391"
+         x1="30.592009"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8536"
+         y2="54.114151"
+         x2="25.852194"
+         y1="61.61409"
+         x1="25.828648"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8538"
+         y2="37.594082"
+         x2="30.719378"
+         y1="44.50613"
+         x1="27.808489"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8540"
+         y2="24.223944"
+         x2="41.574856"
+         y1="29.481194"
+         x1="36.225933"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8542"
+         y2="16.067469"
+         x2="56.743046"
+         y1="18.858444"
+         x1="49.781719"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8544"
+         y2="14.383641"
+         x2="73.882675"
+         y1="14.277544"
+         x1="66.383446"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8546"
+         y2="19.432369"
+         x2="90.348167"
+         y1="16.445574"
+         x1="83.468582"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8548"
+         y2="30.434359"
+         x2="103.59801"
+         y1="25.027893"
+         x1="98.399956"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8550"
+         y2="45.69141"
+         x2="111.58703"
+         y1="38.69978"
+         x1="108.87285"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8552"
+         y2="62.848534"
+         x2="113.0821"
+         y1="55.350929"
+         x1="113.27074"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8554"
+         y2="79.257454"
+         x2="107.85244"
+         y1="72.411163"
+         x1="110.91477"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8556"
+         y2="92.385391"
+         x2="96.705269"
+         y1="87.247162"
+         x1="102.16862"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8558"
+         y2="100.20599"
+         x2="81.361206"
+         y1="97.568939"
+         x1="88.382286"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8560"
+         y2="116.62862"
+         x2="73.526115"
+         y1="106.85223"
+         x1="75.629021"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8562"
+         y2="136.1814"
+         x2="69.320297"
+         y1="126.40501"
+         x1="71.423203"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8564"
+         y2="151.04951"
+         x2="75.79554"
+         y1="145.06157"
+         x1="71.279526"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8566"
+         y2="167.38997"
+         x2="80.74662"
+         y1="159.98088"
+         x1="79.582375"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8568"
+         y2="184.13675"
+         x2="77.419685"
+         y1="177.05231"
+         x1="79.881546"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8570"
+         y2="201.8501"
+         x2="83.278435"
+         y1="193.18983"
+         x1="78.278442"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8572"
+         y2="219.17062"
+         x2="93.278419"
+         y1="210.51036"
+         x1="88.278427"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8574"
+         y2="236.49113"
+         x2="103.2784"
+         y1="227.83087"
+         x1="98.278404"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8576"
+         y2="253.81166"
+         x2="113.27838"
+         y1="245.1514"
+         x1="108.27839"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8578"
+         y2="271.13217"
+         x2="123.27836"
+         y1="262.47192"
+         x1="118.27837"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8580"
+         y2="288.4527"
+         x2="133.27834"
+         y1="279.79245"
+         x1="128.27835"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8582"
+         y2="297.91864"
+         x2="147.56496"
+         y1="293.16092"
+         x1="139.84267"
+         style="stroke:#595959;stroke-width:1.20936656"
+         inkscape:transform-center-x="0.26932702"
+         inkscape:transform-center-y="-0.80798105" />
+      <line
+         id="line8584"
+         y2="306.10663"
+         x2="161.49687"
+         y1="300.77435"
+         x1="156.2227"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8586"
+         y2="309.66147"
+         x2="180.01299"
+         y1="309.66147"
+         x1="170.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8588"
+         y2="309.66147"
+         x2="200.01299"
+         y1="309.66147"
+         x1="190.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8590"
+         y2="309.66147"
+         x2="220.01299"
+         y1="309.66147"
+         x1="210.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8592"
+         y2="309.66147"
+         x2="240.01299"
+         y1="309.66147"
+         x1="230.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8594"
+         y2="309.66147"
+         x2="260.013"
+         y1="309.66147"
+         x1="250.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8596"
+         y2="309.66147"
+         x2="280.013"
+         y1="309.66147"
+         x1="270.013"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8598"
+         y2="303.43124"
+         x2="291.24323"
+         y1="306.12595"
+         x1="288.54852"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8600"
+         y2="284.89572"
+         x2="294.77875"
+         y1="294.89572"
+         x1="294.77875"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8602"
+         y2="267.69632"
+         x2="292.05331"
+         y1="275.01599"
+         x1="293.6886"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8604"
+         y2="249.24277"
+         x2="284.57953"
+         y1="258.29199"
+         x1="288.83527"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8606"
+         y2="245.83534"
+         x2="269.34848"
+         y1="245.50151"
+         x1="277.54404"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8608"
+         y2="237.62427"
+         x2="254.17932"
+         y1="242.85204"
+         x1="260.49979"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8610"
+         y2="221.37944"
+         x2="248.38007"
+         y1="229.49211"
+         x1="249.58932"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8612"
+         y2="204.58362"
+         x2="238.44693"
+         y1="212.48392"
+         x1="244.57761"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8614"
+         y2="188.78299"
+         x2="226.18558"
+         y1="196.68329"
+         x1="232.31625"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8616"
+         y2="172.98238"
+         x2="213.92422"
+         y1="180.88269"
+         x1="220.0549"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8618"
+         y2="157.18178"
+         x2="201.66287"
+         y1="165.08208"
+         x1="207.79355"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8620"
+         y2="147.00784"
+         x2="187.75711"
+         y1="150.74211"
+         x1="194.26137"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8622"
+         y2="132.45605"
+         x2="180.14191"
+         y1="139.69345"
+         x1="182.10931"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8624"
+         y2="116.77573"
+         x2="185.02788"
+         y1="123.28902"
+         x1="181.30931"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8626"
+         y2="109.12545"
+         x2="199.56122"
+         y1="111.11033"
+         x1="192.32861"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8628"
+         y2="113.97357"
+         x2="215.25327"
+         y1="110.27073"
+         x1="208.73108"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8630"
+         y2="128.48842"
+         x2="222.93866"
+         y1="121.26063"
+         x1="220.93634"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8632"
+         y2="145.15738"
+         x2="233.46957"
+         y1="137.25706"
+         x1="227.3389"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8634"
+         y2="160.95801"
+         x2="245.7309"
+         y1="153.05769"
+         x1="239.60022"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8636"
+         y2="176.75861"
+         x2="257.99225"
+         y1="168.85831"
+         x1="251.86157"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8638"
+         y2="192.55923"
+         x2="270.2536"
+         y1="184.65892"
+         x1="264.12292"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8640"
+         y2="200.56091"
+         x2="284.01678"
+         y1="198.28026"
+         x1="277.99484"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8642"
+         y2="212.66704"
+         x2="295.10922"
+         y1="206.78513"
+         x1="291.49725"
+         style="stroke:#595959;stroke-width:1.07191098" />
+      <line
+         id="line8644"
+         y2="228.09178"
+         x2="306.39127"
+         y1="220.00539"
+         x1="300.50824"
+         style="stroke:#595959;stroke-width:1"
+         inkscape:transform-center-x="0.78702136"
+         inkscape:transform-center-y="-0.76903711" />
+      <line
+         id="line8646"
+         y2="258.86496"
+         x2="328.03119"
+         y1="252.93724"
+         x1="323.43637"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8648"
+         y2="275.01602"
+         x2="328.36893"
+         y1="267.69644"
+         x1="330.00421"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8650"
+         y2="294.89572"
+         x2="327.27875"
+         y1="284.89572"
+         x1="327.27875"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8652"
+         y2="309.81262"
+         x2="335.85144"
+         y1="303.67831"
+         x1="330.54861"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8654"
+         y2="326.61945"
+         x2="340.60641"
+         y1="318.56302"
+         x1="339.68777"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8656"
+         y2="343.17953"
+         x2="335.0528"
+         y1="336.00888"
+         x1="338.8385"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8658"
+         y2="353.72122"
+         x2="321.12616"
+         y1="349.93552"
+         x1="328.29678"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8660"
+         y2="354.5705"
+         x2="303.6803"
+         y1="355.48914"
+         x1="311.73672"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8662"
+         y2="345.43134"
+         x2="288.79556"
+         y1="350.73419"
+         x1="294.9299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8664"
+         y2="342.16147"
+         x2="270.013"
+         y1="342.16147"
+         x1="280.013"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8666"
+         y2="342.16147"
+         x2="250.01299"
+         y1="342.16147"
+         x1="260.013"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8668"
+         y2="342.16147"
+         x2="230.01299"
+         y1="342.16147"
+         x1="240.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8670"
+         y2="342.16147"
+         x2="210.01299"
+         y1="342.16147"
+         x1="220.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8672"
+         y2="342.16147"
+         x2="190.01299"
+         y1="342.16147"
+         x1="200.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8674"
+         y2="342.16147"
+         x2="170.01299"
+         y1="342.16147"
+         x1="180.01299"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8676"
+         y2="351.24768"
+         x2="155.92679"
+         y1="345.69702"
+         x1="161.47745"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8678"
+         y2="369.7832"
+         x2="152.39125"
+         y1="359.7832"
+         x1="152.39125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8680"
+         y2="389.7832"
+         x2="152.39125"
+         y1="379.7832"
+         x1="152.39125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8682"
+         y2="409.7832"
+         x2="152.39125"
+         y1="399.7832"
+         x1="152.39125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8684"
+         y2="429.7832"
+         x2="152.39125"
+         y1="419.7832"
+         x1="152.39125"
+         style="stroke:#595959;stroke-width:1" />
+      <line
+         id="line8686"
+         y2="434.7832"
+         x2="147.39125"
+         y1="434.7832"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <circle
+         id="circle8688"
+         r="2.75"
+         cy="434.7832"
+         cx="136.14125"
+         style="fill:#ffffff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8690"
+         r="2.75"
+         cy="434.7832"
+         cx="136.14125"
+         style="fill:none;stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8692"
+         y2="413.5332"
+         x2="147.39125"
+         y1="413.5332"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8694"
+         y2="416.0332"
+         x2="147.39125"
+         y1="416.0332"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8696"
+         y2="393.5332"
+         x2="147.39125"
+         y1="393.5332"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8698"
+         y2="396.0332"
+         x2="147.39125"
+         y1="396.0332"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8700"
+         y2="374.7832"
+         x2="147.39125"
+         y1="374.7832"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8702"
+         y2="353.5332"
+         x2="147.39125"
+         y1="353.5332"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8704"
+         y2="356.0332"
+         x2="147.39125"
+         y1="356.0332"
+         x1="124.89125"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8706"
+         y2="295.28281"
+         x2="131.44821"
+         y1="306.53281"
+         x1="111.96262"
+         style="stroke:#0000ff;stroke-width:1" />
+      <circle
+         id="circle8708"
+         r="2.75"
+         cy="300.90781"
+         cx="121.70541"
+         style="fill:#0000ff;stroke:none;stroke-width:1" />
+      <line
+         id="line8710"
+         y2="276.87976"
+         x2="120.82323"
+         y1="288.12976"
+         x1="101.33764"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8712"
+         y2="279.04483"
+         x2="122.07322"
+         y1="290.2948"
+         x1="102.58764"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8714"
+         y2="259.55927"
+         x2="110.82324"
+         y1="270.80923"
+         x1="91.337662"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8716"
+         y2="261.7243"
+         x2="112.07324"
+         y1="272.9743"
+         x1="92.587662"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8718"
+         y2="242.23872"
+         x2="100.82327"
+         y1="253.48871"
+         x1="81.337677"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8720"
+         y2="244.40379"
+         x2="102.07327"
+         y1="255.65378"
+         x1="82.587677"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8722"
+         y2="226.00075"
+         x2="91.44828"
+         y1="237.25072"
+         x1="71.9627"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8724"
+         y2="207.59769"
+         x2="80.823303"
+         y1="218.84767"
+         x1="61.337719"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8726"
+         y2="209.76276"
+         x2="82.073303"
+         y1="221.01274"
+         x1="62.587715"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8728"
+         y2="191.35971"
+         x2="71.448318"
+         y1="202.60968"
+         x1="51.962738"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8730"
+         y2="140.01814"
+         x2="63.38065"
+         y1="135.28661"
+         x1="41.383774"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8732"
+         y2="120.46536"
+         x2="67.586464"
+         y1="115.73383"
+         x1="45.589588"
+         style="stroke:#0000ff;stroke-width:1" />
+      <circle
+         id="circle8734"
+         r="2.75"
+         cy="118.09959"
+         cx="56.588028"
+         style="fill:#0000ff;stroke:none;stroke-width:1" />
+      <line
+         id="line8736"
+         y2="100.91259"
+         x2="71.792282"
+         y1="96.181046"
+         x1="49.795403"
+         style="stroke:#0000ff;stroke-width:1" />
+      <circle
+         id="circle8738"
+         r="2.75"
+         cy="98.546814"
+         cx="60.793842"
+         style="fill:#0000ff;stroke:none;stroke-width:1" />
+      <line
+         id="line8740"
+         y2="337.16147"
+         x2="166.26299"
+         y1="314.66147"
+         x1="166.26299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8742"
+         y2="337.16147"
+         x2="163.76299"
+         y1="314.66147"
+         x1="163.76299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8744"
+         y2="337.16147"
+         x2="185.01299"
+         y1="314.66147"
+         x1="185.01299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8746"
+         y2="337.16147"
+         x2="206.26299"
+         y1="314.66147"
+         x1="206.26299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8748"
+         y2="337.16147"
+         x2="203.76299"
+         y1="314.66147"
+         x1="203.76299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8750"
+         y2="337.16147"
+         x2="226.26299"
+         y1="314.66147"
+         x1="226.26299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8752"
+         y2="337.16147"
+         x2="223.76299"
+         y1="314.66147"
+         x1="223.76299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8754"
+         y2="337.16147"
+         x2="246.26299"
+         y1="314.66147"
+         x1="246.26299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8756"
+         y2="337.16147"
+         x2="243.76299"
+         y1="314.66147"
+         x1="243.76299"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8758"
+         y2="337.16147"
+         x2="266.263"
+         y1="314.66147"
+         x1="266.263"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8760"
+         y2="337.16147"
+         x2="263.763"
+         y1="314.66147"
+         x1="263.763"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8762"
+         y2="337.16147"
+         x2="286.263"
+         y1="314.66147"
+         x1="286.263"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8764"
+         y2="337.16147"
+         x2="283.763"
+         y1="314.66147"
+         x1="283.763"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8766"
+         y2="298.64572"
+         x2="322.27875"
+         y1="298.64572"
+         x1="299.77875"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8768"
+         y2="301.14572"
+         x2="322.27875"
+         y1="301.14572"
+         x1="299.77875"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8770"
+         y2="279.89572"
+         x2="322.27875"
+         y1="279.89572"
+         x1="299.77875"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8772"
+         y2="249.98216"
+         x2="315.31659"
+         y1="259.55759"
+         x1="294.95581"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8774"
+         y2="252.24446"
+         x2="316.38052"
+         y1="261.81989"
+         x1="296.01974"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8776"
+         y2="220.79564"
+         x2="295.02518"
+         y1="240.84305"
+         x1="284.80994"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8778"
+         y2="199.57472"
+         x2="269.36877"
+         y1="213.36874"
+         x1="251.59308"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8780"
+         y2="182.78656"
+         x2="256.34109"
+         y1="196.58058"
+         x1="238.5654"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8782"
+         y2="184.76164"
+         x2="257.87378"
+         y1="198.55566"
+         x1="240.09808"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8784"
+         y2="167.97348"
+         x2="244.8461"
+         y1="181.7675"
+         x1="227.0704"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8786"
+         y2="151.18533"
+         x2="231.81842"
+         y1="164.97935"
+         x1="214.04272"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8788"
+         y2="153.16042"
+         x2="233.35107"
+         y1="166.95444"
+         x1="215.57538"
+         style="stroke:#0000ff;stroke-width:1" />
+      <line
+         id="line8790"
+         y2="136.37227"
+         x2="220.32339"
+         y1="150.16628"
+         x1="202.5477"
+         style="stroke:#0000ff;stroke-width:1" />
+      <circle
+         id="circle8792"
+         r="5"
+         cy="434.7832"
+         cx="119.89125"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8794"
+         r="5"
+         cy="434.7832"
+         cx="119.89125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8798"
+         r="5"
+         cy="414.7832"
+         cx="119.89125"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8800"
+         r="5"
+         cy="414.7832"
+         cx="119.89125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8804"
+         r="5"
+         cy="394.7832"
+         cx="119.89125"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8806"
+         r="5"
+         cy="394.7832"
+         cx="119.89125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8810"
+         r="5"
+         cy="374.7832"
+         cx="119.89125"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8812"
+         r="5"
+         cy="374.7832"
+         cx="119.89125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8816"
+         r="5"
+         cy="354.7832"
+         cx="119.89125"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8818"
+         r="5"
+         cy="354.7832"
+         cx="119.89125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8822"
+         r="5"
+         cy="342.58145"
+         cx="107.50995"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8824"
+         r="5"
+         cy="342.58145"
+         cx="107.50995"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8828"
+         r="5"
+         cy="325.79047"
+         cx="103.01083"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8830"
+         r="5"
+         cy="325.79047"
+         cx="103.01083"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8834"
+         r="5"
+         cy="309.03281"
+         cx="107.63249"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8836"
+         r="5"
+         cy="309.03281"
+         cx="107.63249"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8840"
+         r="5"
+         cy="291.71228"
+         cx="97.632507"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8842"
+         r="5"
+         cy="291.71228"
+         cx="97.632507"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8846"
+         r="5"
+         cy="274.39175"
+         cx="87.63253"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8848"
+         r="5"
+         cy="274.39175"
+         cx="87.63253"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8852"
+         r="5"
+         cy="257.07123"
+         cx="77.632545"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <text
+         id="text8856"
+         font-size="7.5"
+         y="260.07123"
+         x="77.632545"
+         style="font-size:7.5px;font-family:Verdana;text-anchor:middle;fill:#000000">C</text>
+      <circle
+         id="circle8858"
+         r="5"
+         cy="239.75072"
+         cx="67.632568"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8860"
+         r="5"
+         cy="239.75072"
+         cx="67.632568"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8864"
+         r="5"
+         cy="222.43019"
+         cx="57.632587"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8866"
+         r="5"
+         cy="222.43019"
+         cx="57.632587"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8870"
+         r="5"
+         cy="205.10968"
+         cx="47.632607"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8872"
+         r="5"
+         cy="205.10968"
+         cx="47.632607"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8876"
+         r="5"
+         cy="201.81918"
+         cx="30.444693"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8878"
+         r="5"
+         cy="201.81918"
+         cx="30.444693"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8882"
+         r="5"
+         cy="190.82254"
+         cx="16.831255"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8884"
+         r="5"
+         cy="190.82254"
+         cx="16.831255"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8888"
+         r="5"
+         cy="174.71088"
+         cx="10"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8890"
+         r="5"
+         cy="174.71088"
+         cx="10"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8894"
+         r="5"
+         cy="157.28055"
+         cx="11.56056"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8896"
+         r="5"
+         cy="157.28055"
+         cx="11.56056"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8900"
+         r="5"
+         cy="142.63863"
+         cx="21.145226"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8902"
+         r="5"
+         cy="142.63863"
+         cx="21.145226"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8906"
+         r="5"
+         cy="134.23515"
+         cx="36.495583"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8908"
+         r="5"
+         cy="134.23515"
+         cx="36.495583"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8912"
+         r="5"
+         cy="114.68237"
+         cx="40.701393"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8914"
+         r="5"
+         cy="114.68237"
+         cx="40.701393"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8918"
+         r="5"
+         cy="95.129593"
+         cx="44.907207"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8920"
+         r="5"
+         cy="95.129593"
+         cx="44.907207"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8924"
+         r="5"
+         cy="82.784531"
+         cx="32.503635"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8926"
+         r="5"
+         cy="82.784531"
+         cx="32.503635"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8930"
+         r="5"
+         cy="66.614067"
+         cx="25.81295"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8932"
+         r="5"
+         cy="66.614067"
+         cx="25.81295"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8936"
+         r="5"
+         cy="49.114174"
+         cx="25.867891"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8938"
+         r="5"
+         cy="49.114174"
+         cx="25.867891"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8942"
+         r="5"
+         cy="32.986038"
+         cx="32.659973"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8944"
+         r="5"
+         cy="32.986038"
+         cx="32.659973"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8948"
+         r="5"
+         cy="20.719099"
+         cx="45.140816"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8950"
+         r="5"
+         cy="20.719099"
+         cx="45.140816"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8954"
+         r="5"
+         cy="14.206812"
+         cx="61.383949"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8956"
+         r="5"
+         cy="14.206812"
+         cx="61.383949"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8960"
+         r="5"
+         cy="14.454372"
+         cx="78.882172"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8962"
+         r="5"
+         cy="14.454372"
+         cx="78.882172"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8966"
+         r="5"
+         cy="21.423571"
+         cx="94.93457"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8968"
+         r="5"
+         cy="21.423571"
+         cx="94.93457"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <ellipse
+         id="circle8972"
+         cy="34.846661"
+         cx="105.5821"
+         style="fill:#ff0033;stroke:none;stroke-width:1"
+         rx="8.2500677"
+         ry="7.4113245" />
+      <ellipse
+         id="circle8974"
+         cy="34.846661"
+         cx="105.5821"
+         style="fill:none;stroke:#595959;stroke-width:1.56389165"
+         rx="8.2500677"
+         ry="7.4113245" />
+      <text
+         id="text8976"
+         font-size="7.5"
+         y="41.45731"
+         x="100.07127"
+         style="font-size:11.72918701px;font-family:Verdana;text-anchor:middle;fill:#000000"
+         transform="scale(1.055069,0.94780531)">I</text>
+      <circle
+         id="circle8978"
+         r="5"
+         cy="50.352509"
+         cx="113.39649"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8980"
+         r="5"
+         cy="50.352509"
+         cx="113.39649"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8984"
+         r="5"
+         cy="67.846954"
+         cx="112.95634"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8986"
+         r="5"
+         cy="67.846954"
+         cx="112.95634"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8990"
+         r="5"
+         cy="83.821663"
+         cx="105.81087"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8992"
+         r="5"
+         cy="83.821663"
+         cx="105.81087"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle8996"
+         r="5"
+         cy="95.81089"
+         cx="93.063026"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle8998"
+         r="5"
+         cy="95.81089"
+         cx="93.063026"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9002"
+         r="5"
+         cy="101.96404"
+         cx="76.680473"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9004"
+         r="5"
+         cy="101.96404"
+         cx="76.680473"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9008"
+         r="5"
+         cy="121.51682"
+         cx="72.474663"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9010"
+         r="5"
+         cy="121.51682"
+         cx="72.474663"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9014"
+         r="5"
+         cy="141.0696"
+         cx="68.268845"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9016"
+         r="5"
+         cy="141.0696"
+         cx="68.268845"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9020"
+         r="5"
+         cy="155.04149"
+         cx="78.806213"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9022"
+         r="5"
+         cy="155.04149"
+         cx="78.806213"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9026"
+         r="5"
+         cy="172.32936"
+         cx="81.522781"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9028"
+         r="5"
+         cy="172.32936"
+         cx="81.522781"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9032"
+         r="5"
+         cy="188.85971"
+         cx="75.77845"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9034"
+         r="5"
+         cy="188.85971"
+         cx="75.77845"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9038"
+         r="5"
+         cy="206.18024"
+         cx="85.778435"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9040"
+         r="5"
+         cy="206.18024"
+         cx="85.778435"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9044"
+         r="5"
+         cy="223.50075"
+         cx="95.778412"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9046"
+         r="5"
+         cy="223.50075"
+         cx="95.778412"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9050"
+         r="5"
+         cy="240.82127"
+         cx="105.77839"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9052"
+         r="5"
+         cy="240.82127"
+         cx="105.77839"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9056"
+         r="5"
+         cy="258.14178"
+         cx="115.77837"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9058"
+         r="5"
+         cy="258.14178"
+         cx="115.77837"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9062"
+         r="5"
+         cy="275.46231"
+         cx="125.77835"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9064"
+         r="5"
+         cy="275.46231"
+         cx="125.77835"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9068"
+         r="6.9415698"
+         cy="291.51041"
+         cx="136.16084"
+         style="fill:#ff0033;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9070"
+         r="6.9415698"
+         cy="291.51041"
+         cx="136.16084"
+         style="fill:none;stroke:#666666;stroke-width:1.38831401" />
+      <text
+         id="text9072"
+         font-size="7.5"
+         y="295.67535"
+         x="136.16084"
+         style="font-size:10.41235542px;font-family:Verdana;text-anchor:middle;fill:#000000">I</text>
+      <circle
+         id="circle9074"
+         r="6.9415698"
+         cy="299.56924"
+         cx="153.13206"
+         style="fill:#ff0033;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9076"
+         r="6.9415698"
+         cy="299.56924"
+         cx="153.13206"
+         style="fill:none;stroke:#595959;stroke-width:1.38831401" />
+      <text
+         id="text9078"
+         font-size="7.5"
+         y="303.73419"
+         x="153.13206"
+         style="font-size:10.41235542px;font-family:Verdana;text-anchor:middle;fill:#000000">I</text>
+      <circle
+         id="circle9080"
+         r="5"
+         cy="309.66147"
+         cx="165.01299"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9082"
+         r="5"
+         cy="309.66147"
+         cx="165.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9086"
+         r="5"
+         cy="309.66147"
+         cx="185.01299"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9088"
+         r="5"
+         cy="309.66147"
+         cx="185.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9092"
+         r="5"
+         cy="309.66147"
+         cx="205.01299"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9094"
+         r="5"
+         cy="309.66147"
+         cx="205.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9098"
+         r="5"
+         cy="309.66147"
+         cx="225.01299"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9100"
+         r="5"
+         cy="309.66147"
+         cx="225.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9104"
+         r="5"
+         cy="309.66147"
+         cx="245.01299"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9106"
+         r="5"
+         cy="309.66147"
+         cx="245.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9110"
+         r="5"
+         cy="309.66147"
+         cx="265.013"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9112"
+         r="5"
+         cy="309.66147"
+         cx="265.013"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9116"
+         r="5"
+         cy="309.66147"
+         cx="285.013"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9118"
+         r="5"
+         cy="309.66147"
+         cx="285.013"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9122"
+         r="5"
+         cy="299.89572"
+         cx="294.77875"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9124"
+         r="5"
+         cy="299.89572"
+         cx="294.77875"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9128"
+         r="5"
+         cy="279.89572"
+         cx="294.77875"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9130"
+         r="5"
+         cy="279.89572"
+         cx="294.77875"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9134"
+         r="5"
+         cy="262.81662"
+         cx="290.96317"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9136"
+         r="5"
+         cy="262.81662"
+         cx="290.96317"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9140"
+         r="5"
+         cy="367.00894"
+         cx="72.830902"
+         style="fill:#ffe88f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9142"
+         r="5"
+         cy="367.00894"
+         cx="72.830902"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9146"
+         r="5"
+         cy="356.44418"
+         cx="58.008266"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9148"
+         r="5"
+         cy="356.44418"
+         cx="58.008266"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9152"
+         r="5"
+         cy="338.67981"
+         cx="54.039577"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9154"
+         r="5"
+         cy="338.67981"
+         cx="54.039577"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9158"
+         r="5"
+         cy="322.81137"
+         cx="62.956814"
+         style="fill:#ffe88f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9160"
+         r="5"
+         cy="322.81137"
+         cx="62.956814"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9164"
+         r="5"
+         cy="302.81137"
+         cx="62.956814"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9166"
+         r="5"
+         cy="302.81137"
+         cx="62.956814"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9170"
+         r="5"
+         cy="282.81137"
+         cx="62.956814"
+         style="fill:#ffe88f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9172"
+         r="5"
+         cy="282.81137"
+         cx="62.956814"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9176"
+         r="5"
+         cy="262.81137"
+         cx="62.956814"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9178"
+         r="5"
+         cy="262.81137"
+         cx="62.956814"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9182"
+         r="5"
+         cy="242.81136"
+         cx="62.956814"
+         style="fill:#8fbdff;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9184"
+         r="5"
+         cy="242.81136"
+         cx="62.956814"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9188"
+         r="5"
+         cy="226.62329"
+         cx="56.308651"
+         style="fill:#8fff8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9190"
+         r="5"
+         cy="226.62329"
+         cx="56.308651"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9194"
+         r="5"
+         cy="210.46754"
+         cx="63.03484"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9196"
+         cy="210.46754"
+         cx="63.03484"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         r="5"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9200"
+         r="5"
+         cy="203.78032"
+         cx="79.206825"
+         style="fill:#8fbdff;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9202"
+         r="5"
+         cy="203.78032"
+         cx="79.206825"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9206"
+         r="5"
+         cy="210.46754"
+         cx="95.378769"
+         style="fill:#8fbdff;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9208"
+         r="5"
+         cy="210.46754"
+         cx="95.378769"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9212"
+         r="5"
+         cy="226.62329"
+         cx="102.105"
+         style="fill:#8fff8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9214"
+         r="5"
+         cy="226.62329"
+         cx="102.105"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9218"
+         r="5"
+         cy="242.81136"
+         cx="95.456833"
+         style="fill:#ffe88f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9220"
+         r="5"
+         cy="242.81136"
+         cx="95.456833"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9224"
+         r="5"
+         cy="262.81137"
+         cx="95.456833"
+         style="fill:#8fff8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9226"
+         r="5"
+         cy="262.81137"
+         cx="95.456833"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9230"
+         r="5"
+         cy="282.81137"
+         cx="95.456833"
+         style="fill:#8fbdff;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9232"
+         r="5"
+         cy="282.81137"
+         cx="95.456833"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9236"
+         r="5"
+         cy="302.81137"
+         cx="95.456833"
+         style="fill:#8fff8f;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9238"
+         r="5"
+         cy="302.81137"
+         cx="95.456833"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9242"
+         r="5"
+         cy="322.81137"
+         cx="95.456833"
+         style="fill:#8fbdff;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9244"
+         r="5"
+         cy="322.81137"
+         cx="95.456833"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9248"
+         r="6.671803"
+         cy="336.74646"
+         cx="104.10284"
+         style="fill:#ff0000;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9250"
+         r="6.671803"
+         cy="336.74646"
+         cx="104.10284"
+         style="fill:none;stroke:#595959;stroke-width:1.3343606"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <text
+         id="text9252"
+         font-size="7.5"
+         y="340.74954"
+         x="104.10284"
+         style="font-size:10.00770473px;font-family:Verdana;text-anchor:middle;fill:#000000"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)">I</text>
+      <circle
+         id="circle9254"
+         r="5"
+         cy="353.17776"
+         cx="102.24092"
+         style="fill:#8fbdff;stroke:none;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9256"
+         r="5"
+         cy="353.17776"
+         cx="102.24092"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)" />
+      <circle
+         id="circle9260"
+         r="5"
+         cy="248.98544"
+         cx="320.37317"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9262"
+         r="5"
+         cy="248.98544"
+         cx="320.37317"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9266"
+         r="5"
+         cy="262.81674"
+         cx="331.09439"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9268"
+         r="5"
+         cy="262.81674"
+         cx="331.09439"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9272"
+         r="5"
+         cy="279.89572"
+         cx="327.27875"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9274"
+         r="5"
+         cy="279.89572"
+         cx="327.27875"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9278"
+         r="5"
+         cy="299.89572"
+         cx="327.27875"
+         style="fill:#ffbd8f;stroke:#666666;stroke-width:1" />
+      <circle
+         id="circle9284"
+         r="5"
+         cy="313.59521"
+         cx="339.12131"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9286"
+         r="5"
+         cy="313.59521"
+         cx="339.12131"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9290"
+         r="7.1189504"
+         cy="331.58725"
+         cx="341.17288"
+         style="fill:#ff0033;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9292"
+         r="7.1189504"
+         cy="331.58725"
+         cx="341.17288"
+         style="fill:none;stroke:#595959;stroke-width:1.42379022" />
+      <text
+         id="text9294"
+         font-size="7.5"
+         y="335.85861"
+         x="341.17288"
+         style="font-size:10.67842674px;font-family:Verdana;text-anchor:middle;fill:#000000">I</text>
+      <circle
+         id="circle9296"
+         r="5"
+         cy="347.60114"
+         cx="332.71841"
+         style="fill:#ffe88f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9298"
+         r="5"
+         cy="347.60114"
+         cx="332.71841"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9302"
+         r="5"
+         cy="356.0556"
+         cx="316.70453"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9304"
+         r="5"
+         cy="356.0556"
+         cx="316.70453"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9308"
+         r="5"
+         cy="354.00406"
+         cx="298.71249"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9310"
+         r="5"
+         cy="354.00406"
+         cx="298.71249"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9314"
+         r="5"
+         cy="342.16147"
+         cx="285.013"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9316"
+         r="5"
+         cy="342.16147"
+         cx="285.013"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9320"
+         r="5"
+         cy="342.16147"
+         cx="265.013"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9322"
+         r="5"
+         cy="342.16147"
+         cx="265.013"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9326"
+         r="5"
+         cy="342.16147"
+         cx="245.01299"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9328"
+         r="5"
+         cy="342.16147"
+         cx="245.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9332"
+         r="5"
+         cy="342.16147"
+         cx="225.01299"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9334"
+         r="5"
+         cy="342.16147"
+         cx="225.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9338"
+         r="5"
+         cy="342.16147"
+         cx="205.01299"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9340"
+         r="5"
+         cy="342.16147"
+         cx="205.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9344"
+         r="5"
+         cy="342.16147"
+         cx="185.01299"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9346"
+         r="5"
+         cy="342.16147"
+         cx="185.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9350"
+         r="5"
+         cy="342.16147"
+         cx="165.01299"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9352"
+         r="5"
+         cy="342.16147"
+         cx="165.01299"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9356"
+         r="5"
+         cy="354.7832"
+         cx="152.39125"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9358"
+         r="5"
+         cy="354.7832"
+         cx="152.39125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9362"
+         r="5"
+         cy="374.7832"
+         cx="152.39125"
+         style="fill:#8fbdff;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9364"
+         r="5"
+         cy="374.7832"
+         cx="152.39125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9368"
+         r="5"
+         cy="394.7832"
+         cx="152.39125"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9370"
+         r="5"
+         cy="394.7832"
+         cx="152.39125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9374"
+         r="5"
+         cy="414.7832"
+         cx="152.39125"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9376"
+         r="5"
+         cy="414.7832"
+         cx="152.39125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <circle
+         id="circle9380"
+         r="5"
+         cy="434.7832"
+         cx="152.39125"
+         style="fill:#8fff8f;stroke:none;stroke-width:1" />
+      <circle
+         id="circle9382"
+         r="5"
+         cy="434.7832"
+         cx="152.39125"
+         style="fill:none;stroke:#595959;stroke-width:1" />
+      <line
+         inkscape:transform-center-y="-0.76903711"
+         inkscape:transform-center-x="0.78702136"
+         style="stroke:#595959;stroke-width:1"
+         x1="311.70364"
+         y1="235.99881"
+         x2="317.58667"
+         y2="244.08521"
+         id="line9931" />
+      <circle
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)"
+         style="fill:#ffbd8f;stroke:none;stroke-width:1"
+         cx="101.65015"
+         cy="372.04419"
+         r="5"
+         id="circle9937" />
+      <circle
+         transform="matrix(0.7900306,-0.61306741,0.61306741,0.7900306,0,0)"
+         style="fill:none;stroke:#595959;stroke-width:1"
+         cx="101.65015"
+         cy="372.04419"
+         r="5"
+         id="circle9939" />
+    </g>
+  </g>
+</svg>

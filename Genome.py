@@ -19,10 +19,17 @@ classdocs
 '''
 class Genome(object):
     
-    def __init__(self,gtfFile):
+    def __init__(self,gtfFile,logFile=None,textField=0):
         '''
         Constructor
         '''
+        
+        self.logFile=logFile
+        self.textField =textField
+        
+        startTime = Helper.getTime()
+        Helper.info(" [%s] Assembling Genome from %s" % (startTime.strftime("%c"),gtfFile),self.logFile,self.textField)
+        
         
         #Dict / List for all Genes
         self.geneList = []
@@ -54,6 +61,7 @@ class Genome(object):
         self.createTranscriptomeFromFile(gtfFile)
         self.genesByChromosome = self.getGenesByChromosome()
         
+        Helper.printTimeDiff(startTime,self.logFile,self.textField)
         
     def parseGtf(self,gtfFile):
         """
@@ -163,8 +171,8 @@ class Genome(object):
         Returns a list with all the genes for each chromosome in a dictionary
         return: genesByChromosome
         """
-        startTime = Helper.getTime()
-        Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
+        #startTime = Helper.getTime()
+        #Helper.info(" [%s] Parsing Gene Data from %s" % (startTime.strftime("%c"),gtfFilePath))
         
         #check fileType of Genome File
         if gtfFilePath.endswith(".gz"):
@@ -176,8 +184,8 @@ class Genome(object):
         self.parseGtf(gtfFile)
         self.assembleTranscriptome()
         
-        duration = Helper.getTime() -startTime
-        Helper.info(" Finished parsing in %s" % (str(duration)))
+        #duration = Helper.getTime() -startTime
+        #Helper.info(" Finished parsing in %s" % (str(duration)))
         
         del self.featureTypes
         del self.geneTypes

@@ -1,0 +1,21 @@
+#This file is used to configure the behaviour of RNAeditor
+
+#Standard input files
+refGenome = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
+gtfFile = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.83.gtf
+dbSNP = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/dbSNP_ensemble2.vcf
+hapmap = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/HAPMAP.vcf
+omni = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/1000GenomeProject.vcf
+esp = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/ESP.vcf
+aluRegions = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/repeats.bed
+output = default
+sourceDir = /usr/local/bin/
+maxDiff = 0.04
+seedDiff = 2
+standCall = 0
+standEmit = 0
+edgeDistance = 3
+paired = False
+keepTemp = True
+overwrite = False
+threads = 5

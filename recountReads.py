@@ -11,7 +11,7 @@ from Helper import Helper
 import argparse, os, re, sys
 
 
-parser = argparse.ArgumentParser(description='Merges the GTF Files and recalculates the base Counts after RnaEditor is finished.')
+parser = argparse.ArgumentParser(description='Merges the GVF Files and recalculates the base Counts after RnaEditor is finished.')
 parser.add_argument('-f', '--files', metavar='N', type=str, nargs='+', help='the list of files')
 parser.add_argument('-b', '--bams', metavar='N', type=str, nargs='+', help='the list of bam files')
 parser.add_argument('-t', '--top', metavar='N', type=str, nargs="+", help='list of header names (space separated)')
@@ -154,9 +154,9 @@ for bamFile in args.bams:
         i+=1
         '''check if basecount is unset for current condition''' 
         if idDict[keyTuple][fileCounter] == defaultList: 
-            chr,start = keyTuple[3],int(keyTuple[7])-1 #pysam is zero based        
-            reads=samfile.fetch(chr, start, start+1)
-            baseCount = getBaseCount(reads,start)
+            chr,startAnalysis = keyTuple[3],int(keyTuple[7])-1 #pysam is zero based        
+            reads=samfile.fetch(chr, startAnalysis, startAnalysis+1)
+            baseCount = getBaseCount(reads,startAnalysis)
             idDict[keyTuple][fileCounter] = baseCount
     if counter % 1000 == 0:
         Helper.status("%s out of %s editing sites finished" % (i,len(keySet)))

@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ressources/InputTab.ui'
-#
-# Created: Mon Nov  4 15:28:17 2013
-#      by: PyQt4 UI code generator 4.10.3
-#
-# WARNING! All changes made in this file will be lost!
-
 from PyQt4 import QtCore, QtGui
+from PyQt4.Qt import QSizePolicy
+from PyQt4.QtGui import QGridLayout, QVBoxLayout
+from Helper import Parameters
+
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -23,185 +18,363 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(792, 647)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
-        Form.setSizePolicy(sizePolicy)
-        Form.setMinimumSize(QtCore.QSize(200, 200))
-        self.verticalLayoutWidget = QtGui.QWidget(Form)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(380, 360, 231, 151))
-        self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setMargin(0)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label_8 = QtGui.QLabel(self.verticalLayoutWidget)
-        self.label_8.setObjectName(_fromUtf8("label_8"))
-        self.verticalLayout.addWidget(self.label_8)
-        self.checkBox_2 = QtGui.QCheckBox(self.verticalLayoutWidget)
-        self.checkBox_2.setChecked(True)
-        self.checkBox_2.setObjectName(_fromUtf8("checkBox_2"))
-        self.verticalLayout.addWidget(self.checkBox_2)
-        self.checkBox = QtGui.QCheckBox(self.verticalLayoutWidget)
-        self.checkBox.setChecked(True)
-        self.checkBox.setObjectName(_fromUtf8("checkBox"))
-        self.verticalLayout.addWidget(self.checkBox)
-        self.formLayoutWidget_2 = QtGui.QWidget(Form)
-        self.formLayoutWidget_2.setGeometry(QtCore.QRect(380, 540, 231, 91))
-        self.formLayoutWidget_2.setObjectName(_fromUtf8("formLayoutWidget_2"))
-        self.formLayout_2 = QtGui.QFormLayout(self.formLayoutWidget_2)
-        self.formLayout_2.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
-        self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.FieldsStayAtSizeHint)
-        self.formLayout_2.setContentsMargins(0, -1, -1, -1)
-        self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
-        self.label_9 = QtGui.QLabel(self.formLayoutWidget_2)
-        self.label_9.setObjectName(_fromUtf8("label_9"))
-        self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_9)
-        self.label_10 = QtGui.QLabel(self.formLayoutWidget_2)
-        self.label_10.setObjectName(_fromUtf8("label_10"))
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_10)
-        self.lineEdit_7 = QtGui.QLineEdit(self.formLayoutWidget_2)
-        self.lineEdit_7.setObjectName(_fromUtf8("lineEdit_7"))
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.lineEdit_7)
-        self.pushButton_start = QtGui.QPushButton(Form)
-        self.pushButton_start.setGeometry(QtCore.QRect(840, 580, 131, 32))
-        self.pushButton_start.setObjectName(_fromUtf8("pushButton_start"))
-        self.gridLayoutWidget = QtGui.QWidget(Form)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(50, 390, 313, 242))
-        self.gridLayoutWidget.setObjectName(_fromUtf8("gridLayoutWidget"))
-        self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
-        self.gridLayout.setMargin(0)
-        self.gridLayout.setHorizontalSpacing(6)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.pushButton_esp = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_esp.setObjectName(_fromUtf8("pushButton_esp"))
-        self.gridLayout.addWidget(self.pushButton_esp, 4, 2, 1, 1)
-        self.lineEdit_esp = QtGui.QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_esp.setObjectName(_fromUtf8("lineEdit_esp"))
-        self.gridLayout.addWidget(self.lineEdit_esp, 4, 1, 1, 1)
-        self.pushButton_omni = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_omni.setObjectName(_fromUtf8("pushButton_omni"))
-        self.gridLayout.addWidget(self.pushButton_omni, 3, 2, 1, 1)
-        self.lineEdit_aluRegions = QtGui.QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_aluRegions.setObjectName(_fromUtf8("lineEdit_aluRegions"))
-        self.gridLayout.addWidget(self.lineEdit_aluRegions, 5, 1, 1, 1)
-        self.label_refGenome = QtGui.QLabel(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_refGenome.sizePolicy().hasHeightForWidth())
-        self.label_refGenome.setSizePolicy(sizePolicy)
-        self.label_refGenome.setObjectName(_fromUtf8("label_refGenome"))
-        self.gridLayout.addWidget(self.label_refGenome, 0, 0, 1, 1)
-        self.pushButton_dbSNP = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_dbSNP.setObjectName(_fromUtf8("pushButton_dbSNP"))
-        self.gridLayout.addWidget(self.pushButton_dbSNP, 1, 2, 1, 1)
-        self.pushButton_aluRegion = QtGui.QPushButton(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pushButton_aluRegion.sizePolicy().hasHeightForWidth())
-        self.pushButton_aluRegion.setSizePolicy(sizePolicy)
-        self.pushButton_aluRegion.setObjectName(_fromUtf8("pushButton_aluRegion"))
-        self.gridLayout.addWidget(self.pushButton_aluRegion, 5, 2, 1, 1)
-        self.lineEdit_refGenome = QtGui.QLineEdit(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit_refGenome.sizePolicy().hasHeightForWidth())
-        self.lineEdit_refGenome.setSizePolicy(sizePolicy)
-        self.lineEdit_refGenome.setObjectName(_fromUtf8("lineEdit_refGenome"))
-        self.gridLayout.addWidget(self.lineEdit_refGenome, 0, 1, 1, 1)
-        self.label_dbSNP = QtGui.QLabel(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_dbSNP.sizePolicy().hasHeightForWidth())
-        self.label_dbSNP.setSizePolicy(sizePolicy)
-        self.label_dbSNP.setObjectName(_fromUtf8("label_dbSNP"))
-        self.gridLayout.addWidget(self.label_dbSNP, 1, 0, 1, 1)
-        self.label_aluRegions = QtGui.QLabel(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_aluRegions.sizePolicy().hasHeightForWidth())
-        self.label_aluRegions.setSizePolicy(sizePolicy)
-        self.label_aluRegions.setObjectName(_fromUtf8("label_aluRegions"))
-        self.gridLayout.addWidget(self.label_aluRegions, 5, 0, 1, 1)
-        self.pushButton_refGenome = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_refGenome.setObjectName(_fromUtf8("pushButton_refGenome"))
-        self.gridLayout.addWidget(self.pushButton_refGenome, 0, 2, 1, 1)
-        self.label_hapmap = QtGui.QLabel(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_hapmap.sizePolicy().hasHeightForWidth())
-        self.label_hapmap.setSizePolicy(sizePolicy)
-        self.label_hapmap.setObjectName(_fromUtf8("label_hapmap"))
-        self.gridLayout.addWidget(self.label_hapmap, 2, 0, 1, 1)
-        self.label_esp = QtGui.QLabel(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_esp.sizePolicy().hasHeightForWidth())
-        self.label_esp.setSizePolicy(sizePolicy)
-        self.label_esp.setObjectName(_fromUtf8("label_esp"))
-        self.gridLayout.addWidget(self.label_esp, 4, 0, 1, 1)
-        self.lineEdit_dbSNP = QtGui.QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_dbSNP.setObjectName(_fromUtf8("lineEdit_dbSNP"))
-        self.gridLayout.addWidget(self.lineEdit_dbSNP, 1, 1, 1, 1)
-        self.label_omni = QtGui.QLabel(self.gridLayoutWidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_omni.sizePolicy().hasHeightForWidth())
-        self.label_omni.setSizePolicy(sizePolicy)
-        self.label_omni.setObjectName(_fromUtf8("label_omni"))
-        self.gridLayout.addWidget(self.label_omni, 3, 0, 1, 1)
-        self.pushButton_hapmap = QtGui.QPushButton(self.gridLayoutWidget)
-        self.pushButton_hapmap.setObjectName(_fromUtf8("pushButton_hapmap"))
-        self.gridLayout.addWidget(self.pushButton_hapmap, 2, 2, 1, 1)
-        self.lineEdit_hapmap = QtGui.QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_hapmap.setObjectName(_fromUtf8("lineEdit_hapmap"))
-        self.gridLayout.addWidget(self.lineEdit_hapmap, 2, 1, 1, 1)
-        self.lineEdit_omni = QtGui.QLineEdit(self.gridLayoutWidget)
-        self.lineEdit_omni.setObjectName(_fromUtf8("lineEdit_omni"))
-        self.gridLayout.addWidget(self.lineEdit_omni, 3, 1, 1, 1)
-        self.label = QtGui.QLabel(Form)
-        self.label.setGeometry(QtCore.QRect(140, 10, 531, 181))
-        self.label.setAutoFillBackground(False)
-        self.label.setText(_fromUtf8(""))
-        self.label.setPixmap(QtGui.QPixmap(_fromUtf8("../icons/RNAeditor.png")))
-        self.label.setScaledContents(True)
-        self.label.setObjectName(_fromUtf8("label"))
 
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+class DropListWidget(QtGui.QListWidget):
+    def __init__(self, type, parent=None):
+        super(DropListWidget, self).__init__(parent)
+        self.setAcceptDrops(True)
+        self.setIconSize(QtCore.QSize(72, 72))
+        
+        #enable multiple selection
+        #self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        
+        #enable drag and drop
+        #self.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        
+        #set sorting enabled
+        self.setSortingEnabled(True)
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(_translate("Form", "Form", None))
-        self.label_8.setText(_translate("Form", "Settings", None))
-        self.checkBox_2.setToolTip(_translate("Form", "Overwrite exisitng Files", None))
-        self.checkBox_2.setText(_translate("Form", "Overwrite", None))
-        self.checkBox.setToolTip(_translate("Form", "Delete Temporary Files", None))
-        self.checkBox.setText(_translate("Form", "Delete Temp", None))
-        self.label_9.setText(_translate("Form", "Output", None))
-        self.label_10.setText(_translate("Form", "outfile Prefix", None))
-        self.pushButton_start.setText(_translate("Form", "Start", None))
-        self.pushButton_esp.setText(_translate("Form", "...", None))
-        self.pushButton_omni.setText(_translate("Form", "...", None))
-        self.label_refGenome.setText(_translate("Form", "ref. Genome:", None))
-        self.pushButton_dbSNP.setText(_translate("Form", "...", None))
-        self.pushButton_aluRegion.setText(_translate("Form", "...", None))
-        self.label_dbSNP.setText(_translate("Form", "dbSNP:", None))
-        self.label_aluRegions.setText(_translate("Form", "Alu Regions:", None))
-        self.pushButton_refGenome.setText(_translate("Form", "...", None))
-        self.label_hapmap.setText(_translate("Form", "Hapmap:", None))
-        self.label_esp.setText(_translate("Form", "ESP:", None))
-        self.label_omni.setText(_translate("Form", "Omni:", None))
-        self.pushButton_hapmap.setText(_translate("Form", "...", None))
+    def dragEnterEvent(self, event):
+        """
+            Only accepts Files if they are valid 
+        """
+        if event.mimeData().hasUrls:
+            isFastq=True
+            for url in event.mimeData().urls():
+                url = url.toString()
+                urlSuffix = url.split(".")[-1]
+                if urlSuffix not in ["fastq","fq","bam","txt"]:
+                    isFastq=False
+            if isFastq:
+                event.setDropAction(QtCore.Qt.CopyAction)
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.ignore()
 
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.setDropAction(QtCore.Qt.CopyAction)
+            event.accept()
+            links = []
+            for url in event.mimeData().urls():
+                links.append(str(url.toLocalFile()))
+            self.emit(QtCore.SIGNAL("dropped"), links)
+            self.sortItems()
+        else:
+            event.ignore()
+            
+    def dropFirstItem(self):
+        if self.count() > 0:
+            return [self.takeItem(0)]
+        else:
+            return [None]
+        
+    def dropFirstTwoItems(self):
+        if self.count() > 1:
+            item1=self.takeItem(0)
+            item2=self.takeItem(0)
+            return [item1,item2]
+        else:
+            return None
+    
+    def dropLastItems(self,n):
+        if self.count() > 0:
+            return self.takeItem(self.count()-1)
+        else:
+            return None
+    
+    
+    #delete the selected item
+    def _del_item(self):
+        for item in self.selectedItems():
+            self.takeItem(self.row(item))
+
+
+class InputTab(QtGui.QWidget):
+    
+    def __init__(self,control):
+        
+        self.control=control
+        super(InputTab,self).__init__()
+        
+        self.createMenu()
+        self.createComponents()
+        self.createLayout()
+        self.createConnects()
+        
+        
+        
+    def createMenu(self):
+        pass
+    
+    def createComponents(self):
+
+        #m_pMyWidget->setStyleSheet("background-color:black;");
+        
+        """
+        InputFiles Layout on the left Side
+        """
+        self.refGenomeLabel = QtGui.QLabel("ref. Genome:")
+        self.refGenomeTextBox = QtGui.QLineEdit()
+        self.refGenomeButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.gtfFileLabel = QtGui.QLabel("GTF File:")
+        self.gtfFileTextBox = QtGui.QLineEdit()
+        self.gtfFileButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.dbsnpLabel = QtGui.QLabel("dbSNP:")
+        self.dbsnpTextBox = QtGui.QLineEdit()
+        self.dbsnpButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.hapmapLabel = QtGui.QLabel("Hapmap:")
+        self.hapmapTextBox = QtGui.QLineEdit()
+        self.hapmapButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.omniLabel = QtGui.QLabel("Omni:")
+        self.omniTextBox = QtGui.QLineEdit()
+        self.omniButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.espLabel = QtGui.QLabel("ESP:")
+        self.espTextBox = QtGui.QLineEdit()
+        self.espButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.aluRegionsLabel = QtGui.QLabel("Alu Regions:")
+        self.aluRegionsTextBox = QtGui.QLineEdit()
+        self.aluRegionsButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.sourceDirLabel = QtGui.QLabel("Source Directory")
+        self.sourceDirTextBox = QtGui.QLineEdit()
+        self.sourceDirButton = QtGui.QPushButton(self.tr("..."))
+        
+        self.verticalLine = QtGui.QFrame()
+        self.verticalLine.setFrameStyle(QtGui.QFrame.HLine)
+        self.verticalLine.setFrameShadow(QtGui.QFrame.Sunken)
+        self.verticalLine.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
+        
+        self.outputLabel = QtGui.QLabel("Output directory")
+        self.outputTextBox = QtGui.QLineEdit()
+        self.outputButton = QtGui.QPushButton(self.tr("..."))
+        #self.button.setStyleSheet("background-color:red;")
+    
+
+        """
+        Drop Files Section
+        """
+        self.dropList = DropListWidget(self)
+        self.dropList.setAcceptDrops(True)
+        
+        
+        
+        """
+        Settings Layout on the bottom
+        """
+        self.threadsLabel = QtGui.QLabel("Threads:")
+        self.threadsSpinBox = QtGui.QSpinBox()
+        self.threadsSpinBox.setRange(1,30)
+        self.threadsSpinBox.setValue(4)
+
+        self.maxDiffLabel = QtGui.QLabel("max Diff Rate:")
+        self.maxDiffLabel.setToolTip("Error rate in percentage")
+        self.maxDiffSpinBox = QtGui.QDoubleSpinBox()
+        self.maxDiffSpinBox.setToolTip("Error rate in percentage")
+        self.maxDiffSpinBox.setRange(0.01,0.2)
+        self.maxDiffSpinBox.setSingleStep(0.01)
+        self.maxDiffSpinBox.setValue(0.04)
+        
+        self.seedLabel = QtGui.QLabel("Seed Diff:")
+        self.seedLabel.setToolTip("Maximum number of mismatches in the seed sequence")
+        self.seedSpinBox = QtGui.QSpinBox()
+        self.seedSpinBox.setToolTip("Maximum number of mismatches in the seed sequence")
+        self.seedSpinBox.setRange(1,10)
+        self.seedSpinBox.setValue(2)
+        
+        self.standCallLabel = QtGui.QLabel("Stand Call:")
+        self.seedLabel.setToolTip("The minimum phred-scaled confidence threshold at which variants should be considered as true")
+        self.standCallSpinBox = QtGui.QSpinBox()
+        self.standCallSpinBox.setToolTip("The minimum phred-scaled confidence threshold at which variants should be considered as true")
+        self.standCallSpinBox.setRange(1,30)
+        self.standCallSpinBox.setValue(2)
+        
+        self.standEmitLabel = QtGui.QLabel("Stand Emit:")
+        self.standEmitLabel.setToolTip("The minimum phred-scaled confidence threshold at which variants should be emitted")
+        self.standEmitSpinBox = QtGui.QSpinBox()
+        self.standEmitSpinBox.setToolTip("The minimum phred-scaled confidence threshold at which variants should be emitted")
+        self.standEmitSpinBox.setRange(1,30)
+        self.standEmitSpinBox.setValue(2)
+        
+        self.edgeDistanceLabel = QtGui.QLabel("min edge distance:")
+        self.edgeDistanceLabel.setToolTip("The minimum distance of the editing site from the read edge")
+        self.edgeDistanceSpinBox = QtGui.QSpinBox()
+        self.edgeDistanceSpinBox.setToolTip("The minimum distance of the editing site from the read edge")
+        self.edgeDistanceSpinBox.setRange(0,15)
+        self.edgeDistanceSpinBox.setValue(3)
+        
+        self.pairedCheckBox = QtGui.QCheckBox("paired-end Sequencing")
+        self.overwriteCheckBox = QtGui.QCheckBox("Overwrite existing Files")
+        self.overwriteCheckBox.setChecked(True)
+        self.keepTempCheckBox = QtGui.QCheckBox("Keep temporary Files")
+        
+        #Start Button
+        self.startButton = QtGui.QPushButton(self.tr("Start New Analysis"))
+
+    def createLayout(self):
+        #drop Part        
+        
+        #create right Side
+        self.inputFilesLayout = QGridLayout()
+        self.inputFilesLayout.addWidget(self.gtfFileLabel,1,1)
+        self.inputFilesLayout.addWidget(self.gtfFileTextBox,1,2)
+        self.inputFilesLayout.addWidget(self.gtfFileButton,1,3)
+        
+        self.inputFilesLayout.addWidget(self.refGenomeLabel,2,1)
+        self.inputFilesLayout.addWidget(self.refGenomeTextBox,2,2)
+        self.inputFilesLayout.addWidget(self.refGenomeButton,2,3)
+        
+        self.inputFilesLayout.addWidget(self.dbsnpLabel,3,1)
+        self.inputFilesLayout.addWidget(self.dbsnpTextBox,3,2)
+        self.inputFilesLayout.addWidget(self.dbsnpButton,3,3)
+        
+        self.inputFilesLayout.addWidget(self.hapmapLabel,4,1)
+        self.inputFilesLayout.addWidget(self.hapmapTextBox,4,2)
+        self.inputFilesLayout.addWidget(self.hapmapButton,4,3)
+        
+        self.inputFilesLayout.addWidget(self.omniLabel,5,1)
+        self.inputFilesLayout.addWidget(self.omniTextBox,5,2)
+        self.inputFilesLayout.addWidget(self.omniButton,5,3)
+        
+        self.inputFilesLayout.addWidget(self.espLabel,6,1)
+        self.inputFilesLayout.addWidget(self.espTextBox,6,2)
+        self.inputFilesLayout.addWidget(self.espButton,6,3)
+        
+        self.inputFilesLayout.addWidget(self.aluRegionsLabel,7,1)
+        self.inputFilesLayout.addWidget(self.aluRegionsTextBox,7,2)
+        self.inputFilesLayout.addWidget(self.aluRegionsButton,7,3)
+        
+        self.inputFilesLayout.addWidget(self.sourceDirLabel,8,1)
+        self.inputFilesLayout.addWidget(self.sourceDirTextBox,8,2)
+        self.inputFilesLayout.addWidget(self.sourceDirButton,8,3)
+        
+        self.inputFilesLayout.addWidget(self.verticalLine,9,1,1,3)
+        self.inputFilesLayout.setRowMinimumHeight(9,20)
+        
+        self.inputFilesLayout.addWidget(self.outputLabel,10,1)
+        self.inputFilesLayout.addWidget(self.outputTextBox,10,2)
+        self.inputFilesLayout.addWidget(self.outputButton,10,3)
+        
+        
+        self.inputFilesLayout.setColumnMinimumWidth(2,100)
+        self.inputFilesLayout.setRowStretch(9,1)
+        
+        self.inputFilesWidget = QtGui.QWidget()
+        self.inputFilesWidget.setLayout(self.inputFilesLayout)
+
+        
+        #create settings layout
+        self.settingsLayout = QGridLayout()
+        self.settingsLayout.addWidget(self.threadsLabel,1,1)
+        self.settingsLayout.addWidget(self.threadsSpinBox,1,2)
+        self.settingsLayout.addWidget(self.maxDiffLabel,2,1)
+        self.settingsLayout.addWidget(self.maxDiffSpinBox,2,2)
+        self.settingsLayout.addWidget(self.seedLabel,3,1)
+        self.settingsLayout.addWidget(self.seedSpinBox,3,2)
+        
+        self.settingsLayout.addWidget(self.standCallLabel,1,3)
+        self.settingsLayout.addWidget(self.standCallSpinBox,1,4)
+        self.settingsLayout.addWidget(self.standEmitLabel,2,3)
+        self.settingsLayout.addWidget(self.standEmitSpinBox,2,4)
+        self.settingsLayout.addWidget(self.edgeDistanceLabel,3,3)
+        self.settingsLayout.addWidget(self.edgeDistanceSpinBox,3,4)
+        
+        self.settingsLayout.addWidget(self.pairedCheckBox,1,5)
+        self.settingsLayout.addWidget(self.keepTempCheckBox,2,5)
+        self.settingsLayout.addWidget(self.overwriteCheckBox,3,5)
+        
+        self.settingsLayout.setColumnStretch(2,1)
+        self.settingsLayout.setColumnStretch(6,5)
+        
+        
+        self.settingsWidget = QtGui.QWidget()
+        self.settingsWidget.setLayout(self.settingsLayout)
+        
+
+        
+        #self.settingsLayout.setColumnStretch(3,1)
+        
+        #create central Layout
+        self.centralLayout = QGridLayout()
+        self.centralLayout.setRowStretch(1,1)
+        self.centralLayout.setColumnStretch(1,1)
+        self.centralLayout.addWidget(self.dropList,1,1)
+        
+        
+        
+        self.centralLayout.addWidget(self.inputFilesWidget, 1,2)
+        self.centralLayout.addWidget(self.settingsWidget, 2, 1, 1, 2)
+        self.centralLayout.addWidget(self.startButton,3,2)
+        self.setLayout(self.centralLayout)
+        
+        
+        
+        
+        
+    def createConnects(self):
+        self.refGenomeButton.clicked.connect(lambda: self.control.openFileDialog(self.refGenomeTextBox))
+        self.dbsnpButton.clicked.connect(lambda: self.control.openFileDialog(self.dbsnpTextBox))
+        self.hapmapButton.clicked.connect(lambda: self.control.openFileDialog(self.hapmapTextBox))
+        self.omniButton.clicked.connect(lambda: self.control.openFileDialog(self.omniTextBox))
+        self.espButton.clicked.connect(lambda: self.control.openFileDialog(self.espTextBox))
+        self.aluRegionsButton.clicked.connect(lambda: self.control.openFileDialog(self.aluRegionsTextBox))
+        
+        self.outputButton.clicked.connect(lambda: self.control.openFolderDialog(self.outputTextBox))
+        self.sourceDirButton.clicked.connect(lambda: self.control.openFolderDialog(self.sourceDirTextBox))
+        
+        self.startButton.clicked.connect(self.control.newAssay)
+        
+        self.connect(self.dropList, QtCore.SIGNAL("dropped"), self.control.fileDropped)
+        
+        # connect del key to lists
+        del_one = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete), self.dropList)
+        self.connect(del_one, QtCore.SIGNAL('activated()'), self.dropList._del_item)
+        
+        
+    def createDefaults(self,file=None):
+        if file==None:
+            p=Parameters()
+        else:
+            p=Parameters(file)
+        self.gtfFileTextBox.setText(p.gtfFile)
+        self.refGenomeTextBox.setText(p.refGenome)   
+        self.dbsnpTextBox.setText(p.dbsnp)
+        self.hapmapTextBox.setText(p.hapmap)
+        self.omniTextBox.setText(p.omni)
+        self.espTextBox.setText(p.esp)
+        self.aluRegionsTextBox.setText(p.aluRegions)
+        self.outputTextBox.setText(p.output)
+        self.sourceDirTextBox.setText(p.sourceDir)
+        
+        self.threadsSpinBox.setValue(int(p.threads))
+        self.maxDiffSpinBox.setValue(float(p.maxDiff))
+        self.seedSpinBox.setValue(float(p.seedDiff))
+        self.standCallSpinBox.setValue(int(p.standCall))
+        self.standEmitSpinBox.setValue(int(p.standEmit))
+        self.pairedCheckBox.setChecked(p.paired)
+        self.keepTempCheckBox.setChecked(p.keepTemp)
+        self.overwriteCheckBox.setChecked(p.overwrite)
+            
+            
+if __name__ == '__main__':
+    import sys, os
+    print(os.getcwd())
+    app = QtGui.QApplication(sys.argv) 
+    mainWindow = InputTab()
+    mainWindow.show() 
+    sys.exit(app.exec_())
+   

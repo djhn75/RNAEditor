@@ -5,7 +5,7 @@ inFile <- Args[1]
 plot <- paste(Args[1],".mmCount.pdf",sep="")
 outFile <- paste(Args[1],".mmCount.txt",sep="")
 
-
+#inFile <- "/media/Storage/bio-data/David/rnaEditor/test/test.vcf"
 table_ScrambleN <- read.table(inFile,sep="\t", quote="",dec=".", skip=0)
 #table_ScrambleN <- read.table("/home//uchida/workspace/rnaEditor/testdata/adar1.nonAlu.noSpliceSites.noHomo.vcf",sep="\t", quote="",dec=".", skip=0)
 
