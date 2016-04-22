@@ -19,8 +19,16 @@ OPTIONS = {'argv_emulation': True,
 setup(
     
     name='RnaEditor',
-    version = "1.0",
+    version = "0.1",
     author = "David John",
     author_email = "john@med.uni-frankfurt.de",
-    py_modules = ["CallEditingSites","createDiagrams","Gene","Genome","gtfHandler","Helper","MapFastq","recountReads","RnaEdit","Transcript","VariantSet",   "ui",]
+    url = "http://rnaeditor.uni-frankfurt.de",
+    download_url = "http://rnaeditor.uni-frankfurt.de/install.php",
+    py_modules = ["CallEditingSites","createDiagrams","Gene","Genome","gtfHandler","Helper","MapFastq","recountReads","RnaEditor","Transcript","VariantSet"],
+    scripts = [],
+    package_dir = {"pysam" : "/usr/local/lib/python2.7/dist-packages/pysam/",
+                   "PyQt4" : "/usr/lib/python2.7/dist-packages/PyQt4/",
+                   "numpy" : "/usr/lib/python2.7/dist-packages/numpy/",
+                   "matplotlib" : "/usr/lib/pymodules/python2.7/matplotlib/"},
+      packages= ["ui","pysam","PyQt4","numpy","matplotlib"]
 )

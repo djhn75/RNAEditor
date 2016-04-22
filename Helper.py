@@ -12,7 +12,7 @@ import ui
 from numpy import arange
 from PyQt4.QtCore import QString
 #from matplotlib.backends import qt_compat
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+#from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
 from shutil import copyfile
 
