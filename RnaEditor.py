@@ -12,8 +12,8 @@ from CallEditingSites import CallEditingSites
 import multiprocessing, argparse, os
 import traceback
 from PyQt4 import QtGui, QtCore
-
-
+import textwrap
+import sys
 import gc
 import subprocess
 
@@ -272,22 +272,55 @@ class RnaEdit(QtCore.QThread):
         Helper.info("\t overwrite:" + str(self.params.overwrite),self.logFile,self.textField)
         Helper.info("",self.logFile,self.textField)
 
+
+def main(argv):
+    app = QtGui.QApplication(argv) 
+    mainWindow = GuiView()
+    
+    app.setApplicationName("RNAEditor")
+    app.setApplicationVersion("0.1")
+    
+    app_icon = QtGui.QIcon()
+    app_icon.addFile('ui/icons/rnaEditor_16x16.png', QtCore.QSize(16,16))
+    app_icon.addFile('ui/icons/rnaEditor_24x24.png', QtCore.QSize(24,24))
+    app_icon.addFile('ui/icons/rnaEditor_32x32.png', QtCore.QSize(32,32))
+    app_icon.addFile('ui/icons/rnaEditor_48x48.png', QtCore.QSize(48,48))
+    app_icon.addFile('ui/icons/rnaEditor_256x256.png', QtCore.QSize(256,256))
+    app_icon.addFile('ui/icons/rnaEditor_512x512.png', QtCore.QSize(512,512))
+    app_icon.addFile('ui/icons/rnaEditor_1024x1024.png', QtCore.QSize(1024,1024))
+    
+    app.setWindowIcon(app_icon)
+
+     
+    mainWindow.show() 
+    sys.exit(app.exec_())
        
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='map FastQ Files to the given genome and realigns the reads for SNP-calling.',)
-    parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
-    parser.add_argument('-c', '--conf', metavar='Configuration File', type=str, help='Configuration File used to read Parameters for RnaEditor', required=True)
-    
-    args = parser.parse_args()
-    
-    parameters = Parameters(args.conf) 
-    edit=RnaEdit(args.input,parameters,0)
-    
-    edit.start()
-    edit.wait()
-   
-    
-    del edit 
+    if len(sys.argv) > 1:
+        parser = argparse.ArgumentParser(
+            prog = 'RnaEditor',
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            description=textwrap.dedent('''\
+             RnaEditor: easily detect editing sites from deep sequencing data'
+            ----------------------------------------------------------------
+                run without arguments to start the user interface.
+            '''))
+        parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paire-end-sequencing)', required=True)
+        parser.add_argument('-c', '--conf', metavar='Configuration File', type=str, help='Configuration File used to read Parameters for RnaEditor', required=True)
+        
+        args = parser.parse_args()
+        
+        parameters = Parameters(args.conf) 
+        edit=RnaEdit(args.input,parameters,0)
+        
+        edit.start()
+        edit.wait()
+       
+        
+        del edit 
+    else: 
+        from ui.GuiView import GuiView
+        main(sys.argv)
 else:
     pass    
     
