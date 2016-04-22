@@ -3,20 +3,23 @@ Created on 11.06.2014
 
 @author: david
 '''
-from collections import defaultdict
-import gtfHandler
-import gzip
-from Helper import Helper
-from Gene import Gene
-from itertools import izip
-from array import array
-from Transcript import Transcript
-from __builtin__ import SyntaxError
-from operator import attrgetter
-
 '''
 classdocs
 '''
+
+from __builtin__ import SyntaxError
+from array import array
+from collections import defaultdict
+import gzip
+from itertools import izip
+from operator import attrgetter
+
+from Gene import Gene
+from Helper import Helper
+from Transcript import Transcript
+import gtfHandler
+
+
 class Genome(object):
     
     def __init__(self,gtfFile,logFile=None,textField=0):

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import sys 
+
 from PyQt4 import QtGui, QtCore
-from ui.GuiView import GuiView
+
 from ui.GuiControll import GuiControll
+from ui.GuiView import GuiView
+
 
 def main(argv):
     app = QtGui.QApplication(argv) 

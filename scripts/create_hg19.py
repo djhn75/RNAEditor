@@ -4,12 +4,12 @@
 #@author: david
 
 
-import argparse,sys
+import argparse, sys
 from string import split, replace, ascii_letters
+from subprocess import STDOUT
+import subprocess
 import urllib2
 import zipfile
-import subprocess
-from subprocess import STDOUT
 
 
 parser = argparse.ArgumentParser(description='Download all the files for RNAeditor')

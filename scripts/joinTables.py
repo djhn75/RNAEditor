@@ -8,6 +8,7 @@ Created on Apr 16, 2013
 import argparse, os
 from string import split
 
+
 parser = argparse.ArgumentParser(description='Merge tables.')
 parser.add_argument('-f', '--files', metavar='N', type=str, nargs='+', help='the list of files', required=True)
 parser.add_argument('-t', '--top', metavar='N', type=str, nargs="+", help='list of header names (space separated)')

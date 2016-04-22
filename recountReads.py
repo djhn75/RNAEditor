@@ -6,9 +6,11 @@ If there is an
 @author: david
 '''
 
-import pysam
-from Helper import Helper
 import argparse, os, re, sys
+
+import pysam
+
+from Helper import Helper
 
 
 parser = argparse.ArgumentParser(description='Merges the GVF Files and recalculates the base Counts after RnaEditor is finished.')

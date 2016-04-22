@@ -7,11 +7,11 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import os
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.Qt import QSizePolicy
 from PyQt4.QtGui import QGridLayout, QVBoxLayout
-import os
-
 
 
 class RunTab(QtGui.QWidget):
