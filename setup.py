@@ -9,7 +9,7 @@ from distutils.core import setup
 #root = '/dist/RnaEditor.app/Contents'
 #pythonhome = os.path.join(root, 'Frameworks/Python.framework/Versions/Current')
 
-APP = ['Main.py']
+APP = ['RnaEditor.py']
 DATA_FILES = ['ui/icons/rnaEditor_icon.pdf','ui/icons/rnaEditor_icon.png','ui/icons/rnaEditor_icon.svg','configuration.txt']
 OPTIONS = {'argv_emulation': True,
 'iconfile': '/Users/david/git/rnaEditor/ui/icons/rnaEditor.icns',
@@ -22,5 +22,5 @@ setup(
     version = "1.0",
     author = "David John",
     author_email = "john@med.uni-frankfurt.de",
-    py_modules = ["CallEditingSites","createDiagrams","Gene","Genome","gtfHandler","Helper","Main","MapFastq","recountReads","RnaEdit","Transcript","VariantSet",   "ui",]
+    py_modules = ["CallEditingSites","createDiagrams","Gene","Genome","gtfHandler","Helper","MapFastq","recountReads","RnaEdit","Transcript","VariantSet",   "ui",]
 )
