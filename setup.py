@@ -30,5 +30,5 @@ setup(
                    "PyQt4" : "/usr/lib/python2.7/dist-packages/PyQt4/",
                    "numpy" : "/usr/lib/python2.7/dist-packages/numpy/",
                    "matplotlib" : "/usr/lib/pymodules/python2.7/matplotlib/"},
-      packages= ["ui","pysam","PyQt4","numpy","matplotlib"]
+    packages= ["ui","pysam","PyQt4","numpy","matplotlib"]
 )
