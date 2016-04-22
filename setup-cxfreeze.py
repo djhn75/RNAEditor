@@ -5,7 +5,7 @@ from cx_Freeze import setup, Executable
 # fine tuning.
 buildOptions = {
 "includes": [],
-"packages": ['os','sys','re','copy','gc','pysam','__builtin__','array','collection','gzip','itertools','operator','datetime','subprocess','errno','collections','traceback','PyQt4','matplotlib','numpy','multiprocessing','pyface'],
+"packages": ['os','sys','re','copy','gc','pysam','__builtin__','array','gzip','itertools','operator','datetime','subprocess','errno','collections','traceback','PyQt4','matplotlib','numpy','multiprocessing'],
 'excludes' : ['boto.compat.sys',
                  'boto.compat._sre',
                  'boto.compat._json',
