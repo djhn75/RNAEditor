@@ -26,9 +26,17 @@ setup(
     download_url = "http://rnaeditor.uni-frankfurt.de/install.php",
     py_modules = ["CallEditingSites","createDiagrams","Gene","Genome","gtfHandler","Helper","MapFastq","recountReads","RnaEditor","Transcript","VariantSet"],
     scripts = [],
+
+    package_dir = {"pysam" : "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/pysam/",
+                   "PyQt4" : "/Library/Python/2.7/site-packages/PyQt4/",
+                   "numpy" : "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/",
+                   "matplotlib" : "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/matplotlib/"},
+    packages= ["ui","pysam","PyQt4","numpy","matplotlib"]
+)
+
+    
+"""    
     package_dir = {"pysam" : "/usr/local/lib/python2.7/dist-packages/pysam/",
                    "PyQt4" : "/usr/lib/python2.7/dist-packages/PyQt4/",
                    "numpy" : "/usr/lib/python2.7/dist-packages/numpy/",
-                   "matplotlib" : "/usr/lib/pymodules/python2.7/matplotlib/"},
-    packages= ["ui","pysam","PyQt4","numpy","matplotlib"]
-)
+                   "matplotlib" : "/usr/lib/pymodules/python2.7/matplotlib/"},"""
