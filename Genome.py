@@ -7,11 +7,11 @@ Created on 11.06.2014
 classdocs
 '''
 
-from __builtin__ import SyntaxError
+#from __builtin__ import SyntaxError
 from array import array
 from collections import defaultdict
 import gzip
-from itertools import izip
+#from itertools import izip
 from operator import attrgetter
 
 from Gene import Gene
@@ -135,8 +135,8 @@ class Genome(object):
             
             gene = Gene(geneId, chromosome, strand, geneType, geneNames, geneExons, geneCds)
             
-            geneExons = dict(izip(geneExons,xrange(1000000)))
-            geneCds = dict(izip(geneCds,xrange(1000000))) 
+            geneExons = dict(zip(geneExons,xrange(1000000)))
+            geneCds = dict(zip(geneCds,xrange(1000000))) 
             
             
             self.geneList.append(gene)

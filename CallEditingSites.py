@@ -319,7 +319,7 @@ class CallEditingSites(object):
         
         '''check if result file already exists''' 
         if os.path.isfile(self.rnaEdit.params.output+".editingSites.clusters") and self.rnaEdit.params.overwrite==False:
-            print "\t [SKIP] Final result file already exist",self.rnaEdit.logFile,self.rnaEdit.textField
+            Helper.status("\t [SKIP] Final result file already exist",self.rnaEdit.logFile,self.rnaEdit.textField,"green")
             return 1
         
         

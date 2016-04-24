@@ -8,7 +8,7 @@ from collections import defaultdict, OrderedDict
 import os
 import operator
 from copy import copy
-from exceptions import KeyError
+#from exceptions import KeyError
 from Genome import Genome
 import collections
 import numpy as np

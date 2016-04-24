@@ -10,7 +10,7 @@ from collections import defaultdict, OrderedDict
 import traceback
 import ui
 from numpy import arange
-from PyQt4.QtCore import QString
+from PyQt4 import QtCore
 #from matplotlib.backends import qt_compat
 #from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
@@ -273,7 +273,7 @@ class Helper():
                     if resultFile!=None:
                         os.remove(resultFile.name)
                     #exit(1)
-            except OSError, o:
+            except OSError as o:
                 if o.errno == errno.ENOTDIR or o.errno == errno.ENOENT:
                     Helper.error(cmd[0] + " Command not found on this system",logFile,textField)
                     if resultFile!=None:
@@ -286,7 +286,7 @@ class Helper():
                     #exit(1)
             Helper.printTimeDiff(startTime, logFile, textField, "green")
         else:
-            print "\t [SKIP] File already exist",logFile,textField
+            Helper.info("\t [SKIP] File already exist",logFile,textField, "green") 
 
     @staticmethod
     def getPositionDictFromVcfFile(vcfFile,runNumber):
@@ -684,7 +684,7 @@ class Helper():
         if textField!=0:
             #currentAssay = Helper.runningAssays[textField] 
             if color in Helper.colors:
-                textField.append(QString("<font color=\""+color+"\">%1</font>").arg("[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n"))
+                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg("[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n"))
             else:
                 textField.append(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         if logFile!=None:
@@ -704,7 +704,7 @@ class Helper():
     def info (message,logFile=None,textField=0,color="olive"):
         if textField!=0:
             if color in Helper.colors:
-                textField.append(QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
             else:
                 textField.append(Helper.prefix + "INFO:    "  + message + Helper.praefix)
         if logFile!=None:
@@ -723,7 +723,7 @@ class Helper():
     def error (message,logFile=None,textField=0,color="red"):
         if textField!=0:
             if color in Helper.colors:
-                textField.append(QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
             else:
                 textField.append(Helper.prefix + "ERROR:    "  + message + Helper.praefix)
         if logFile!=None:
@@ -746,9 +746,9 @@ class Helper():
             #currentAssay = Helper.runningAssays[runNumber] 
             if color in Helper.colors:
                 if bold==True:
-                    textField.append(QString("<font color=\""+color+"\"><b>%1</b></font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                    textField.append(QtCore.QString("<font color=\""+color+"\"><b>%1</b></font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
                 else:
-                    textField.append(QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                    textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
             else:
                 textField.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix)
         if logFile!=None:

@@ -40,9 +40,9 @@ class Gene(object):
         '''
         prints all the important information like Gene name and all the exons
         '''
-        print "GeneName: %s" % str(tuple(self.names))
-        print "GeneId: %s" % self.geneId
-        print "Position: %s:%s-%s %s" % (str(self.chromosome),str(self.start), str(self.end),"+" if self.strand else "-")
-        print "CDS: %s" % str(self.codingExons)
-        print "Exons: %s" % str(self.exons)
-        print "Biotype: %s" % self.geneType
+        print("GeneName: %s" % str(tuple(self.names)))
+        print("GeneId: %s" % self.geneId)
+        print("Position: %s:%s-%s %s" % (str(self.chromosome),str(self.start), str(self.end),"+" if self.strand else "-"))
+        print("CDS: %s" % str(self.codingExons))
+        print("Exons: %s" % str(self.exons))
+        print("Biotype: %s" % self.geneType)

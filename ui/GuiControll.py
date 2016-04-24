@@ -75,7 +75,7 @@ class GuiControll(object):
         #initialize new Thread with new assay
         try:
             assay = RnaEdit(fastqFiles, parameters,runTab.commandBox)
-        except Exception,err:
+        except Exception as err:
             Helper.error(str(err)+"\n creating rnaEditor Object Failed!" ,textField=runTab.commandBox)
         
         
@@ -117,11 +117,11 @@ class GuiControll(object):
         resultTab = ResultTab(self,fileName)
         self.view.tabMainWindow.addTab(resultTab,fileName[fileName.rfind("/")+1:fileName.rfind(".html")])
         Helper.runningThreads.append(resultTab)
-        print fileName
+        print(fileName)
             
     @QtCore.pyqtSlot()            
     def closeTab(self, currentIndex):
-        print "tab close %i" % currentIndex
+        print ("tab close %i" % currentIndex)
         if currentIndex != 0:
             currentThread=Helper.runningThreads[currentIndex]
             currentQWidget=self.view.tabMainWindow.widget(currentIndex)
