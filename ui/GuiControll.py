@@ -9,7 +9,7 @@ from ui.RunTab import RunTab
 from PyQt4 import QtCore, QtGui
 import os, sys, time
 from Helper import Parameters, Helper
-from RnaEdit import RnaEdit
+from RnaEditor import RnaEdit
 import subprocess
 import traceback
 

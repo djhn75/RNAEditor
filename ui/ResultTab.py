@@ -1,7 +1,8 @@
 import sys
+
+from PyQt4 import QtGui
 from PyQt4.QtCore import QUrl
 from PyQt4.QtWebKit import QWebView
-from PyQt4 import QtGui
 
 
 class ResultTab(QWebView):
