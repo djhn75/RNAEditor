@@ -30,12 +30,12 @@
 							
 							<h5> Human </h5>
 								<ul>
-									<li><a href="">GRCH38</a></li>
-									<li><a href="">GRCH37</a></li>
+									<li><a href="http://141.2.194.197/rnaeditor_annotations/GRCH38.tar.gz">GRCH38</a></li>
+									<li><a href="http://141.2.194.197/rnaeditor_annotations/GRCH37.tar.gz">GRCH37</a></li>
 								</ul>
 							<h5> Mouse </h5>
 								<ul>
-									<li><a href="">comming soon</a></li>
+									<li><a href="http://141.2.194.197/rnaeditor_annotations/GRCM38.tar.gz">GRCHM38</a></li>
 									
 								</ul>
 							<br>

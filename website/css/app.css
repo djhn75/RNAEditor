@@ -30,16 +30,32 @@ footer{
 }
 
 
+.toc{
+	/*background:#E0FFD0;*/
+	font-size:90%; 
+	padding:.5em; 
+	padding-bottom:1em;
+}
+
 .codebox {
     /* Below are styles for the codebox (not the code itself) */
     border:1px solid black;
-    background-color:#EEEEFF;
-    width:300px;
+    background-color: black;
+    width:auto;
     overflow:auto;    
     padding:10px;
 }
 .codebox code {
     /* Styles in here affect the text of the codebox */
+    color:#2FFF12;
+    font-size:0.9em;
+    /* You could also put all sorts of styling here, like different font, color, underline, etc. for the code. */
+}
+
+code {
+    /* Styles in here affect the text of the codebox */
+    background-color: black;
+    color:#2FFF12;
     font-size:0.9em;
     /* You could also put all sorts of styling here, like different font, color, underline, etc. for the code. */
 }

@@ -36,7 +36,15 @@
 									<li><a href="http://bedtools.readthedocs.org/en/latest/">Bedtools</a></li>										
 								</ul>
 
-									
+							<h4>Required python packages:</h4>
+								<p>RnaEditor requires the following python packages:</p>
+								<ul>
+									<li><a href="https://pysam.readthedocs.org/en/latest/"> numpy </a> run: <code>pip install pysam</code></li>
+									<li><a href="https://pypi.python.org/pypi/PyQt4">PyQt4</a> run: <code>sudo apt-get install python-qt4</code></li>
+									<li><a href="http://matplotlib.org/faq/installing_faq.html#installation">matplolib</a> run: <code>pip install matplotlib</code></li>
+									<li><a href="https://pysam.readthedocs.org/en/latest/">pysam</a> run:<code>pip install pysam</code></li>
+								</ul>
+		
 								
 							<h4>RnaEditor:</h4>
 								<ul>
