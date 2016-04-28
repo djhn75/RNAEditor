@@ -401,7 +401,7 @@ class VariantSet(object):
         Helper.info("[%s] Print Clusters to %s" %  (startTime.strftime("%c"),outFile.name),self.logFile,self.textField)
         
         
-        outFile.write("\t".join(["#Chr","Start","Stop","Cluster Name","GeneID","Gene Symbol","Cluster Length","Number of Editing_sites","Editing_rate","\n"]))
+        outFile.write("\t".join(["#Chr","Start","Stop","IslandID","GeneID","Gene Symbol","Cluster Length","Number of Editing_sites","Editing_rate","\n"]))
         
         for cluster in self.clusterDict.keys():
             end = max(v.position for v in self.clusterDict[cluster])
@@ -424,7 +424,7 @@ class VariantSet(object):
                 except KeyError:
                     geneIdSet.add("N/A") #when variant has no attribute GI
             
-            outFile.write("\t".join([v.chromosome,str(start),str(end),str(cluster), #Chr","Start","Stop","Cluster Name",
+            outFile.write("\t".join([v.chromosome,str(start),str(end),"Island"+str(cluster), #Chr","Start","Stop","Cluster Name",
                                      ",".join(map(str,geneIdSet)),",".join(map(str,geneNameSet)), #"GeneID","Gene Symbol"
                                      str(length),str(len(self.clusterDict[cluster])),'%1.2f'%float(editingRate),"\n"]))
             

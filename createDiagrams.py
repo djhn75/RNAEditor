@@ -127,9 +127,9 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         #write the baseCounts to a file to open with Excel later
         stats.baseCountHTMLTable="<table><tr><th>Missmatch Type</th><th>Alu</th><th>Non Alu</th></tr>"
         file=open(stats.outdir+"html/"+stats.sampleName+"_baseCounts.txt","w")
-        file.write("MM    alu    nonAlu\n")
+        file.write("\t".join(["MM","alu","nonAlu"])+"\n")
         for keyAlu,keyNonAlu in zip(counts1.keys(),counts2.keys()):
-            file.write("\t".join([str(keyAlu),str(counts1[keyAlu]),str(counts2[keyAlu]),"\n"]))
+            file.write("\t".join([str(keyAlu),str(counts1[keyAlu]),str(counts2[keyAlu])])+"\n")
             stats.baseCountHTMLTable+="<tr><td>%s</td><td>%s</td><td>%s</td></tr>"%(keyAlu,str(counts1[keyAlu]),str(counts2[keyAlu]))
         file.close()
         stats.baseCountHTMLTable+="</table>"
@@ -148,10 +148,10 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         counts2=Helper.countOccurrences(output+".editingSites.nonAlu.gvf", 2, logFile, textField) 
         
         file=open(stats.outdir+"html/"+stats.sampleName+"_editingSites.txt","w")
-        file.write("Position    alu    nonAlu\n")
+        file.write("\t".join(["Position","alu","nonAlu"])+"\n")
         
         for keyAlu,keyNonAlu in zip(counts1.keys(),counts2.keys()):
-            file.write("\t".join([str(keyAlu),str(counts1[keyAlu]),str(counts2[keyAlu]),"\n"]))
+            file.write("\t".join([str(keyAlu),str(counts1[keyAlu]),str(counts2[keyAlu])])+"\n")
             
         file.close()
         
@@ -182,7 +182,7 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         
         #make String for the HTML Table and write to a table for Ecxel
         file=open(stats.outdir+"html/"+stats.sampleName+"_editingSites.txt","w")
-        file.write("Position    alu    nonAlu\n")
+        file.write("\t".join(["Position","alu","nonAlu"])+"\n")
         stats.editingPositionHTMLTable="<table><tr><th>Editing Position</th><th>Total Alu</th><th>Alu Percentage</th><th>Total Non Alu</th><th>Non Alu Percentage</th></tr>"
         for key in orderList:
             alu = counts1[key] if key in counts1.keys() else 0
@@ -191,7 +191,7 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
             nonAluNumber=str(counts2[key]) if key in counts2.keys() else "0"
             aluPercentage= str(round(float(alu)/sumAlu,3)*100)+" %"
             nonAluPercentage= str(round(float(nonAlu)/sumNonAlu,3)*100)+" %"
-            file.write("\t".join([str(key),aluNumber,nonAluNumber,"\n"]))
+            file.write("\t".join([str(key),aluNumber,nonAluNumber])+"\n")
             stats.editingPositionHTMLTable+="<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(key,aluNumber, aluPercentage,nonAluNumber, nonAluPercentage)
         file.close()
         stats.editingPositionHTMLTable+="</table>"
