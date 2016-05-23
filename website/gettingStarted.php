@@ -33,21 +33,21 @@
                     
                     <div class="content">
 					
-						<p> RnaEditor can be used in two ways. Either you start it with a user inteface or you use it from the command line.
+						<p> RnaEditor can be used in two ways. Either you start it with a user inteface, or you use it from the command line.
 						Both methods will be explained below.</p>
 						
 						
 						<h3 id='guiMode'>Interactive mode</h3>
 							<div class='panel'>
-								<p>To start RnaEitor with a user interface just run <code>python RnaEditor.py</code> or double click the program symbol on Mac or Windows.</p>
+								<p>To start RnaEitor with a user interface, simply run <code>python RnaEditor.py</code> or double click the program symbol on Mac or Windows.</p>
 								
-								<p>Follow these steps to run you analisys:</p>
+								<p>Follow these steps to start you analisys:</p>
 								<ul>
-									<li>1 Download your <a href="download.php"><b>annotation bundle</b></a> and extract it</li>
-									<li>2 Set the correct paths in the file <b>configuration.txt</b> inside of your bundle</li>
-									<li>3 Drop <b>configuration.txt</b> inside of RnaEditor</li>
-									<li>4 Drop your Fastq files inside of RnaEditor</li>
-									<li>5 Check the parameters again and Press start then wait for the results</li>
+									<li>1 Download the <a href="download.php"><b>annotation bundle</b></a> and extract it.</li>
+									<li>2 Set the correct paths in the file <b>configuration.txt</b> inside of your bundle.</li>
+									<li>3 Drop <b>configuration.txt</b> inside of RnaEditor.</li>
+									<li>4 Drop your Fastq files inside of RnaEditor.</li>
+									<li>5 Check the parameters again and Press start then wait for the results.</li>
 								<ul>
 						
 							</div>
@@ -55,21 +55,20 @@
 						
 						<h3 id='consoleMode'>Console mode</h3>
 							<div class='panel'>
-								<p>For an overview on how to run RnaEditor just run <code>python RnaEditor.py -h</code>. This will print the following help page. </p>								
+								<p>For an overview on how to run RnaEditor, simply run <code>python RnaEditor.py -h</code>. This will print the following help page. </p>								
 								<div class="codebox">
 
 								<code>
 								usage: RnaEditor [-h] -i Fastq-Files [Fastq-Files ...] -c Configuration File<br><br>
 
-									 RnaEditor: easily detect editing sites from deep sequencing data'<br>
+									 RnaEditor: easily detect editing sites from deep sequencing data<br>
 									----------------------------------------------------------------<br>
 									    run without arguments to start the user interface.<br>
 									<br>
 									optional arguments:<br><br>
 									  -h, --help            show this help message and exit<br>
 									  -i Fastq-Files [Fastq-Files ...], --input Fastq-Files [Fastq-Files ...]
-									                        Input fastq files (maximum two for paire-end-
-									                        sequencing)<br>
+									                        Input fastq files (maximum two for paired-end sequencing)<br>
 									  -c Configuration-File, --conf Configuration-File
 									                        Configuration File used to read Parameters for
 									                        RnaEditor<br>							

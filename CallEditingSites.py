@@ -220,7 +220,7 @@ class CallEditingSites(object):
                 scoreArray.sort(reverse=True)
                 if len(scoreArray) < 2:   #test if more than one blat Hit exists
                     scoreArray.append(0)
-                if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 perchen of first hit
+                if chr == largestScoreLine[1] and scoreArray[1] < scoreArray[0]*0.95: #check if same chromosome and hit is lower the 95 percent of first hit
                     blockCount,blockSizes,blockStarts = int(largestScoreLine[2]),largestScoreLine[3].split(",")[:-1],largestScoreLine[4].split(",")[:-1]
                     for i in range(blockCount):
                         startPos = int(blockStarts[i])+1

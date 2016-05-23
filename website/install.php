@@ -24,7 +24,7 @@
 						<h3>Installation</h3>
 						
 						<div class='panel'>
-							<p>To install RnaEditor follow these steps :</p>
+							<p>To install RnaEditor follow these steps:</p>
 							
 							<h4>Required Software:</h4>
 								<p>RnaEditor will ask for a source directly where the following software products have to be installed:</p>

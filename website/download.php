@@ -25,7 +25,7 @@
 						
 						<div class='panel'>
 							
-							<p>RnaEditor needs certain annoation files and databases to detect editing sites.
+							<p>RnaEditor requires a set of annotation files and databases to detect editing sites.
 							Either download one of the following annotation bundles or download the files manually by executing the commands below.</p>
 							
 							<h5> Human </h5>
@@ -76,11 +76,11 @@
 									
 									    <ul>
 									    <li>#download Alu regions from the repeat masker
-											<ul><li>#Link: http://genome.ucsc.edu/cgi-bin/hgTables</li>
-												<li>#group: Variation and Repeats</li>
-												<li>#track: RepeatMasker</li>
-												<li>#table: rmsk</li>
-												<li>#output format: BED</li>
+											<ul><li>Link: http://genome.ucsc.edu/cgi-bin/hgTables</li>
+												<li>group: Variation and Repeats</li>
+												<li>track: RepeatMasker</li>
+												<li>table: rmsk</li>
+												<li>output format: BED</li>
 											</ul>
 									    
 									    </ul>
