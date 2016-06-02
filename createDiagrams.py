@@ -94,7 +94,7 @@ def topGenes(sumDict, fileName,number=20,value=5, logFile=None,textField=0):
             numbers=str(counts[gene][value])
             file.write("\t".join([geneName,numbers]) +"\n")
         htmlStr+="</table>"
-        return str
+        return htmlStr
 
         
         
