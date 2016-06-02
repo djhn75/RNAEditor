@@ -84,9 +84,13 @@ def topGenes(sumDict, fileName,number=20,value=5, logFile=None,textField=0):
         yLim=max(max(i) for i in valueMatrix)+1
         Helper.createBarplot(valueMatrix, fileName, barNameTuple, [barName], width=0.35, title="Highly Edited Genes",yLim=yLim,barText=False,yText="Editing Counts")
         
+        
+        file= open(fileName.replace("png","txt"))
+        file.write("\t".join(["Gene_Symbol","Number_of_editing_sites"])+"\n")
         str="<table class='geneTable'><tr><th>GeneName</th><th>Number of editing sites</th></tr>"
         for gene in counts:
             str+="<tr><td>%s</td><td>%s</td></tr>"%(counts[gene][0],counts[gene][value])
+            file.write("\t".join([str(counts[gene]),str(counts[gene][value])+"\n")
         str+="</table>"
         return str
 
