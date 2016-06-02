@@ -90,7 +90,7 @@ def topGenes(sumDict, fileName,number=20,value=5, logFile=None,textField=0):
         str="<table class='geneTable'><tr><th>GeneName</th><th>Number of editing sites</th></tr>"
         for gene in counts:
             str+="<tr><td>%s</td><td>%s</td></tr>"%(counts[gene][0],counts[gene][value])
-            file.write("\t".join([str(counts[gene]),str(counts[gene][value])+"\n")
+            file.write("\t".join([str(counts[gene]),str(counts[gene][value])]) +"\n")
         str+="</table>"
         return str
 
