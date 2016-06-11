@@ -36,7 +36,7 @@ for file in args.files: #loop through all files
     file = open(file)
     
     for line in file: #loop through current file
-        line = line.split()
+        line = line.split(args.delimiter)
         keyTuple=()
         for k in args.keys:
             keyTuple=keyTuple+(line[k-1],)

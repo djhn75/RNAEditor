@@ -264,7 +264,7 @@ class CallEditingSites(object):
                 #count statistics
                 if numberBlatReads < minMissmatch:
                     mmNumberTooSmall+=1
-                elif numberBlatReads < numberDiscardReads: #check if more readd fit the blat criteria than not
+                elif numberBlatReads < numberDiscardReads: #check if more reads fit the blat criteria than not
                     mmReadsSmallerDiscardReads+=1    
                 mmNumberTotal+=1
             
@@ -445,7 +445,7 @@ class CallEditingSites(object):
         ##############################################
         if not os.path.isfile(self.rnaEdit.params.output+".noBlat.vcf") or self.rnaEdit.params.overwrite==True:
             blatOutfile = self.rnaEdit.params.output + ".noBlat.vcf"
-            self.blatSearch(nonAluVariants, blatOutfile, 25, 1)
+            self.blatSearch(nonAluVariants, blatOutfile, 25, 2)
             
             #print nonAlu variants
             nonAluVariants.printVariantDict(self.rnaEdit.params.output+".noBlat.vcf")
