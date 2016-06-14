@@ -290,7 +290,7 @@ class VariantSet(object):
         sumFile=open(outfile.name[:outfile.name.rfind(".")]+".summary","w")        
         
         outfile.write("\t".join(["#Gene_ID","Name","SEGMENT","#CHROM","GENE_START","GENE_STOP","VAR_ID","VAR_POS",
-                                 "REF","ALT","QUAL","#A","#C","#G","T","Reads_Total","Edited_Reads","Editing_Ratio","\n"]))
+                                 "REF","ALT","QUAL","#A","#C","#G","#T","Reads_Total","Edited_Reads","Editing_Ratio","\n"]))
         
         for v in self.variantDict.values():
             anno = v.attributes["GI"]
