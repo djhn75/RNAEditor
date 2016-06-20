@@ -29,6 +29,10 @@ footer{
 	text-align: center;
 }
 
+table {width: 90%;}
+th{height: 12.0px; background-color: #64b2df; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #000000 #000000 #000000 #000000; padding: 4.0px 4.0px 4.0px 4.0px}
+tr {height: 11.0px; border-style: solid; border-width: 1.0px 1.0px 1.0px 1.0px; border-color: #000000 #000000 #000000 #000000; padding: 4.0px 4.0px 4.0px 4.0px}
+
 
 .toc{
 	/*background:#E0FFD0;*/
