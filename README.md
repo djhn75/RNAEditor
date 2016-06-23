@@ -1,6 +1,8 @@
+RNAEditor is an all-in-one tool to analyze RNA editing events from RNA sequencing (RNA-seq) data.
+Raw sequencing reads (.fastq) or mapped reads (.bam) can be used as an input data. 
+RNAEditor maps the reads to the genome, calculates sequence variations,  filters for “non-editing sites” and applies a cluster algorithm to detect “editing islands”.
 
-
-1.) INSTALL INSTRUCTIONS
+### 1.) INSTALL INSTRUCTIONS
 
         Install following tools to /usr/local/bin/:
 
@@ -32,23 +34,24 @@
                     $ pip install pysam
 
 
-2.) START RNAEDITOR
+### 2.) START RNAEDITOR
 
         run: python RNAEditor.py
 
-3.) KICKOFF ANALYSIS
+### 3.) KICKOFF ANALYSIS
 
     To detect editing from you NGS data simply drop all your FASTQ-Files to the RNAEditor window set the parameters and press START
 
 
-4.) LEGAL STATEMENT
+### 4.) LEGAL STATEMENT
 
         RNAEditor is free to use without login information, provided that the original work is properly cited.
         It is provided “as is” without any reliability whatsoever.
         We have taken extreme care regarding the contents that we provide in RNAEditor, but if you identify a bug, please contact us.
         If you are commercial user, please contact us: uchida@med.uni-frankfurt.de
 
-5.) LICENSE
+### 5.) LICENSE
+
         The MIT License
 
         Copyright (c) 2016 David John
