@@ -9,7 +9,7 @@ from ui.RunTab import RunTab
 from PyQt4 import QtCore, QtGui
 import os, sys, time
 from Helper import Parameters, Helper
-from RnaEditor import RnaEdit
+from RNAEditor import RnaEdit
 import subprocess
 import traceback
 
@@ -39,8 +39,9 @@ class GuiControll(object):
         if parameters.paired==True:
             #fastqs=inputTab.dropList.dropFirstTwoItems()
             fastqs = inputTab.dropList.dropFirstItem()
-            if not str(fastqs[0].text()).endswith(".bam"):
-                fastqs+=inputTab.dropList.dropFirstItem()
+            if fastqs[0]!=None:
+                if not str(fastqs[0].text()).endswith(".bam"):
+                    fastqs+=inputTab.dropList.dropFirstItem()
         else:
             fastqs = inputTab.dropList.dropFirstItem()        
         
@@ -66,19 +67,19 @@ class GuiControll(object):
         
         
         runTab = RunTab(self)
-        currentIndex =  self.view.tabMainWindow.count()
 
-        #self.view.tabMainWindow.addTab(self.runTab, "Analysis"+ str(Helper.assayCount))
-        self.view.tabMainWindow.addTab(runTab, sampleName + " "+ str(currentIndex))
         
         
         #initialize new Thread with new assay
         try:
             assay = RnaEdit(fastqFiles, parameters,runTab.commandBox)
         except Exception as err:
-            Helper.error(str(err)+"\n creating rnaEditor Object Failed!" ,textField=runTab.commandBox)
-        
-        
+            QtGui.QMessageBox.information(self.view,"Error", str(err)+"Cannot start Analysis!")
+            Helper.error(str(err) + "\n creating rnaEditor Object Failed!", textField=runTab.commandBox)
+        currentIndex = self.view.tabMainWindow.count()
+
+        # self.view.tabMainWindow.addTab(self.runTab, "Analysis"+ str(Helper.assayCount))
+        self.view.tabMainWindow.addTab(runTab, sampleName + " " + str(currentIndex))
         Helper.runningThreads.append(assay)
         
         assay.start()
@@ -132,7 +133,7 @@ class GuiControll(object):
                 currentQWidget.deleteLater()
                 del Helper.runningThreads[currentIndex]
                 return
-            
+
             #check if rnaEditor is still running or if it is finished it can be deleteted immediately
             if currentThread.isTerminated == False:
                     quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))

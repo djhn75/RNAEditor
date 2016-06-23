@@ -1,13 +1,13 @@
 #This file is used to configure the behaviour of RNAeditor
 
 #Standard input files
-refGenome = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
-gtfFile = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.83.gtf
-dbSNP = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/dbSNP_ensemble2.vcf
-hapmap = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/HAPMAP.vcf
-omni = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/1000GenomeProject.vcf
-esp = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/ESP.vcf
-aluRegions = /media/Storage/databases/rnaEditor_annotations/human/GRCH38/repeats.bed
+refGenome = ~/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
+gtfFile = ~/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.83.gtf
+dbSNP = ~/rnaEditor_annotations/human/GRCH38/dbSNP_ensemble2.vcf
+hapmap = ~/rnaEditor_annotations/human/GRCH38/HAPMAP.vcf
+omni = ~/rnaEditor_annotations/human/GRCH38/1000GenomeProject.vcf
+esp = ~/rnaEditor_annotations/human/GRCH38/ESP.vcf
+aluRegions = ~/rnaEditor_annotations/human/GRCH38/repeats.bed
 output = default
 sourceDir = /usr/local/bin/
 maxDiff = 0.04

@@ -306,7 +306,7 @@ if __name__ == '__main__':
                 run without arguments to start the user interface.
             '''))
         parser.add_argument('-i', '--input', metavar='Fastq-Files',nargs='+', type=str, help='Input fastq files (maximum two for paired-end sequencing)', required=True)
-        parser.add_argument('-c', '--conf', metavar='Configuration File', type=str, help='Configuration File used to read Parameters for RnaEditor', required=True)
+        parser.add_argument('-c', '--conf', metavar='Configuration File', type=str, help='Configuration File used to read Parameters for RnaEditor', required=True, default='configuration.txt')
         
         args = parser.parse_args()
         
