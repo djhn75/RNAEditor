@@ -28,8 +28,8 @@ If pip is available just run the following comannds to fulfill the requirements.
 
 #### 2.)Install
 To install RNAEditor either donwload the prebuild Application bundle or clone git repository
-+	MacOSX: [RNAEditor.app](http://RNAEditor.uni-frnakfurt.de)
-+	Linux: [RNAEditor.tar.gz](http://RNAEditor.uni-frnakfurt.de)
++	MacOSX: [RNAEditor.app](http://rnaeditor.uni-frankfurt.de/src/RNAEditor.dmg)
++	Linux: [RNAEditor.tar.gz](http://rnaeditor.uni-frankfurt.de/src/RNAEditor.tar.gz)
 +	Source: [GitHub]: (https://github.com/djhn75/RNAEditor)
 
 ### 3.) Start RNAEditor
