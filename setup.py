@@ -18,7 +18,7 @@ mainscript = 'RNAEditor.py'
 name="RNAEditor"
 OPTIONS = {'iconfile': 'ui/icons/rnaEditor.icns','plist': {'CFBundleShortVersionString':'0.1.0'}
 }
-DATA_FILES = ['ui/icons/rnaEditor_icon.pdf','ui/icons/RNAEditor.png','ui/icons/rnaEditor_icon.svg','configuration.txt','ui/icons/inputTab_icon.png']
+DATA_FILES = ['ui/icons/rnaEditor_icon.pdf','ui/icons/RNAeditor.png','ui/icons/rnaEditor_icon.svg','configuration.txt','ui/icons/inputTab_icon.png']
 
 if sys.platform == 'darwin':
     extra_options = dict(
