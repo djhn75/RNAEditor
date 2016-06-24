@@ -22,7 +22,7 @@ Also you need to make sure that you installed **pysam, python-qt4, matplotlib, n
 If pip is available just run the following comannds to fulfill the requirements.
 `$ pip instal pysam`
 `$ sudo apt-get install python-qt4`
-`$ pip install matplotlib`
+`$ sudo  matplotlib` (if this fails run `sudo apt-get install libfreetype6-dev libxft-dev` first)
 `$ pip install pysam`
 
 
