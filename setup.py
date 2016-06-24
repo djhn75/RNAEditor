@@ -10,8 +10,9 @@ Usage (Windows):
 Usage (Linux):
     python sytup.py install
 """
-import sys
-from setuptools import setup
+from __future__ import print_function
+from setuptools import setup, find_packages
+import io, sys, codecs, os
 
 mainscript = 'RNAEditor.py'
 name="RNAEditor"
@@ -44,11 +45,11 @@ setup(
     name=name,
     version="0.1",
     author="David John",
+    packages=find_packages(),
     description="RNAEditor is tool to analyze RNA editing events from RNA-seq data.",
     author_email="john@med.uni-frankfurt.de",
     url="http://rnaeditor.uni-frankfurt.de",
     download_url="http://rnaeditor.uni-frankfurt.de/install.php",
-    scripts=[],
     data_files=DATA_FILES,
     install_requires=['numpy>=1.9.0', 'pysam>=0.9.0', 'matplotlib>=1.4.3'],
     **extra_options
