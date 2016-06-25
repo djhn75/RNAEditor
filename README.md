@@ -19,11 +19,7 @@ Install following tools to **/usr/local/bin/**:
 + Bedtools: [Download]( http://bedtools.readthedocs.io/en/latest/content/installation.html)
 
 Also you need to make sure that you installed **pysam, python-qt4, matplotlib, numpy**.
-If pip is available just run the following comannds to fulfill the requirements.
-`$ pip instal pysam`
-`$ sudo apt-get install python-qt4`
-`$ sudo  matplotlib` (if this fails run `sudo apt-get install libfreetype6-dev libxft-dev` first)
-`$ pip install pysam`
+Ubuntu users simply run `sudo apt-get install python-numpy python-qt4 python-numpy python-pysam`
 
 
 #### 2.)Install
@@ -36,7 +32,7 @@ To install RNAEditor either donwload the prebuild Application bundle or clone gi
 
 + run`python RNAEditor.py`
 
-#### 4.) Run Analysis
+#### 4.) Run Analysis 
 To detect editing from you NGS data simply drop all your FASTQ-Files to the RNAEditor window set the parameters and press START
 
 
