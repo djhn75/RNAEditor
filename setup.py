@@ -33,12 +33,14 @@ elif sys.platform == 'win32':
         setup_requires=['py2exe'],
         app=[mainscript],
     )
+    sys.exit("RNAEditor does not support Windows yet")
 else:
     extra_options = dict(
         # Normally unix-like platforms will use "setup.py install"
         # and install the main script as such
         scripts=[mainscript],
     )
+    sys.exit("Install all the requirements and run RNAEditor.py")
 
 setup(
 
