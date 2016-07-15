@@ -10,6 +10,7 @@ Install following tools to **/usr/local/bin/**:
 + Picard Tools: [Donwload](https://sourceforge.net/projects/picard/files/picard-tools/1.119/picard-tools-1.119.zip/download)
 	**Move all .jar files to /usr/local/bin/picard-tools/** (use version <= 1.119)
 + GATK: [Donwload](https://www.broadinstitute.org/gatk/download/auth?package=GATK)
+    **Use GATK version 3.5 with java 1.7**, the newer vesions are currently causing problems.
 + Blat:
 	+ Binarys:
 		+ [MacOSX_x86_64](http://hgdownload.soe.ucsc.edu/admin/exe/macOSX.x86_64/blat/blat)
