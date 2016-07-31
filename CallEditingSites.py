@@ -44,8 +44,13 @@ class CallEditingSites(object):
         Helper.info( "\t threads:" + self.rnaEdit.params.threads, self.rnaEdit.logFile, self.rnaEdit.textField) 
         Helper.info( "\t StandCall:" + self.rnaEdit.params.standCall, self.rnaEdit.logFile, self.rnaEdit.textField) 
         Helper.info( "\t standEmit:" + self.rnaEdit.params.standEmit, self.rnaEdit.logFile, self.rnaEdit.textField) 
-        Helper.info( "\t keepTemp:" + str(self.rnaEdit.params.keepTemp), self.rnaEdit.logFile, self.rnaEdit.textField) 
-        Helper.info( "\t overwrite:" + str(self.rnaEdit.params.overwrite), self.rnaEdit.logFile, self.rnaEdit.textField) 
+        Helper.info( "\t keepTemp:" + str(self.rnaEdit.params.keepTemp), self.rnaEdit.logFile, self.rnaEdit.textField)
+
+        Helper.info("\t intronDistance:" + str(self.rnaEdit.params.intronDistance), self.rnaEdit.logFile, self.rnaEdit.textField)
+        Helper.info("\t minPts:" + str(self.rnaEdit.params.minPts), self.rnaEdit.logFile, self.rnaEdit.textField)
+        Helper.info("\t eps:" + str(self.rnaEdit.params.eps), self.rnaEdit.logFile, self.rnaEdit.textField)
+
+        Helper.info( "\t overwrite:" + str(self.rnaEdit.params.overwrite), self.rnaEdit.logFile, self.rnaEdit.textField)
     
     
   
@@ -422,7 +427,7 @@ class CallEditingSites(object):
         self.genome = Genome(self.rnaEdit.params.gtfFile,self.rnaEdit.logFile,self.rnaEdit.textField)
         #erase variants from intronic splice junctions
         if not os.path.isfile(self.rnaEdit.params.output+".noSpliceJunction.vcf") or self.rnaEdit.params.overwrite==True:
-            self.removeIntronicSpliceJunctions(nonAluVariants, self.genome)
+            self.removeIntronicSpliceJunctions(nonAluVariants, self.genome, distance=self.rnaEdit.params.intronDistance)
             nonAluVariants.printVariantDict(self.rnaEdit.params.output+".noSpliceJunction.vcf")
         else:
             if not os.path.isfile(self.rnaEdit.params.output+".noHomo.vcf"):
@@ -484,7 +489,7 @@ class CallEditingSites(object):
         
         variants.printVariantDict(self.rnaEdit.params.output+".editingSites.vcf")
         variants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.gvf",printSummary=True)
-        variants.createClusters(eps=50,minSamples=5)
+        variants.createClusters(eps=self.rnaEdit.params.eps,minSamples=self.rnaEdit.params.minPts)
         variants.printClusters(self.rnaEdit.params.output+".editingIslands.bed")
         
         return 1

@@ -54,6 +54,9 @@ class Parameters():
         self.standCall = str(inputTab.standCallSpinBox.value())
         self.standEmit = str(inputTab.standEmitSpinBox.value())
         self.edgeDistance = str(inputTab.edgeDistanceSpinBox.value())
+        self.intronDistance = str(inputTab.intronDistanceSpinBox.value())
+        self.minPts = str(inputTab.minPtsSpinBox.value())
+        self.eps = str(inputTab.epsSpinBox.value())
         self.paired = inputTab.pairedCheckBox.isChecked()
         self.overwrite = inputTab.overwriteCheckBox.isChecked()
         self.keepTemp = inputTab.keepTempCheckBox.isChecked()
@@ -106,6 +109,12 @@ class Parameters():
                 self.standEmit=str(value)    
             elif id == "edgeDistance":
                 self.edgeDistance=str(value)
+            elif id == "intronDistance":
+                self.intronDistance=str(value)
+            elif id== "minPts":
+                self.minPts=str(value)
+            elif id== "eps":
+                self.eps=str(value)
             elif id == "threads":
                 self.threads=str(value)
             elif id == "keepTemp":

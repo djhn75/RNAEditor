@@ -210,12 +210,33 @@ class InputTab(QtGui.QWidget):
         self.standEmitSpinBox.setRange(1,30)
         self.standEmitSpinBox.setValue(2)
         
-        self.edgeDistanceLabel = QtGui.QLabel("min edge distance:")
+        self.edgeDistanceLabel = QtGui.QLabel("min edge distance (bp):")
         self.edgeDistanceLabel.setToolTip("The minimum distance of the editing site from the read edge")
         self.edgeDistanceSpinBox = QtGui.QSpinBox()
         self.edgeDistanceSpinBox.setToolTip("The minimum distance of the editing site from the read edge")
         self.edgeDistanceSpinBox.setRange(0,15)
         self.edgeDistanceSpinBox.setValue(3)
+
+        self.intronDistanceLabel = QtGui.QLabel("min intron distance (bp):")
+        self.intronDistanceLabel.setToolTip("The minimum distance of an intronic editing site to the next exon")
+        self.intronDistanceSpinBox = QtGui.QSpinBox()
+        self.intronDistanceSpinBox.setToolTip("The minimum distance of an intronic editing site to the next exon")
+        self.intronDistanceSpinBox.setRange(0, 100)
+        self.intronDistanceSpinBox.setValue(5)
+
+        self.minPtsLabel = QtGui.QLabel("min editing Sites per cluster:")
+        self.minPtsLabel.setToolTip("The minimum number of editing sites in an editing island")
+        self.minPtsSpinBox = QtGui.QSpinBox()
+        self.minPtsSpinBox.setToolTip("The minimum number of editing sites in an editing island")
+        self.minPtsSpinBox.setRange(0, 100)
+        self.minPtsSpinBox.setValue(5)
+
+        self.epsLabel = QtGui.QLabel("max Neigbour distance (bp):")
+        self.epsLabel.setToolTip("The maximal distance of an editing sites to be considered a neighbour")
+        self.epsSpinBox = QtGui.QSpinBox()
+        self.epsSpinBox.setToolTip("The maximal distance of an editing sites to be considered a neighbour")
+        self.epsSpinBox.setRange(0, 1000)
+        self.epsSpinBox.setValue(50)
         
         self.pairedCheckBox = QtGui.QCheckBox("paired-end Sequencing")
         self.overwriteCheckBox = QtGui.QCheckBox("Overwrite existing Files")
@@ -293,12 +314,18 @@ class InputTab(QtGui.QWidget):
         self.settingsLayout.addWidget(self.edgeDistanceLabel,3,3)
         self.settingsLayout.addWidget(self.edgeDistanceSpinBox,3,4)
         
-        self.settingsLayout.addWidget(self.pairedCheckBox,1,5)
-        self.settingsLayout.addWidget(self.keepTempCheckBox,2,5)
-        self.settingsLayout.addWidget(self.overwriteCheckBox,3,5)
-        
+        self.settingsLayout.addWidget(self.pairedCheckBox,1,7)
+        self.settingsLayout.addWidget(self.keepTempCheckBox,2,7)
+        self.settingsLayout.addWidget(self.overwriteCheckBox,3,7)
+
+        self.settingsLayout.addWidget(self.intronDistanceLabel,1,5)
+        self.settingsLayout.addWidget(self.intronDistanceSpinBox,1,6)
+        self.settingsLayout.addWidget(self.minPtsLabel,2,5)
+        self.settingsLayout.addWidget(self.minPtsSpinBox,2,6)
+        self.settingsLayout.addWidget(self.epsLabel,3,5)
+        self.settingsLayout.addWidget(self.epsSpinBox,3,6)
         self.settingsLayout.setColumnStretch(2,1)
-        self.settingsLayout.setColumnStretch(6,5)
+        self.settingsLayout.setColumnStretch(8,5)
         
         
         self.settingsWidget = QtGui.QWidget()
@@ -365,6 +392,9 @@ class InputTab(QtGui.QWidget):
         self.seedSpinBox.setValue(float(p.seedDiff))
         self.standCallSpinBox.setValue(int(p.standCall))
         self.standEmitSpinBox.setValue(int(p.standEmit))
+        self.intronDistanceSpinBox.setValue(int(p.intronDistance))
+        self.minPtsSpinBox.setValue(int(p.minPts))
+        self.epsSpinBox.setValue(int(p.eps))
         self.pairedCheckBox.setChecked(p.paired)
         self.keepTempCheckBox.setChecked(p.keepTemp)
         self.overwriteCheckBox.setChecked(p.overwrite)
