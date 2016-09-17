@@ -57,12 +57,12 @@ class RnaEdit(QtCore.QThread):
             self.params.output=self.outdir+self.sampleName
             if not os.path.exists(self.outdir):
                 os.makedirs(self.outdir, mode=0755)
-                os.chmod(self.outdir, mode=0755)
+                os.chmod(self.outdir, 0755)
 
             #create folder for html output
             if not os.path.exists(self.outdir+"/html"):
                 os.makedirs(self.outdir+"/html", mode=0755)
-                os.chmod(self.outdir, mode=0755)
+                os.chmod(self.outdir, 0755)
         
         
         self.checkDependencies()

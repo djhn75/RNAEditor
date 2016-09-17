@@ -72,7 +72,7 @@ def topGenes(sumDict, fileName,number=20,value=5, logFile=None,textField=0):
 
         if value==1:
             barName="3'-UTR"
-        elif value==2:
+        elif value  ==2:
             barName="5'-UTR"
         elif value==3:
             barName="Exonic"
