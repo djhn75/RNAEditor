@@ -199,6 +199,10 @@ class Helper():
                 a=[]
                 for char in line.rstrip():
                     phredQual=ord(char)-64
+                    if phredQual<0: #correct unvalid values
+                        phredQual=0
+                    elif phredQual>40:
+                        phredQual=40
                     phredChar=chr(phredQual+33)
                     a.append(phredChar)
                 outFile.write("".join(a) + "\n")
@@ -214,6 +218,7 @@ class Helper():
         """
         fastqFile=open(inFastqFile,"r")
         lineNumber=0
+
         lines=lines*4
         for line in fastqFile:
             lineNumber+=1
@@ -229,7 +234,7 @@ class Helper():
                 fastqFile.close()
                 return True
             
-        Helper.error("%s has less than %i Sequences. \n These are not enough reads for editing detection!!" % (fastqFile.name,lines),logFile, runNumber)
+        Helper.error("%s has less than %i Sxequences. \n These are not enough reads for editing detection!!" % (fastqFile.name,lines),logFile, runNumber)
     
     @staticmethod
     def proceedCommand(description,cmd,infile,outfile,rnaEdit):
