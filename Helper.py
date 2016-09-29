@@ -180,6 +180,7 @@ class Helper():
     def convertPhred64toPhred33(fastqFile,outFile,logFile,textField):
         """
         converts the inputFile to phred33 Quality and writes it into the ourdir
+        :rtype: String to converted FastQ file
         """
         startTime=Helper.getTime()
         Helper.info("[" + startTime.strftime("%c") + "] * * * convert Quality encoding: " + fastqFile[fastqFile.rfind("/")+1:]   + " * * *",logFile,textField)

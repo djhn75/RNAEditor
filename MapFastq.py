@@ -22,20 +22,28 @@ class MapFastq(object):
         '''
         
         self.rnaEdit=rnaEdit
-        
+
+        """
         #check read Quality encoding and convert to phred33 quality if necessary
         for i in range(len(self.rnaEdit.fastqFiles)):
-            if Helper.isPhred33Encoding(self.rnaEdit.fastqFiles[i], 50000, self.rnaEdit.logFile, self.rnaEdit.textField) == False:
+            if Helper.isPhred33Encoding(self.rnaEdit.fastqFiles[i], 1000000, self.rnaEdit.logFile, self.rnaEdit.textField) == False:
                 self.rnaEdit.fastqFiles[i]=Helper.convertPhred64toPhred33(self.rnaEdit.fastqFiles[i],self.rnaEdit.params.output+ "_" + str(i+1) + "_phred33.fastq",self.rnaEdit.logFile,self.rnaEdit.textField)
-                
+        """
         
         
-        #set fastQ files
-        if self.rnaEdit.params.paired ==True:
-            self.fastqFile1=self.rnaEdit.fastqFiles[0]
-            self.fastqFile2=self.rnaEdit.fastqFiles[1]
+        #set fastQ files and check if the qualitys have to be converted
+        if self.rnaEdit.params.paired==True:
+            if Helper.isPhred33Encoding(self.rnaEdit.fastqFiles[0], 1000000, self.rnaEdit.logFile, self.rnaEdit.textField) == False or Helper.isPhred33Encoding(self.rnaEdit.fastqFiles[1], 1000000, self.rnaEdit.logFile, self.rnaEdit.textField) == False:
+                self.fastqFile1 = Helper.convertPhred64toPhred33(self.rnaEdit.fastqFiles[0],self.rnaEdit.params.output+ "_1_phred33.fastq",self.rnaEdit.logFile,self.rnaEdit.textField)
+                self.fastqFile2 = Helper.convertPhred64toPhred33(self.rnaEdit.fastqFiles[1],self.rnaEdit.params.output+ "_2_phred33.fastq",self.rnaEdit.logFile,self.rnaEdit.textField)
+            else:
+                self.fastqFile1=self.rnaEdit.fastqFiles[0]
+                self.fastqFile2=self.rnaEdit.fastqFiles[1]
         elif self.rnaEdit.params.paired==False:
-            self.fastqFile = self.rnaEdit.fastqFiles[0]
+            if Helper.isPhred33Encoding(self.rnaEdit.fastqFiles[0], 1000000, self.rnaEdit.logFile, self.rnaEdit.textField) == False:
+                self.fastqFile1 = Helper.convertPhred64toPhred33(self.rnaEdit.fastqFiles[0], self.rnaEdit.params.output + "_1_phred33.fastq", self.rnaEdit.logFile, self.rnaEdit.textField)
+            else:
+                self.fastqFile = self.rnaEdit.fastqFiles[0]
 
 
         #self.printAttributes()
