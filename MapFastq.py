@@ -111,7 +111,10 @@ class MapFastq(object):
         unsortedBamFile=self.rnaEdit.params.output+".unsorted.bam"
         bamFile=self.rnaEdit.params.output+".bam"
         """
-        cmd=["java", "-Xmx4G", "-jar", self.rnaEdit.params.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
+        cmd=["java", "-Xmx8
+
+
+        G", "-jar", self.rnaEdit.params.sourceDir + "picard-tools/SortSam.jar", "INPUT=" + samFile, "OUTPUT=" + bamFile, "SO=coordinate", "VALIDATION_STRINGENCY=LENIENT", "CREATE_INDEX=true"]
         Helper.proceedCommand("convert sam to bam", cmd, samFile, bamFile, self.rnaEdit)
         """
 
