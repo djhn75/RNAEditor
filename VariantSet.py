@@ -621,6 +621,8 @@ class VariantSet(object):
     def createClusters(self,eps=50,minSamples=5):
         
         islandCounter=0
+        eps=int(eps)
+        minSamples=int(minSamples)
         variantsByChromosome = self.getVariantListByChromosome()
         self.clusterDict=defaultdict(list)
         for chr in variantsByChromosome.keys():
