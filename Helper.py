@@ -707,11 +707,13 @@ class Helper():
         
         sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
     @staticmethod
-    def newline (quantity=1,logFile=None,textField=0):
+    def newline(quantity=1,
+                 logFile=None,
+                 textField=0):
         if textField!=0:
-            #currentAssay = Helper.runningAssays[runNumber] 
+            # currentAssay = Helper.runningAssays[runNumber]
             textField.append("\n"*quantity)
-        if logFile!=None:
+        if logFile != None:
             logFile.write("\n"*quantity)
             logFile.flush()
         sys.stderr.write("\n"*quantity)

@@ -1,6 +1,6 @@
-#This file is used to configure the behaviour of RNAeditor
+# This file is used to configure the behaviour of RNAeditor
 
-#Standard input files
+# Standard input files
 refGenome = ~/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.dna.primary_assembly.fa
 gtfFile = ~/rnaEditor_annotations/human/GRCH38/Homo_sapiens.GRCh38.83.gtf
 dbSNP = ~/rnaEditor_annotations/human/GRCH38/dbSNP_ensemble2.vcf
