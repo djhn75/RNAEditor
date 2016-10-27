@@ -353,6 +353,7 @@ class InputTab(QtGui.QWidget):
         
         
     def createConnects(self):
+        self.gtfFileButton.clicked.connect(lambda: self.control.openFileDialog(self.gtfFileTextBox))
         self.refGenomeButton.clicked.connect(lambda: self.control.openFileDialog(self.refGenomeTextBox))
         self.dbsnpButton.clicked.connect(lambda: self.control.openFileDialog(self.dbsnpTextBox))
         self.hapmapButton.clicked.connect(lambda: self.control.openFileDialog(self.hapmapTextBox))
