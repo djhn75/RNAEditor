@@ -466,17 +466,17 @@ class CallEditingSites(object):
         #print nonAlu editing Sites
         nonAluVariants.deleteNonEditingBases()
         nonAluVariants.annotateVariantDict(self.genome)
-        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingIslands.bed")
+        nonAluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.nonAlu.vcf")
         nonAluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.nonAlu.gvf",printSummary=True)
         nonAluVariants.createClusters(eps=50,minSamples=5)
-        nonAluVariants.printClusters(self.rnaEdit.params.output+".editingIslands.bed")
+        nonAluVariants.printClusters(self.rnaEdit.params.output+".editingIslands.nonAlu.bed")
         #print Alu editing Sites
         aluVariants.deleteNonEditingBases()
         aluVariants.annotateVariantDict(self.genome)
         aluVariants.printVariantDict(self.rnaEdit.params.output+".editingSites.alu.vcf")
         aluVariants.printGeneList(self.genome,self.rnaEdit.params.output+".editingSites.alu.gvf",printSummary=True)
         aluVariants.createClusters(eps=50,minSamples=5)
-        aluVariants.printClusters(self.rnaEdit.params.output+".editingIslands.bed")
+        aluVariants.printClusters(self.rnaEdit.params.output+".editingIslands.alu.bed")
         
         #combine alu and non Alu sites
         variants=aluVariants+nonAluVariants

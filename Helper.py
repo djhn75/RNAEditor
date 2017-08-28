@@ -706,6 +706,7 @@ class Helper():
             logFile.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         
         sys.stderr.write("\t" + Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
+
     @staticmethod
     def newline(quantity=1,
                  logFile=None,
