@@ -214,9 +214,9 @@ class VariantSet(object):
                             a += gene+":"+"|".join(segment)  
                         else:
                             if type(gene)==str: #when variantDict was not annotated yet
-                                a+=gene+":"+"|".join(segment)+"," 
+                                a+=gene +":"+"|".join(segment)+","
                             else:     
-                                a+=gene.geneId+":"+"|".join(segment)+","  
+                                a+=gene.names[0]+":"+"|".join(segment)+","
                             
                     attributeString+=key+"="+a[:-1]+";"
                     continue
