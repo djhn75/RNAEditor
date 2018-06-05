@@ -77,7 +77,8 @@ class RnaEdit(QtCore.QThread):
             Helper.error("RnaEditor Failed",self.logFile,self.textField)
         
         """ At this point the RnaEditor has succesfully finished """
-        cmd=["python",os.getcwd()+"/createDiagrams.py","-o", self.params.output]
+        fileDir = os.path.dirname(os.path.realpath(__file__))
+        cmd=["python",fileDir+"/createDiagrams.py","-o", self.params.output]
         a=subprocess.call(cmd)
         self.emit(QtCore.SIGNAL("taskDone"), self.params.output+".html")
         
