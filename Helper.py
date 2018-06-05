@@ -453,7 +453,8 @@ class Helper():
         htmlOutPrefix=stats.outdir+"html/"+stats.sampleName
         
         #copy rnaEditor logo to htmlOutPrefix
-        copyfile('ui/icons/rnaEditor_512x512.png',stats.outdir+"html/rnaEditor_512x512.png")
+        fileDir = os.path.dirname(os.path.realpath(__file__))
+        copyfile(fileDir + '/ui/icons/rnaEditor_512x512.png',stats.outdir+"html/rnaEditor_512x512.png")
         
         outDict={"title":"Result Page for "+ stats.sampleName,
                  "sampleName":stats.sampleName,
