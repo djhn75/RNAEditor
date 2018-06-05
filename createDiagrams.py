@@ -96,12 +96,9 @@ def topGenes(sumDict, fileName,number=20,value=5, logFile=None,textField=0):
         htmlStr+="</table>"
         return htmlStr
 
-        
-        
-
 def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         '''
-        writes all the diagrams wich aree then showd in the resultTab
+        writes all the diagrams wich are then shown in the resultTab
         All the values are stored in an instance of the Class Stats
         
         :param output: output variable of Params.output

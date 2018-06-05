@@ -450,7 +450,7 @@ class Helper():
         :param output: output prefix from rnaEdit object
         '''
         
-        htmlOutPrefix=stats.outdir+"html/"+stats.sampleName
+        htmlOutPrefix="html/"+stats.sampleName
         
         #copy rnaEditor logo to htmlOutPrefix
         fileDir = os.path.dirname(os.path.realpath(__file__))
