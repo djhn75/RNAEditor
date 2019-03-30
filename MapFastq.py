@@ -92,7 +92,7 @@ class MapFastq(object):
         
             #convert sai to sam
             samFile=self.rnaEdit.params.output+".sam"
-            cmd = [self.rnaEdit.params.sourceDir + "bwa", "sampe", "-r", "@RG\tID:bwa\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile1, saiFile2, self.fastqFile1, self.fastqFile2]
+            cmd = [self.rnaEdit.params.sourceDir + "bwa", "sampe", "-r", "@RG\\tID:bwa\\tSM:A\\tPL:ILLUMINA\\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile1, saiFile2, self.fastqFile1, self.fastqFile2]
             Helper.proceedCommand("convert sai to sam", cmd, saiFile1, samFile, self.rnaEdit)
         elif self.rnaEdit.params.paired == False:  #For single end sequencing
             #Align Fastq Reads to the Genome
@@ -103,7 +103,7 @@ class MapFastq(object):
             #convert sai to sam
             samFile=self.rnaEdit.params.output+".sam"
 
-            cmd = [self.rnaEdit.params.sourceDir + "bwa", "samse", "-r", "@RG\tID:bwa\tSM:A\tPL:ILLUMINA\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile, self.fastqFile]
+            cmd = [self.rnaEdit.params.sourceDir + "bwa", "samse", "-r", "@RG\\tID:bwa\\tSM:A\\tPL:ILLUMINA\\tPU:HiSEQ2000", self.rnaEdit.params.refGenome, saiFile, self.fastqFile]
             #cmd = [self.rnaEdit.params.sourceDir + "bwa", "samse", self.rnaEdit.params.refGenome, saiFile, self.fastqFile]
             Helper.proceedCommand("convert sai to sam", cmd, saiFile, samFile, self.rnaEdit)
         
