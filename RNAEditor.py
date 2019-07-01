@@ -17,7 +17,7 @@ import sys
 import gc
 import subprocess
 
-
+#Branch for python3
 class RnaEdit(QtCore.QThread):
 
     def __init__(self, fastqFiles, params, textField):
