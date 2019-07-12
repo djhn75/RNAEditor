@@ -51,7 +51,7 @@ class MapFastq(object):
         #self.checkDependencies()
     
     def printAttributes(self):
-        print
+        print()
         Helper.info("*** MAP READS WITH FOLLOWING ATTRIBUTES ***", self.rnaEdit.logFile,self.rnaEdit.textField) 
         if self.rnaEdit.params.paired:
             Helper.info("\t FastQ-File_1: " + self.fastqFile1,self.rnaEdit.logFile,self.rnaEdit.textField)
@@ -168,7 +168,7 @@ class MapFastq(object):
         """
         bamFile=self.rnaEdit.params.output+"/accepted_hits.bam"
         cmd=[self.rnaEdit.params.sourceDir + "tophat/tophat2", "--no-coverage-search","--keep-fasta-order", "-p", "12", "--rg-id", "A","--rg-sample","A","--rg-library","illumina","--rg-platform-unit","HiSeq", "-o", self.rnaEdit.params.output, self.rnaEdit.params.refGenome, self.fastqFile ]
-        print cmd
+        print(cmd)
         Helper.proceedCommand("Map reads with tophat", cmd, self.rnaEdit.params.fastqFile, bamFile, self.rnaEdit.)
         """
         

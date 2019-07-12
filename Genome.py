@@ -135,8 +135,8 @@ class Genome(object):
             
             gene = Gene(geneId, chromosome, strand, geneType, geneNames, geneExons, geneCds)
             
-            geneExons = dict(zip(geneExons,xrange(1000000)))
-            geneCds = dict(zip(geneCds,xrange(1000000))) 
+            geneExons = dict(zip(geneExons,range(1000000)))
+            geneCds = dict(zip(geneCds,range(1000000)))
             
             
             self.geneList.append(gene)

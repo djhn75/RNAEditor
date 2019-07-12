@@ -226,7 +226,7 @@ class Helper():
             if lineNumber%4==0:
                 for char in line.rstrip():
                     if ord(char)>74 and ord(char)<105:
-                        #print line.rstrip()
+                        #print(line.rstrip())
                         fastqFile.close()
                         return False
                     if ord(char)>105:
@@ -265,17 +265,17 @@ class Helper():
                 resultFile=open(outfile,"w+")
             try:    
                 
-                #print " ".join(cmd),resultFile,logFile
+                #print(" ".join(cmd),resultFile,logFile)
                 
                 #retcode = subprocess.call(cmd, stdout=resultFile, stderr=logFile)
                 rnaEdit.runningCommand = subprocess.Popen(cmd, stdout=resultFile, stderr=logFile)
                 retcode = rnaEdit.runningCommand.wait()
                 """while retcode==None:
-                    #print "check if process is still running"
+                    #print("check if process is still running")
                     sleep(10)
                     retcode=Helper.runningCommand[runNumber].wait()
                 """
-                #print retcode
+                #print(retcode)
                 
                 #del Helper.runningCommand[runNumber]
                 rnaEdit.runningCommand=False
@@ -351,9 +351,9 @@ class Helper():
 
     @staticmethod
     def getCommandOutput(command):
-        #print command
-        #print os.path.dirname(os.path.abspath(__file__))
-        #print os.getcwd()
+        #print(command)
+        #print(os.path.dirname(os.path.abspath(__file__)))
+        #print(os.getcwd())
         return subprocess.check_output(command)
     
     @staticmethod
@@ -658,7 +658,7 @@ class Helper():
         summe=float(sum(list))
         for value in list:
             array.append(round((float(value)/summe)*100.0,2))
-        #print array    
+        #print(array)
         return array   
 
     @staticmethod

@@ -176,6 +176,7 @@ class CallEditingSites(object):
         #############################
         pslFile=outFile+".psl"
         if not os.path.isfile(pslFile) or not os.path.getsize(pslFile) > 0:
+            #TODO: Exchange Blat with multithreaded pblat
             cmd = [self.rnaEdit.params.sourceDir+"blat","-stepSize=5","-repMatch=2253", "-minScore=20","-minIdentity=0","-noHead", self.rnaEdit.params.refGenome, tempFasta, pslFile]
             #print cmd
             Helper.proceedCommand("do blat search for unique reads",cmd,tempFasta, "None", self.rnaEdit)
@@ -287,8 +288,8 @@ class CallEditingSites(object):
         Helper.printTimeDiff(startTime,self.rnaEdit.logFile,self.rnaEdit.textField)
          
     def cleanUp(self):
-        #print [x for x in gc.get_objects()]
-        #print str(self) + " cleaned up"
+        #print([x for x in gc.get_objects()])
+        #print(str(self) + " cleaned up")
         self.genome = None
         
         if self.rnaEdit.params.keepTemp==False:
@@ -344,7 +345,7 @@ class CallEditingSites(object):
                "-T","UnifiedGenotyper","-R", self.rnaEdit.params.refGenome, "-glm", "SNP","-I", self.bamFile, 
                "-D", self.rnaEdit.params.dbsnp, "-o", vcfFile, "-metrics", self.rnaEdit.params.output+".snp.metrics", "-nt", self.rnaEdit.params.threads, "-l","ERROR",
                "-stand_call_conf", self.rnaEdit.params.standCall, "-stand_emit_conf", self.rnaEdit.params.standEmit,"-A", "Coverage", "-A", "AlleleBalance","-A", "BaseCounts"]
-        #print cmd
+        #print(cmd)
         Helper.proceedCommand("Call variants", cmd, self.bamFile, vcfFile, self.rnaEdit)
         
         

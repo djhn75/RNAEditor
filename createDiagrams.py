@@ -114,7 +114,7 @@ def createDiagramms(output, geneNumber=20,logFile=None,textField=0):
         if not os.path.exists(stats.outdir+"html/"):
             os.makedirs(stats.outdir+"html/")
         
-        #print outdir, sampleName
+        #print(outdir, sampleName)
         #################################################
         ####               Basecount Plot            ####
         #################################################
