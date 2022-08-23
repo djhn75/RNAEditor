@@ -53,10 +53,10 @@ class Feature:
         attributes = line[8]
         #trim comments
         attributes=attributes[:attributes.find("#")].rstrip()
-        values = map(lambda x: x.strip(), attributes.split(";")[:-1])
+        values = list(map(lambda x: x.strip(), attributes.split(";")[:-1]))
         
         for info in values:
-            info = map( lambda x: x.strip(), info.split(" "))
+            info = list(map( lambda x: x.strip(), info.split(" ")))
             name, value=info[0], info[1].replace("\"","")
 
             if name == "gene_id":
@@ -87,7 +87,7 @@ def iterator(infile):
 
     while 1:
         line = infile.readline()
-        if not line: raise StopIteration
+        if not line: return
         if line.startswith("#"): continue #skip comments
         #added to handle GRCH38 which contains features for genes, transcripts and UTR's which have to be skipped
         #TODO: change this to handle UTR's more precisely

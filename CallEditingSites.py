@@ -67,7 +67,7 @@ class CallEditingSites(object):
         
         geneDict = genome.getGenesByChromosome()
 
-        for key in variants.variantDict.keys():
+        for key in list(variants.variantDict.keys()):
             delVar=False
             chromosome,position,ref,alt = key
             for gene in geneDict[chromosome]:
@@ -94,7 +94,7 @@ class CallEditingSites(object):
         mmNumberTotal = len(variants.variantDict)
         #print temporary BedFile
         numberPassed=0
-        for key in variants.variantDict.keys():
+        for key in list(variants.variantDict.keys()):
             chr,position,ref,alt = key
             startPos = position - distance if position >= distance else 0
             endpos = position + distance
@@ -138,10 +138,10 @@ class CallEditingSites(object):
             Helper.info(" [%s] Create fasta file for blat " % (startTime.strftime("%c")),self.rnaEdit.logFile,self.rnaEdit.textField)
             counter=1
             
-            if len(variants.variantDict.keys()) == 0:
+            if len(list(variants.variantDict.keys())) == 0:
                 Helper.error("No Variants left" ,self.rnaEdit.logFile,self.rnaEdit.textField)
             
-            for varKey in variants.variantDict.keys(): 
+            for varKey in list(variants.variantDict.keys()): 
                 variant=variants.variantDict[varKey]
                 varPos=variant.position-1
                 iter = bamFile.pileup(variant.chromosome, variant.position-1, variant.position)               
@@ -254,7 +254,7 @@ class CallEditingSites(object):
             mmNumberTotal=0
             mmNumberTooSmall=0
             mmReadsSmallerDiscardReads=0 
-            for key in variants.variantDict.keys():
+            for key in list(variants.variantDict.keys()):
                 numberBlatReads=0
                 numberDiscardReads=0
                 if key in siteDict:

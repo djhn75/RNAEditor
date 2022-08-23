@@ -10,11 +10,13 @@ from collections import defaultdict, OrderedDict
 import traceback
 import ui
 from numpy import arange
-from PyQt4 import QtCore
+from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal, QObject
 #from matplotlib.backends import qt_compat
 #from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.pyplot import subplots_adjust, subplots
 from shutil import copyfile
+from io import IOBase
 
 class Parameters():
     '''
@@ -61,7 +63,7 @@ class Parameters():
         self.overwrite = inputTab.overwriteCheckBox.isChecked()
         self.keepTemp = inputTab.keepTempCheckBox.isChecked()
                   
-    def readDefaultsFromFile(self,file):
+    def readDefaultsFromFile(self,file="configuration.txt"):
         try:
             confFile = open(file)
         except IOError:
@@ -370,7 +372,7 @@ class Helper():
                 inFile=open(inFile)
             except IOError:
                 Helper.warning("Could not open %s to write Variant" % file ,logFile,textField)
-        if type(inFile) != file:   
+        if not (isinstance(inFile, IOBase)):   
             raise AttributeError("Invalid file type in 'countOccurrences' (need string or file, %s found)" % type(inFile))
         
         keySet=()
@@ -671,7 +673,7 @@ class Helper():
             if os.path.getsize(vcfFile) == 0: #getsize raises OSError if file is not existing
                 raise IOError("%s File is empty" % vcfFile)
             vcfFile = open(vcfFile,"r")
-        elif type(vcfFile) != file:
+        elif not (isinstance(vcfFile, IOBase)):
             raise TypeError("Invalid type in 'parseVcfFile' (need string or file, %s found)" % type(vcfFile)) 
         
         mmBaseCounts=OrderedDict([("A->C",0),("A->G",0),("A->T",0),("C->A",0),("C->G",0),("C->T",0),("G->A",0),("G->C",0),("G->T",0),("T->A",0),("T->C",0),("T->G",0)])
@@ -700,7 +702,7 @@ class Helper():
         if textField!=0:
             #currentAssay = Helper.runningAssays[textField] 
             if color in Helper.colors:
-                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg("[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n"))
+                textField.append(str("<font color=\""+color+"\">{}</font>").format("[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n"))
             else:
                 textField.append(Helper.prefix + "[DONE] Duration [" + str(duration) + "]"  + Helper.praefix + "\n")
         if logFile!=None:
@@ -723,7 +725,7 @@ class Helper():
     def info (message,logFile=None,textField=0,color="olive"):
         if textField!=0:
             if color in Helper.colors:
-                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                textField.append(str("<font color=\""+color+"\">{}</font>").format(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
             else:
                 textField.append(Helper.prefix + "INFO:    "  + message + Helper.praefix)
         if logFile!=None:
@@ -742,7 +744,7 @@ class Helper():
     def error (message,logFile=None,textField=0,color="red"):
         if textField!=0:
             if color in Helper.colors:
-                textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                textField.append(str("<font color=\""+color+"\">{}</font>").format(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
             else:
                 textField.append(Helper.prefix + "ERROR:    "  + message + Helper.praefix)
         if logFile!=None:
@@ -765,9 +767,9 @@ class Helper():
             #currentAssay = Helper.runningAssays[runNumber] 
             if color in Helper.colors:
                 if bold==True:
-                    textField.append(QtCore.QString("<font color=\""+color+"\"><b>%1</b></font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                    textField.append(str("<font color=\""+color+"\"><b>{}</b></font>").format(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
                 else:
-                    textField.append(QtCore.QString("<font color=\""+color+"\">%1</font>").arg(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
+                    textField.append(str("<font color=\""+color+"\">{}</font>").format(Helper.prefix + "STATUS:    "  + message + Helper.praefix))
             else:
                 textField.append(Helper.prefix + "STATUS:    "  + message + Helper.praefix)
         if logFile!=None:
@@ -775,3 +777,10 @@ class Helper():
             logFile.flush()
         sys.stdout.write("\r" + Helper.prefix + "STATUS:    "  + message + Helper.praefix + "\n")
         sys.stdout.flush()
+        
+        
+        
+        
+class Communicate(QObject):
+
+    taskDone = pyqtSignal(str)

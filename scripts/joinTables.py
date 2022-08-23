@@ -6,7 +6,7 @@ Created on Apr 16, 2013
 @author: david
 '''
 import argparse, os
-from string import split
+
 
 
 parser = argparse.ArgumentParser(description='Merge tables.')
@@ -62,9 +62,9 @@ for file in args.files: #loop through all files
     
     fileCounter+=1
 deli="\t"*len(args.columns)
-print "\t"*len(args.keys),deli.join(header)
+print("\t"*len(args.keys),deli.join(header))
 for keyTuple in keySet:
     output=list(keyTuple)
     for v in idDict[keyTuple]:
         output=output+v
-    print "\t".join(output)
+    print("\t".join(output))

@@ -6,9 +6,9 @@ Created on Oct 21, 2013
 
 from ui.InputTab import InputTab
 from ui.RunTab import RunTab
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 import os, sys, time
-from Helper import Parameters, Helper
+from Helper import Parameters, Helper, Communicate
 from RNAEditor import RnaEdit
 import subprocess
 import traceback
@@ -26,7 +26,7 @@ class GuiControll(object):
         self.view=v
         
 
-    @QtCore.pyqtSlot()
+    #@QtCore.pyqtSlot()
     def newAssay(self):
         '''
         Function wich starts a new analysis
@@ -50,14 +50,14 @@ class GuiControll(object):
         """
         if parameters.paired==True:
             if fastqs[-1] == None:
-                QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNot enough Sequencing Files for paired-end sequencing!!!\n\nDrop FASTQ-Files to the drop area!")
+                QtWidgets.QMessageBox.information(self.view,"Warning","Warning:\nNot enough Sequencing Files for paired-end sequencing!!!\n\nDrop FASTQ-Files to the drop area!")
                 return
         if fastqs[0] == None:
-            QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo Sequencing Files found!!!\n\nDrop FASTQ-Files to the drop area!")
+            QtWidgets.QMessageBox.information(self.view,"Warning","Warning:\nNo Sequencing Files found!!!\n\nDrop FASTQ-Files to the drop area!")
             return
         sampleName = Helper.getSampleName(str(fastqs[0].text()))
         if sampleName == None:
-            QtGui.QMessageBox.information(self.view,"Warning","Warning:\nNo valid Sequencing File!!!\n\nDrop FASTQ-Files to the drop area!")
+            QtWidgets.QMessageBox.information(self.view,"Warning","Warning:\nNo valid Sequencing File!!!\n\nDrop FASTQ-Files to the drop area!")
             return
         
         fastqFiles=[]
@@ -74,8 +74,9 @@ class GuiControll(object):
         try:
             assay = RnaEdit(fastqFiles, parameters,runTab.commandBox)
         except Exception as err:
-            QtGui.QMessageBox.information(self.view,"Error", str(err)+"Cannot start Analysis!")
-            Helper.error(str(err) + "\n creating rnaEditor Object Failed!", textField=runTab.commandBox)
+            QtWidgets.QMessageBox.information(self.view,"Error", str(err)+"Cannot start Analysis!")
+            #Helper.error(str(err) + "\n creating rnaEditor Object Failed!", textField=runTab.commandBox)
+            return
         currentIndex = self.view.tabMainWindow.count()
 
         # self.view.tabMainWindow.addTab(self.runTab, "Analysis"+ str(Helper.assayCount))
@@ -83,21 +84,25 @@ class GuiControll(object):
         Helper.runningThreads.append(assay)
         
         assay.start()
+        self.c = Communicate()
+        self.c.taskDone.connect(self.openAnalysis)
         
-        self.view.connect(assay, QtCore.SIGNAL("taskDone"), self.openAnalysis)
+        #self.view.connect(assay, QtCore.SIGNAL("taskDone"), self.openAnalysis)
         
-    @QtCore.pyqtSlot()
+    #@QtCore.pyqtSlot()
     def openFileDialog(self,textBox):
         fileName = QtGui.QFileDialog.getOpenFileName(self.view.centralWidget,'Open file', QtCore.QDir.homePath())
         textBox.setText(fileName)
     
-    @QtCore.pyqtSlot()    
+    #@QtCore.pyqtSlot()    
     def openFolderDialog(self,textBox):
         folderName = str(QtGui.QFileDialog.getExistingDirectory(self.view.centralWidget, "Select Directory"))
         textBox.setText(folderName)
         
-    @QtCore.pyqtSlot()    
-    def fileDropped(self, l):
+    #@QtCore.pyqtSlot()
+    #Moved inside the DropEvent Method of InputTab
+    #@DeleteLater    
+    '''def fileDropped(self, l):
         for url in l:
             if os.path.exists(url):
                 if url.endswith(".txt"):
@@ -109,7 +114,7 @@ class GuiControll(object):
                     icon = QtGui.QIcon(pixmap)
                     item = QtGui.QListWidgetItem(url, self.view.inputTab.dropList)
                     item.setIcon(icon)        
-                    item.setStatusTip(url)     
+                    item.setStatusTip(url)'''
             
     def openAnalysis(self,fileName=None):
         if fileName==None:
@@ -120,7 +125,7 @@ class GuiControll(object):
         Helper.runningThreads.append(resultTab)
         print(fileName)
             
-    @QtCore.pyqtSlot()            
+    #@QtCore.pyqtSlot()            
     def closeTab(self, currentIndex):
         print ("tab close %i" % currentIndex)
         if currentIndex != 0:
@@ -137,8 +142,8 @@ class GuiControll(object):
             #check if rnaEditor is still running or if it is finished it can be deleteted immediately
             if currentThread.isTerminated == False:
                     quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(currentIndex))
-                    reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                    if reply== QtGui.QMessageBox.Yes:
+                    reply = QtWidgets.QMessageBox.question(self.view, 'Message', quitMessage, QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+                    if reply== QtWidgets.QMessageBox.Yes:
                         self.view.tabMainWindow.removeTab(currentIndex)
                         currentQWidget.deleteLater()
                         del Helper.runningThreads[currentIndex]
@@ -158,6 +163,6 @@ class GuiControll(object):
                 return True
 
             quitMessage = "Are you sure you want to cancel the running Sample %s?" % str(self.view.tabMainWindow.tabText(index))
-            reply = QtGui.QMessageBox.question(self.view, 'Message', quitMessage, QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            if reply == QtGui.QMessageBox.Yes:
+            reply = QtWidgets.QMessageBox.question(self.view, 'Message', quitMessage, QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
                 currentThreat.stopImmediately()

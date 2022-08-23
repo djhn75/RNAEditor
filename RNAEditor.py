@@ -2,16 +2,19 @@
 
 '''
     Created on May 17, 2013
+    Updated on 23 August 2022
+    Release Notest: 
+        -Updated to Python3 and PyQt5
     Main Class to detect RNA-editing in a given FastQ file
     @author: david
 '''
 
-from Helper import Helper, Parameters
+from Helper import Helper, Parameters, Communicate
 from MapFastq import MapFastq
 from CallEditingSites import CallEditingSites
 import multiprocessing, argparse, os
 import traceback
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 import textwrap
 import sys
 import gc
@@ -19,14 +22,16 @@ import subprocess
 
 
 class RnaEdit(QtCore.QThread):
+    
 
     def __init__(self, fastqFiles, params, textField):
+        self.c = Communicate()
         QtCore.QThread.__init__(self)
         if isinstance(params, Parameters):
             self.params = params
         else:
             Helper.error("Params has to be Instance of Parameters")
-        if isinstance(textField, QtGui.QTextEdit) or textField==0:
+        if isinstance(textField, QtWidgets.QTextEdit) or textField==0:
             self.textField=textField
         else:
             Helper.error("textField has to be Instance of QtGui.QTextEdit or 0")
@@ -56,13 +61,13 @@ class RnaEdit(QtCore.QThread):
             #output=/path/to/output/rnaEditor/samplename/samplename
             self.params.output=self.outdir+self.sampleName
             if not os.path.exists(self.outdir):
-                os.makedirs(self.outdir, mode=0755)
-                os.chmod(self.outdir, 0755)
+                os.makedirs(self.outdir, mode=755)
+                os.chmod(self.outdir, 755)
 
             #create folder for html output
             if not os.path.exists(self.outdir+"/html"):
-                os.makedirs(self.outdir+"/html", mode=0755)
-                os.chmod(self.outdir, 0755)
+                os.makedirs(self.outdir+"/html", mode=755)
+                os.chmod(self.outdir, 755)
         
         
         self.checkDependencies()
@@ -80,7 +85,8 @@ class RnaEdit(QtCore.QThread):
         fileDir = os.path.dirname(os.path.realpath(__file__))
         cmd=["python",fileDir+"/createDiagrams.py","-o", self.params.output]
         a=subprocess.call(cmd)
-        self.emit(QtCore.SIGNAL("taskDone"), self.params.output+".html")
+        self.c.taskDone.emit(self.params.output+".html")
+        #self.emit(QtCore.SIGNAL("taskDone"), self.params.output+".html")
         
     def startAnalysis(self):
         """
@@ -277,7 +283,7 @@ class RnaEdit(QtCore.QThread):
 
 
 def main(argv):
-    app = QtGui.QApplication(argv) 
+    app = QtWidgets.QApplication(argv) 
     mainWindow = GuiView()
     
     app.setApplicationName("RNAEditor")

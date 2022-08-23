@@ -1,11 +1,11 @@
 import sys
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import QUrl
-from PyQt4.QtWebKit import QWebView
+from PyQt5 import QtGui
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
-class ResultTab(QWebView):
+class ResultTab(QWebEngineView):
     
     def __init__(self,control,site):
         super(ResultTab,self).__init__()

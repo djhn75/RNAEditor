@@ -9,12 +9,12 @@
 
 import os
 
-from PyQt4 import QtCore, QtGui
-from PyQt4.Qt import QSizePolicy
-from PyQt4.QtGui import QGridLayout, QVBoxLayout
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.Qt import QSizePolicy
+from PyQt5.QtWidgets import QGridLayout, QVBoxLayout
 
 
-class RunTab(QtGui.QWidget):
+class RunTab(QtWidgets.QWidget):
     
     def __init__(self,control):
         super(RunTab,self).__init__()
@@ -33,9 +33,9 @@ class RunTab(QtGui.QWidget):
     def createComponents(self):
 
        
-        self.commandBox = QtGui.QTextEdit()
-        self.stopButton = QtGui.QPushButton("Cancel Analysis!!!")
-        self.processBar = QtGui.QProgressBar()
+        self.commandBox = QtWidgets.QTextEdit()
+        self.stopButton = QtWidgets.QPushButton("Cancel Analysis!!!")
+        self.processBar = QtWidgets.QProgressBar()
 
     def createLayout(self):
         self.centralLayout = QGridLayout()

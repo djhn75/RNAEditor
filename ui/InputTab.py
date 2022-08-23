@@ -1,7 +1,8 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4.Qt import QSizePolicy
-from PyQt4.QtGui import QGridLayout, QVBoxLayout
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.Qt import QSizePolicy
+from PyQt5.QtWidgets import QGridLayout, QVBoxLayout
 from Helper import Parameters
+import os
 
 
 try:
@@ -19,11 +20,15 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 
-class DropListWidget(QtGui.QListWidget):
+class DropListWidget(QtWidgets.QListWidget):
+    dropped =  QtCore.pyqtSignal(list)
+    
     def __init__(self, type, parent=None):
+        self.parent=parent
         super(DropListWidget, self).__init__(parent)
         self.setAcceptDrops(True)
         self.setIconSize(QtCore.QSize(72, 72))
+        
         
         #enable multiple selection
         #self.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
@@ -60,14 +65,31 @@ class DropListWidget(QtGui.QListWidget):
             event.ignore()
 
     def dropEvent(self, event):
+        print("File Dropped")
+        
         if event.mimeData().hasUrls:
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             links = []
             for url in event.mimeData().urls():
-                links.append(str(url.toLocalFile()))
-            self.emit(QtCore.SIGNAL("dropped"), links)
+                url=str(url.toLocalFile())
+                if os.path.exists(url):
+                    if url.endswith(".txt"):
+                        print("CreateDefaults")
+                        self.parent.createDefaults(url)
+                    else:
+                        print(url)                
+                        icon = QtGui.QIcon(url)
+                        pixmap = icon.pixmap(72, 72)                
+                        icon = QtGui.QIcon(pixmap)
+                        item = QtWidgets.QListWidgetItem(url, self)
+                        item.setIcon(icon)        
+                        item.setStatusTip(url)     
+                        links.append(url)
+            
+            #self.addItems(links)
             self.sortItems()
+            
         else:
             event.ignore()
             
@@ -98,7 +120,7 @@ class DropListWidget(QtGui.QListWidget):
             self.takeItem(self.row(item))
 
 
-class InputTab(QtGui.QWidget):
+class InputTab(QtWidgets.QWidget):
     
     def __init__(self,control):
         
@@ -122,129 +144,130 @@ class InputTab(QtGui.QWidget):
         """
         InputFiles Layout on the left Side
         """
-        self.refGenomeLabel = QtGui.QLabel("ref. Genome:")
-        self.refGenomeTextBox = QtGui.QLineEdit()
-        self.refGenomeButton = QtGui.QPushButton(self.tr("..."))
+        self.refGenomeLabel = QtWidgets.QLabel("ref. Genome:")
+        self.refGenomeTextBox = QtWidgets.QLineEdit()
+        self.refGenomeButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.gtfFileLabel = QtGui.QLabel("GTF File:")
-        self.gtfFileTextBox = QtGui.QLineEdit()
-        self.gtfFileButton = QtGui.QPushButton(self.tr("..."))
+        self.gtfFileLabel = QtWidgets.QLabel("GTF File:")
+        self.gtfFileTextBox = QtWidgets.QLineEdit()
+        self.gtfFileButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.dbsnpLabel = QtGui.QLabel("dbSNP:")
-        self.dbsnpTextBox = QtGui.QLineEdit()
-        self.dbsnpButton = QtGui.QPushButton(self.tr("..."))
+        self.dbsnpLabel = QtWidgets.QLabel("dbSNP:")
+        self.dbsnpTextBox = QtWidgets.QLineEdit()
+        self.dbsnpButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.hapmapLabel = QtGui.QLabel("Hapmap:")
-        self.hapmapTextBox = QtGui.QLineEdit()
-        self.hapmapButton = QtGui.QPushButton(self.tr("..."))
+        self.hapmapLabel = QtWidgets.QLabel("Hapmap:")
+        self.hapmapTextBox = QtWidgets.QLineEdit()
+        self.hapmapButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.omniLabel = QtGui.QLabel("Omni:")
-        self.omniTextBox = QtGui.QLineEdit()
-        self.omniButton = QtGui.QPushButton(self.tr("..."))
+        self.omniLabel = QtWidgets.QLabel("Omni:")
+        self.omniTextBox = QtWidgets.QLineEdit()
+        self.omniButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.espLabel = QtGui.QLabel("ESP:")
-        self.espTextBox = QtGui.QLineEdit()
-        self.espButton = QtGui.QPushButton(self.tr("..."))
+        self.espLabel = QtWidgets.QLabel("ESP:")
+        self.espTextBox = QtWidgets.QLineEdit()
+        self.espButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.aluRegionsLabel = QtGui.QLabel("Alu Regions:")
-        self.aluRegionsTextBox = QtGui.QLineEdit()
-        self.aluRegionsButton = QtGui.QPushButton(self.tr("..."))
+        self.aluRegionsLabel = QtWidgets.QLabel("Alu Regions:")
+        self.aluRegionsTextBox = QtWidgets.QLineEdit()
+        self.aluRegionsButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.sourceDirLabel = QtGui.QLabel("Source Directory")
-        self.sourceDirTextBox = QtGui.QLineEdit()
-        self.sourceDirButton = QtGui.QPushButton(self.tr("..."))
+        self.sourceDirLabel = QtWidgets.QLabel("Source Directory")
+        self.sourceDirTextBox = QtWidgets.QLineEdit()
+        self.sourceDirButton = QtWidgets.QPushButton(self.tr("..."))
         
-        self.verticalLine = QtGui.QFrame()
-        self.verticalLine.setFrameStyle(QtGui.QFrame.HLine)
-        self.verticalLine.setFrameShadow(QtGui.QFrame.Sunken)
+        self.verticalLine = QtWidgets.QFrame()
+        self.verticalLine.setFrameStyle(QtWidgets.QFrame.HLine)
+        self.verticalLine.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.verticalLine.setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Expanding)
         
-        self.outputLabel = QtGui.QLabel("Output directory")
-        self.outputTextBox = QtGui.QLineEdit()
-        self.outputButton = QtGui.QPushButton(self.tr("..."))
+        self.outputLabel = QtWidgets.QLabel("Output directory")
+        self.outputTextBox = QtWidgets.QLineEdit()
+        self.outputButton = QtWidgets.QPushButton(self.tr("..."))
         #self.button.setStyleSheet("background-color:red;")
     
 
         """
         Drop Files Section
         """
-        self.dropList = DropListWidget(self)
+        self.dropList = DropListWidget(self, parent=self)
         self.dropList.setAcceptDrops(True)
         
         
+
         
         """
         Settings Layout on the bottom
         """
-        self.threadsLabel = QtGui.QLabel("Threads:")
-        self.threadsSpinBox = QtGui.QSpinBox()
+        self.threadsLabel = QtWidgets.QLabel("Threads:")
+        self.threadsSpinBox = QtWidgets.QSpinBox()
         self.threadsSpinBox.setRange(1,30)
         self.threadsSpinBox.setValue(4)
 
-        self.maxDiffLabel = QtGui.QLabel("max Diff Rate:")
+        self.maxDiffLabel = QtWidgets.QLabel("max Diff Rate:")
         self.maxDiffLabel.setToolTip("Error rate in percentage")
-        self.maxDiffSpinBox = QtGui.QDoubleSpinBox()
+        self.maxDiffSpinBox = QtWidgets.QDoubleSpinBox()
         self.maxDiffSpinBox.setToolTip("Error rate in percentage")
         self.maxDiffSpinBox.setRange(0.01,0.2)
         self.maxDiffSpinBox.setSingleStep(0.01)
         self.maxDiffSpinBox.setValue(0.04)
         
-        self.seedLabel = QtGui.QLabel("Seed Diff:")
+        self.seedLabel = QtWidgets.QLabel("Seed Diff:")
         self.seedLabel.setToolTip("Maximum number of mismatches in the seed sequence")
-        self.seedSpinBox = QtGui.QSpinBox()
+        self.seedSpinBox = QtWidgets.QSpinBox()
         self.seedSpinBox.setToolTip("Maximum number of mismatches in the seed sequence")
         self.seedSpinBox.setRange(1,10)
         self.seedSpinBox.setValue(2)
         
-        self.standCallLabel = QtGui.QLabel("Stand Call:")
+        self.standCallLabel = QtWidgets.QLabel("Stand Call:")
         self.seedLabel.setToolTip("The minimum phred-scaled confidence threshold at which variants should be considered as true")
-        self.standCallSpinBox = QtGui.QSpinBox()
+        self.standCallSpinBox = QtWidgets.QSpinBox()
         self.standCallSpinBox.setToolTip("The minimum phred-scaled confidence threshold at which variants should be considered as true")
         self.standCallSpinBox.setRange(1,30)
         self.standCallSpinBox.setValue(2)
         
-        self.standEmitLabel = QtGui.QLabel("Stand Emit:")
+        self.standEmitLabel = QtWidgets.QLabel("Stand Emit:")
         self.standEmitLabel.setToolTip("The minimum phred-scaled confidence threshold at which variants should be emitted")
-        self.standEmitSpinBox = QtGui.QSpinBox()
+        self.standEmitSpinBox = QtWidgets.QSpinBox()
         self.standEmitSpinBox.setToolTip("The minimum phred-scaled confidence threshold at which variants should be emitted")
         self.standEmitSpinBox.setRange(1,30)
         self.standEmitSpinBox.setValue(2)
         
-        self.edgeDistanceLabel = QtGui.QLabel("min edge distance (bp):")
+        self.edgeDistanceLabel = QtWidgets.QLabel("min edge distance (bp):")
         self.edgeDistanceLabel.setToolTip("The minimum distance of the editing site from the read edge")
-        self.edgeDistanceSpinBox = QtGui.QSpinBox()
+        self.edgeDistanceSpinBox = QtWidgets.QSpinBox()
         self.edgeDistanceSpinBox.setToolTip("The minimum distance of the editing site from the read edge")
         self.edgeDistanceSpinBox.setRange(0,15)
         self.edgeDistanceSpinBox.setValue(3)
 
-        self.intronDistanceLabel = QtGui.QLabel("min intron distance (bp):")
+        self.intronDistanceLabel = QtWidgets.QLabel("min intron distance (bp):")
         self.intronDistanceLabel.setToolTip("The minimum distance of an intronic editing site to the next exon")
-        self.intronDistanceSpinBox = QtGui.QSpinBox()
+        self.intronDistanceSpinBox = QtWidgets.QSpinBox()
         self.intronDistanceSpinBox.setToolTip("The minimum distance of an intronic editing site to the next exon")
         self.intronDistanceSpinBox.setRange(0, 100)
         self.intronDistanceSpinBox.setValue(5)
 
-        self.minPtsLabel = QtGui.QLabel("min editing Sites per cluster:")
+        self.minPtsLabel = QtWidgets.QLabel("min editing Sites per cluster:")
         self.minPtsLabel.setToolTip("The minimum number of editing sites in an editing island")
-        self.minPtsSpinBox = QtGui.QSpinBox()
+        self.minPtsSpinBox = QtWidgets.QSpinBox()
         self.minPtsSpinBox.setToolTip("The minimum number of editing sites in an editing island")
         self.minPtsSpinBox.setRange(0, 100)
         self.minPtsSpinBox.setValue(5)
 
-        self.epsLabel = QtGui.QLabel("max Neigbour distance (bp):")
+        self.epsLabel = QtWidgets.QLabel("max Neigbour distance (bp):")
         self.epsLabel.setToolTip("The maximal distance of an editing sites to be considered a neighbour")
-        self.epsSpinBox = QtGui.QSpinBox()
+        self.epsSpinBox = QtWidgets.QSpinBox()
         self.epsSpinBox.setToolTip("The maximal distance of an editing sites to be considered a neighbour")
         self.epsSpinBox.setRange(0, 1000)
         self.epsSpinBox.setValue(50)
         
-        self.pairedCheckBox = QtGui.QCheckBox("paired-end Sequencing")
-        self.overwriteCheckBox = QtGui.QCheckBox("Overwrite existing Files")
+        self.pairedCheckBox = QtWidgets.QCheckBox("paired-end Sequencing")
+        self.overwriteCheckBox = QtWidgets.QCheckBox("Overwrite existing Files")
         self.overwriteCheckBox.setChecked(True)
-        self.keepTempCheckBox = QtGui.QCheckBox("Keep temporary Files")
+        self.keepTempCheckBox = QtWidgets.QCheckBox("Keep temporary Files")
         
         #Start Button
-        self.startButton = QtGui.QPushButton(self.tr("Start New Analysis"))
+        self.startButton = QtWidgets.QPushButton(self.tr("Start New Analysis"))
 
     def createLayout(self):
         #drop Part        
@@ -294,7 +317,7 @@ class InputTab(QtGui.QWidget):
         self.inputFilesLayout.setColumnMinimumWidth(2,100)
         self.inputFilesLayout.setRowStretch(9,1)
         
-        self.inputFilesWidget = QtGui.QWidget()
+        self.inputFilesWidget = QtWidgets.QWidget()
         self.inputFilesWidget.setLayout(self.inputFilesLayout)
 
         
@@ -328,7 +351,7 @@ class InputTab(QtGui.QWidget):
         self.settingsLayout.setColumnStretch(8,5)
         
         
-        self.settingsWidget = QtGui.QWidget()
+        self.settingsWidget = QtWidgets.QWidget()
         self.settingsWidget.setLayout(self.settingsLayout)
         
 
@@ -365,12 +388,12 @@ class InputTab(QtGui.QWidget):
         self.sourceDirButton.clicked.connect(lambda: self.control.openFolderDialog(self.sourceDirTextBox))
         
         self.startButton.clicked.connect(self.control.newAssay)
-        
-        self.connect(self.dropList, QtCore.SIGNAL("dropped"), self.control.fileDropped)
+        #@TODO
+        #self.connect(self.dropList, QtCore.SIGNAL("dropped"), self.control.fileDropped)
         
         # connect del key to lists
-        del_one = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete), self.dropList)
-        self.connect(del_one, QtCore.SIGNAL('activated()'), self.dropList._del_item)
+        del_one = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete), self.dropList)
+        #self.connect(del_one, QtCore.SIGNAL('activated()'), self.dropList._del_item)
         
         
     def createDefaults(self,file=None):
@@ -400,11 +423,14 @@ class InputTab(QtGui.QWidget):
         self.keepTempCheckBox.setChecked(p.keepTemp)
         self.overwriteCheckBox.setChecked(p.overwrite)
             
+
+    
+
             
 if __name__ == '__main__':
     import sys, os
     print(os.getcwd())
-    app = QtGui.QApplication(sys.argv) 
+    app = QtWidgets.QApplication(sys.argv) 
     mainWindow = InputTab()
     mainWindow.show() 
     sys.exit(app.exec_())

@@ -1,10 +1,10 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.InputTab import InputTab
-from PyQt4.QtGui import QSizePolicy
+from PyQt5.QtWidgets import QSizePolicy
 from ui.GuiControll import GuiControll
 
 
-class GuiView(QtGui.QMainWindow):
+class GuiView(QtWidgets.QMainWindow):
     def __init__(self):
         self.control = GuiControll(self)
         super(GuiView, self).__init__()
@@ -24,24 +24,24 @@ class GuiView(QtGui.QMainWindow):
     def createMenu(self):
         self.exitAction.setShortcut('Ctrl+Q')
         self.exitAction.setStatusTip('Exit application')
-        self.exitAction.triggered.connect(QtGui.qApp.quit)
+        self.exitAction.triggered.connect(QtWidgets.qApp.quit)
         self.exitAction.setText("Exit")
         
         self.menubar = self.menuBar()
         self.fileMenu = self.menubar.addMenu('File') 
         self.fileMenu.addAction(self.exitAction)
         
-        self.openAnalysisAction = QtGui.QAction("Open Analysis",self)
+        self.openAnalysisAction = QtWidgets.QAction("Open Analysis",self)
         self.fileMenu.addAction(self.openAnalysisAction)
         
 
         self.statusBar()
  
     def createComponents(self):
-        self.centralWidget = QtGui.QWidget()
-        self.gridLayout = QtGui.QGridLayout()
-        self.tabMainWindow = QtGui.QTabWidget()
-        self.exitAction = QtGui.QAction(self)        
+        self.centralWidget = QtWidgets.QWidget()
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.tabMainWindow = QtWidgets.QTabWidget()
+        self.exitAction = QtWidgets.QAction(self)        
         
         
         self.tabMainWindow.setEnabled(True)
@@ -54,11 +54,14 @@ class GuiView(QtGui.QMainWindow):
         self.inputTab.createDefaults()
 
     def createConnects(self):
+       
+        self.closeTabAction = QtWidgets.QAction("Close Tab", shortcut=QtGui.QKeySequence("Ctrl+w"), triggered=lambda:self.control.closeTab)
+        self.tabMainWindow.addAction(self.closeTabAction)
         self.tabMainWindow.tabCloseRequested.connect(self.control.closeTab)
-        closeTabAction = QtGui.QAction(self.tabMainWindow)
-        closeTabAction.setShortcut('Ctrl+W')
-        self.connect(closeTabAction,QtCore.SIGNAL('triggered()'),self.tabMainWindow,QtCore.SLOT('close()'))
-        self.connect(self.openAnalysisAction,QtCore.SIGNAL('triggered()'),self.control.openAnalysis)
+        self.closeTabAction.triggered.connect(self.tabMainWindow.close)
+
+        #self.connect(closeTabAction,QtCore.SIGNAL('triggered()'),self.tabMainWindow,QtCore.SLOT('close()'))        
+        #self.connect(self.openAnalysisAction,QtCore.SIGNAL('triggered()'),self.control.openAnalysis)
         
     def createLayout(self):
         #self.resize(679, 417)
@@ -72,7 +75,7 @@ class GuiView(QtGui.QMainWindow):
         
         
 
-        self.tabMainWindow.setTabPosition(QtGui.QTabWidget.North)        
+        self.tabMainWindow.setTabPosition(QtWidgets.QTabWidget.North)        
         self.tabMainWindow.setTabsClosable(True)
         self.gridLayout.addWidget(self.tabMainWindow, 2, 2)
         self.gridLayout.setColumnStretch(2,1)
