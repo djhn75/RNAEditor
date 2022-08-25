@@ -119,9 +119,9 @@ class GuiControll(object):
                     item.setStatusTip(url)'''
             
     def openAnalysis(self,fileName=None):
-        if fileName==None:
-            fileName = str(QtWidgets.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), "Html Files (*.html)"))
-        
+        if fileName==None or fileName==False:
+            fileName, _filter = QtWidgets.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), "Html Files (*.html)")
+        #print(fileName)
         resultTab = ResultTab(self,fileName)
         self.view.tabMainWindow.addTab(resultTab,fileName[fileName.rfind("/")+1:fileName.rfind(".html")])
         Helper.runningThreads.append(resultTab)

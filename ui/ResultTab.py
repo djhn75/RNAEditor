@@ -11,7 +11,7 @@ class ResultTab(QWebEngineView):
         super(ResultTab,self).__init__()
         
         self.control = control
-        self.site = site
+        self.site = str(site)
         self.createMenu()
         self.createComponents()
         self.createLayout()
@@ -22,7 +22,9 @@ class ResultTab(QWebEngineView):
         pass
     
     def createComponents(self):
-        self.load(QUrl(self.site))
+        with open(self.site,'r') as f:
+            html=f.read()
+            self.setHtml(html)
        
      
     def _result_available(self,ok):

@@ -61,7 +61,7 @@ class GuiView(QtWidgets.QMainWindow):
         self.closeTabAction.triggered.connect(self.tabMainWindow.close)
 
         #self.connect(closeTabAction,QtCore.SIGNAL('triggered()'),self.tabMainWindow,QtCore.SLOT('close()'))        
-        #self.connect(self.openAnalysisAction,QtCore.SIGNAL('triggered()'),self.control.openAnalysis)
+        self.openAnalysisAction.triggered.connect(self.control.openAnalysis)
         
     def createLayout(self):
         #self.resize(679, 417)
