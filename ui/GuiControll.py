@@ -91,13 +91,15 @@ class GuiControll(object):
         
     #@QtCore.pyqtSlot()
     def openFileDialog(self,textBox):
-        fileName = QtGui.QFileDialog.getOpenFileName(self.view.centralWidget,'Open file', QtCore.QDir.homePath())
-        textBox.setText(fileName)
+        fileName, _filter = QtWidgets.QFileDialog.getOpenFileName(self.view.centralWidget,'Open file', QtCore.QDir.homePath(), 'All Files (*)')
+        if fileName != '':
+            textBox.setText(fileName)
     
     #@QtCore.pyqtSlot()    
     def openFolderDialog(self,textBox):
-        folderName = str(QtGui.QFileDialog.getExistingDirectory(self.view.centralWidget, "Select Directory"))
-        textBox.setText(folderName)
+        folderName = str(QtWidgets.QFileDialog.getExistingDirectory(self.view.centralWidget, "Select Directory"))
+        if folderName != '':
+            textBox.setText(folderName)
         
     #@QtCore.pyqtSlot()
     #Moved inside the DropEvent Method of InputTab
@@ -118,7 +120,7 @@ class GuiControll(object):
             
     def openAnalysis(self,fileName=None):
         if fileName==None:
-            fileName = str(QtGui.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), filter = QtCore.QString("*html")))
+            fileName = str(QtWidgets.QFileDialog.getOpenFileName(self.view.centralWidget,'Open Result HTML file', QtCore.QDir.homePath(), "Html Files (*.html)"))
         
         resultTab = ResultTab(self,fileName)
         self.view.tabMainWindow.addTab(resultTab,fileName[fileName.rfind("/")+1:fileName.rfind(".html")])

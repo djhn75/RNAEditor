@@ -5,7 +5,7 @@ from Helper import Parameters
 import os
 
 
-try:
+"""try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
     def _fromUtf8(s):
@@ -18,7 +18,7 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-
+"""
 
 class DropListWidget(QtWidgets.QListWidget):
     dropped =  QtCore.pyqtSignal(list)
